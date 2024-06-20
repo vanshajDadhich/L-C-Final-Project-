@@ -1,0 +1,22 @@
+@startuml
+actor Chef
+actor Employee
+actor Admin
+
+Chef --> (Login)
+Chef --> (Publish Menu)
+Chef --> (Get Recommendation for next day)
+Chef --> (Generate Report)
+
+Employee --> (Login)
+Employee --> (View Menu)
+Employee --> (Choose MenuItem For Next Day)
+Employee --> (Provide Feedback)
+Employee --> (Receive Notifications)
+
+Admin --> (Login)
+Admin --> (Add MenuItem)
+Admin --> (Update MenuItem)
+Admin --> (Delete MenuItem)
+Admin --> (Add User)
+@enduml
