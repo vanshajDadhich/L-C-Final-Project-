@@ -1,5 +1,7 @@
   #pragma once
 
+  #include "menuItem.h"
+
   #include <cstdint>
   struct RecommendationSelection {
     int SelectionId;

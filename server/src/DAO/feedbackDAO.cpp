@@ -56,7 +56,7 @@ FeedbackDAO::FeedbackDAO() : databaseConnection{DatabaseConnection::getInstance(
         }
     }
 
-    Feedback FeedbackDAO::getFeedbackByID(const int& feedbackId) {
+    Feedback FeedbackDAO::getFeedbackById(const int& feedbackId) {
         try {
             std::unique_ptr<sql::PreparedStatement> pstmt(
                 databaseConnection->getConnection()->prepareStatement("SELECT * FROM Feedback WHERE feedbackId = ?"));

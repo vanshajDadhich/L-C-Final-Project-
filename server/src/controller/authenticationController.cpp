@@ -4,8 +4,7 @@
 AuthenticationController::AuthenticationController(UserService* userService)
     : userService(userService) {}
 
-bool AuthenticationController::authenticateUser(const int& userId, const std::string& password) {
+int AuthenticationController::authenticateUser(const int& userId, const std::string& password) {
     std::cout<<"Authenticating User : 8\n";
     return userService->authenticateUser(userId, password);
 }
-

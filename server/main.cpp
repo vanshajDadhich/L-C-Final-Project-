@@ -15,7 +15,7 @@ void signalHandlerWrapper(int signal) {
 }
 
 int main() {
-    Server server(8081);
+    Server server(8082);
     serverInstance = &server;
     server.start();
 

@@ -14,6 +14,17 @@ private:
     RequestHandler* requestHandler;
 
     void handleUserInput();
+    void showMenuPrompt(std::string userRole);
+    int showAdminMenu();
+    void showAddItemPrompt();
+    void showUpdateMenuPrompt();
+    void showDeleteItemPrompt();
+    void showMenu();
+    void addUserPrompt();
+
+    void loginPrompt();
+    std::vector<std::string> getDataToUpdate();
+
 };
 
 #endif // USERINTERFACE_H

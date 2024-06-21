@@ -7,9 +7,9 @@ class AuthenticationController
 {
 public:
     AuthenticationController(UserService* userService);
-    bool authenticateUser(const int& userId, const std::string& password);
+    int authenticateUser(const int& userId, const std::string& password);
     ~AuthenticationController() = default;
 private:
     UserService* userService;
 };
-#endif 
+#endif
