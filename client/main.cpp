@@ -11,7 +11,7 @@ void clientHandlerWrapper(int signal) {
 
 
 int main() {
-    int server_port = 8082;
+    int server_port = 8081;
 
     Client client(server_port);
     UserInterface ui(client);
