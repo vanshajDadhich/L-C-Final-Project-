@@ -3,6 +3,11 @@
 
 #include "client.h"
 #include "requestHandler.h"
+#include "./DTO/login.h"
+#include "./DTO/feedback.h"
+#include "./DTO/user.h"
+#include "./DTO/menuItem.h"
+#include "./DTO/SerializationUtility.h"
 
 class UserInterface {
 public:

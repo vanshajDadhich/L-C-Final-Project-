@@ -7,11 +7,7 @@
 class IUserDAO {
 public:
 
-    virtual bool addUser(const User& user) = 0;
-
-    virtual bool updateUser(const User& user) = 0;
-
-    virtual bool deleteUser(const int& userId) = 0;
+    virtual int addUser(const User& user) = 0;
 
     virtual User getUserByID(const int& userId) = 0;
 

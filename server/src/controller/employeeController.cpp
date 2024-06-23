@@ -3,10 +3,10 @@
 EmployeeController::EmployeeController(FeedbackService* feedbackService, RecommendationSelectionService* recommandationSelectionService) : feedbackService(feedbackService), recommandationSelectionService(recommandationSelectionService)  {}
 
 
-std::vector<std::string> EmployeeController::handleRequest(std::vector<std::string> request) {
-    std::vector<std::string> response;
+std::string EmployeeController::handleRequest(Operation operation,std::string request) {
+    std::string response;
 
-    switch (std::stoi(request[0])) {
+    switch (operation) {
         case Operation::GetMenuAndProvideFeedback:
            
             break;
@@ -14,7 +14,7 @@ std::vector<std::string> EmployeeController::handleRequest(std::vector<std::stri
             
             break;
         default:
-            response.push_back("Invalid operation");
+            response = "Invalid operation";
             break;
     }
     return response;

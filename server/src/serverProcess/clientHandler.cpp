@@ -12,12 +12,12 @@ ClientHandler::ClientHandler(int clientSocket)
 
 void ClientHandler::handle() {
     while (running) {
-        std::vector<std::string> dataReceived = receiveRequest();
-        if (dataReceived.empty()) {
+        std::string dataReceived = receiveRequest();
+        if (dataReceived == "") {
             continue; // Continue to listen for further data
         }
         
-        std::vector<std::string> response = requestProcessor.processRequest(dataReceived);
+        std::string response = requestProcessor.processRequest(dataReceived);
 
         if (!sendRequest(response)) {
             std::cerr << "Failed to send response" << std::endl;
@@ -29,10 +29,9 @@ void ClientHandler::handle() {
     close(clientSocket);
 }
 
-bool ClientHandler::sendRequest(std::vector<std::string> response) {
+bool ClientHandler::sendRequest(std::string response) {
     std::vector<unsigned char> responseBuffer;
-    auto serializedResponse = vectorSerializer.serialize(response);
-    responseBuffer.insert(responseBuffer.end(), serializedResponse.begin(), serializedResponse.end());
+    responseBuffer.insert(responseBuffer.end(), response.begin(), response.end());
 
     int valsend = send(clientSocket, responseBuffer.data(), responseBuffer.size(), 0);
     if (valsend < 0) {
@@ -43,18 +42,17 @@ bool ClientHandler::sendRequest(std::vector<std::string> response) {
     return true;
 }
 
-std::vector<std::string> ClientHandler::receiveRequest() {
+std::string ClientHandler::receiveRequest() {
     char buffer[BUFFER_SIZE] = {0};
 
     int valread = read(clientSocket, buffer, BUFFER_SIZE);
     if (valread < 0) {
         std::cerr << "Read failed with error code: " << valread << "\n";
-        return std::vector<std::string>();
+        return "";
     }
-
-    std::cout << "Number of bytes read: " << valread << "\n";
-
-    std::vector<unsigned char> data(buffer, buffer + valread);
-    std::vector<std::string> request = vectorSerializer.deserialize(std::string(data.begin(), data.end()));
+    if(valread > 0){
+      std::cout << "Number of bytes read: " << valread << "\n";
+    }
+    std::string request(buffer, buffer + valread);
     return request;
 }

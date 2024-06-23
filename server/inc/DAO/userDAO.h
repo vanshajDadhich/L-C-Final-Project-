@@ -10,11 +10,7 @@ public:
 
     UserDAO();
 
-    bool addUser(const User& user) override;
-
-    bool updateUser(const User& user)  override;
-
-    bool deleteUser(const int& userId) override;
+    int addUser(const User& user) override;
 
     User getUserByID(const int& userId) override;
 

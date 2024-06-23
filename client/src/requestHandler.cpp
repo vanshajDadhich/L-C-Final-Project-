@@ -12,10 +12,9 @@ RequestHandler::RequestHandler(int clientSocket, struct sockaddr_in serv_addr)
     : clientSocket(clientSocket), serv_addr(serv_addr) {}
 
 
-void RequestHandler::sendRequest(std::vector<std::string> request) {
+void RequestHandler::sendRequest(std::string request) {
     std::vector<unsigned char> requestBuffer;
-    auto serializedRequest = vectorSerializer.serialize(request);
-    requestBuffer.insert(requestBuffer.end(), serializedRequest.begin(), serializedRequest.end());
+    requestBuffer.insert(requestBuffer.end(), request.begin(), request.end());
 
     int valsend = send(clientSocket, requestBuffer.data(), requestBuffer.size(), 0);
     if (valsend < 0) {
@@ -25,18 +24,19 @@ void RequestHandler::sendRequest(std::vector<std::string> request) {
     }
 }
 
-std::vector<std::string> RequestHandler::receiveResponse() {
+std::string RequestHandler::receiveResponse() {
     char buffer[BUFFER_SIZE] = {0};
 
     int valread = read(clientSocket, buffer, BUFFER_SIZE);
     if (valread < 0) {
         std::cerr << "Read failed with error code: " << valread << "\n";
-        return std::vector<std::string>();
+        return "";
+    }
+    if(valread >0){
+      std::cout << "Number of bytes read: " << valread << "\n";
     }
 
-    std::cout << "Number of bytes read: " << valread << "\n";
-
     std::vector<unsigned char> data(buffer, buffer + valread);
-    std::vector<std::string> response = vectorSerializer.deserialize(std::string(data.begin(), data.end()));
-    return response;
+    std::string request(buffer, buffer + valread);
+    return request;
 }

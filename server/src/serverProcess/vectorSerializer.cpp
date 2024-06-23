@@ -2,27 +2,23 @@
 #include <sstream>
 #include <ostream>
 
-std::string VectorSerializer::serialize(std::vector<std::string> data)
-{
-    std::ostringstream serializedString;
-    for (size_t i = 0; i < data.size(); ++i) {
-        serializedString << data[i];
-        if (i != data.size() - 1) {
-            serializedString << ",";
-        }
+std::string VectorSerializer::serialize(std::vector<std::string> vec) {
+    std::string serializedString;
+    for (const auto& str : vec) {
+        serializedString += str + '$';
     }
-    return serializedString.str();
+    if (!serializedString.empty()) {
+        serializedString.pop_back();
+    }
+    return serializedString;
 }
 
-std::vector<std::string> VectorSerializer::deserialize(const std::string& data)
-{
-   std::vector<std::string> splittedString;
-    std::istringstream iss(data);
-    std::string sepratedString;
-   
-    while (std::getline(iss, sepratedString, ',')) {
-        splittedString.push_back(sepratedString);
+std::vector<std::string> VectorSerializer::deserialize(const std::string& serialized) {
+    std::vector<std::string> result;
+    std::string token;
+    std::istringstream tokenStream(serialized);
+    while (std::getline(tokenStream, token, '$')) {
+        result.push_back(token);
     }
-   
-    return splittedString;
+    return result;
 }

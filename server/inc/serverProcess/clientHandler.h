@@ -18,9 +18,8 @@ private:
     RequestProcessor requestProcessor;
     VectorSerializer vectorSerializer;
     
-    bool sendRequest(std::vector<std::string> request);
-    std::vector<unsigned char> processRequest( std::vector<unsigned char> requestBuffer);
-    std::vector<std::string> receiveRequest();
+    bool sendRequest(std::string request);
+    std::string receiveRequest();
 };
 
 #endif // CLIENTHANDLER_H

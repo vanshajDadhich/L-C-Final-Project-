@@ -7,8 +7,7 @@ class UserService
 {
 public:
     UserService(IUserDAO* userDAO);
-    bool addUser(std::vector<std::string> userData);
-    bool deleteUserByID(int userId);
+    bool addUser(const User& user);
     User getUserById(int userId);
 
     std::vector<User> getAllUsers();

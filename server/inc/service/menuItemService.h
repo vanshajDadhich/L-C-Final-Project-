@@ -7,11 +7,11 @@ class MenuItemService
 {
 public:
     MenuItemService(IMenuItemDAO* menuItemDAO);
-    bool addMenuItem(std::vector<std::string> menuData);
+    bool addMenuItem(const MenuItem& menuItem);
     bool updateMenuItem(const MenuItem& menuItem);
     bool deleteMenuItemByID(int menuItemId);
     MenuItem getMenuItemById(int menuItemId);
-    std::vector<std::vector<std::string>> getAllMenuItems();
+    std::vector<MenuItem> getAllMenuItems();
 private:
     IMenuItemDAO* menuItemDAO;
 };

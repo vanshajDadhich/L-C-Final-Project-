@@ -2,8 +2,8 @@
 
 ChefController::ChefController() {}
 
-std::vector<std::string> ChefController::handleRequest( std::vector<std::string> request) {
-    std::vector<std::string> response;
-    response.push_back("Chef Controller");
+std::string ChefController::handleRequest(Operation operation, std::string request) {
+    std::string response;
+    response = "Chef Controller";
     return response;
 }

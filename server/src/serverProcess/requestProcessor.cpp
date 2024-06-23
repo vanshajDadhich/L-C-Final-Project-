@@ -22,27 +22,25 @@ RequestProcessor::RequestProcessor() {
     this->recommendationSelectionService = new RecommendationSelectionService(recommendationSelectionDAO);
 }
 
-std::vector<std::string> RequestProcessor::processRequest(std::vector<std::string> request){
-    std::vector<std::string> response;
+std::string RequestProcessor::processRequest(std::string request){
+    std::pair<Operation, std::string> requestData = SerializationUtility::deserializeOperation(request);
+    std::string response;
     int userAuthenticated;
     std::cout<<"processing request: 17\n";
-    switch (std::stoi(request[0])) {
+    switch (requestData.first) {
         case Operation::login:
-            std::cout<<"processing request: 20 login \n";
-            userAuthenticated = authenticationController->authenticateUser(std::stoi(request[1]), request[2]);
-            std::cout<<"processing request: userAuthenticated : "<<userAuthenticated<<"\n";
+            userAuthenticated = authenticationController->authenticateUser(requestData.second);
             if(userAuthenticated == 1){
-                std::cout<<"Admin object created\n";
                 userController = new AdminController(menuItemService, userService);
-                response = {"1"};
+                response = "1";
             }else if(userAuthenticated == 2){
-                response = {"2"};
+                response = "2";
                 userController = new ChefController();
             }else if(userAuthenticated == 3){
-                response = {"3"};
+                response = "3";
                 userController = new EmployeeController(feedbackService, recommendationSelectionService);
             }else{
-                response = {"-1"};
+                response = "-1";
             }
             break;
         case Operation::AddUser: 
@@ -57,7 +55,7 @@ std::vector<std::string> RequestProcessor::processRequest(std::vector<std::strin
         case Operation::GetMenuAndProvideFeedback:
         case Operation::SelectItemFromTomorrowMenu:
             std::cout<<"Handle Request called\n";
-            response = userController->handleRequest(request);
+            response = userController->handleRequest(requestData.first, requestData.second);
             break;
         default:
             response = {"Invalid Operation"};

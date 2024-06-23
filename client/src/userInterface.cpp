@@ -22,27 +22,28 @@ void UserInterface::run() {
 
 void UserInterface::loginPrompt()
 {
-    int userId;
-    std::string password;
+    Login login;
     std::cout << "Enter Login Credantials: \n";
     std::cout<<"UserId : ";
-    std::cin>>userId;
+    std::cin>>login.userId;
     std::cout<<"Password : ";
-    std::cin>>password;
-    int operation = Operation::login;
+    std::cin>>login.password;
+    Operation operation = Operation::login;
+    auto loginData = SerializationUtility::serialize(login);
+    auto loginSerializedRequest = SerializationUtility::serializeOperation(operation, loginData);
 
-    requestHandler->sendRequest({std::to_string(operation), std::to_string(userId), password} ) ;
+    requestHandler->sendRequest(loginSerializedRequest) ;
 }
 
 void UserInterface::handleUserInput() {
     loginPrompt();
-    std::vector<std::string> response = requestHandler->receiveResponse();
-    if(response[0] == "1"){
+    std::string response = requestHandler->receiveResponse();
+    if(response == "1"){
         std::cout<<"Admin Logged In\n";
         showMenuPrompt("1");
-    }else if(response[0] == "2"){
+    }else if(response == "2"){
         std::cout<<"Chef Logged In\n";
-    }else if(response[0] == "3"){
+    }else if(response == "3"){
         std::cout<<"Employee Logged In\n";
     }else{
         std::cout<<"Invalid Login\n";
@@ -104,79 +105,92 @@ int UserInterface::showAdminMenu()
 }
 
 void UserInterface::addUserPrompt() {
-    std::vector<std::string> userResponse;
-    userResponse.push_back(std::to_string(Operation::AddUser));
-    
-    std::string userName, userRole, userPassword;
+    User user;
+    Operation operation = Operation::AddUser;
 
     std::cout << "Enter User name: " << std::endl;
-    std::getline(std::cin >> std::ws, userName);
-    userResponse.push_back(userName);
+    std::getline(std::cin >> std::ws, user.name);
 
     std::cout << "Enter User password: " << std::endl;
-    std::getline(std::cin >> std::ws, userPassword);
-    userResponse.push_back(userPassword);
+    std::getline(std::cin >> std::ws, user.password);
 
-     std::cout << "Enter User role: " << std::endl;
-    std::getline(std::cin >> std::ws, userRole);
-    userResponse.push_back(userRole);
-
-
-    std::cout << "Sending addUser request to server\n";
-    requestHandler->sendRequest(userResponse);
+    int roleInt;
+    std::cout << "Enter Role (1 for Admin, 2 for Chef, 3 for Employee): ";
+    std::cin >> roleInt;
+    if (roleInt == 1) {
+        user.role = Admin;
+    } else if (roleInt == 2) {
+        user.role = Chef;
+    } else if (roleInt == 3) {
+        user.role = Employee;
+    } else {
+        std::cerr << "Invalid role entered!" << std::endl;
+    }
+    auto userData = SerializationUtility::serialize(user);
+    auto addUserSerializedRequest = SerializationUtility::serializeOperation(operation, userData);
+    requestHandler->sendRequest(addUserSerializedRequest);
 }
 
 void UserInterface::showAddItemPrompt() {
-    std::vector<std::string> userResponse;
-    userResponse.push_back(std::to_string(Operation::AddMenuItem));
-    
-    std::string itemName, itemPrice, itemAvailability, mealType;
+    Operation operation = Operation::AddMenuItem;
+    std::string menuItemName;
+    int menuItemTypeInt;
+    bool availability;
+    int price;
 
     std::cout << "Enter Item name: " << std::endl;
-    std::getline(std::cin >> std::ws, itemName);
-    userResponse.push_back(itemName);
+    std::getline(std::cin >> std::ws, menuItemName);
 
     std::cout << "Enter Item price: " << std::endl;
-    std::getline(std::cin >> std::ws, itemPrice);
-    userResponse.push_back(itemPrice);
+    std::cin>>price;
 
     std::cout << "Enter Item availability: " << std::endl;
-    std::getline(std::cin >> std::ws, itemAvailability);
-    userResponse.push_back(itemAvailability);
+    std::cin>>availability;
 
-    std::cout << "Enter meal type (breakfast/lunch/dinner): " << std::endl;
-    std::getline(std::cin >> std::ws, mealType);
-    userResponse.push_back(mealType);
+    std::cout << "Enter meal type (1 for Breakfast, 2 for Lunch, 3 for Dinner): "<<std::endl;
+    std::cin>>menuItemTypeInt;
+    
+    MenuItem menuItem(0, menuItemName, menuItemTypeInt, availability, price);
+    auto menuItemData = SerializationUtility::serialize(menuItem);
+    auto addMenuSerializedRequest = SerializationUtility::serializeOperation(operation, menuItemData);
 
     std::cout << "Sending addItem request to server\n";
-    requestHandler->sendRequest(userResponse);
+    requestHandler->sendRequest(addMenuSerializedRequest);
 }
 
 
 void UserInterface::showDeleteItemPrompt() {
-    std::string itemName;
-    std::vector<std::string> userResponse{std::to_string(Operation::DeleteMenuItem)};
+    int menuItemId;
+    Operation operation = Operation::DeleteMenuItem;
 
-    std::cout << "Enter the name of item to delete: " << std::endl;
-    std::getline(std::cin >> std::ws, itemName);
-    userResponse.push_back(itemName);
+    std::cout << "Enter the Id of menu item to delete: " << std::endl;
+    std::cin>>menuItemId;
+    std::string menuItemIdStr =  std::to_string(menuItemId);
+    auto deleteMenuItemSerializedRequest = SerializationUtility::serializeOperation(operation,menuItemIdStr);
 
-    requestHandler->sendRequest(userResponse);
+    requestHandler->sendRequest(deleteMenuItemSerializedRequest);
 }
 
 
 void UserInterface::showMenu() {
-    std::vector<std::string> userResponse{std::to_string(Operation::ViewMenu)};
-    requestHandler->sendRequest(userResponse);
+    std::cout<<"Inside Show Menu\n";
+    Operation operation = Operation::ViewMenu;
+    std::string viewMenuSerializedRequest = SerializationUtility::serializeOperation(operation, "");
+    requestHandler->sendRequest(viewMenuSerializedRequest);
 
-    VectorSerializer vectorSerializer;
-    std::vector<std::string> menu = requestHandler->receiveResponse();
+    std::string serializedMenuList = requestHandler->receiveResponse();
 
-    for (const auto& item : menu) {
-        auto menuItemData = vectorSerializer.deserialize(item);
-        for (const auto& field : menuItemData) {
-            std::cout << field << " , ";
-        }
+    std::vector<std::string>MenuList = VectorSerializer::deserialize(serializedMenuList);
+
+    for (const auto& item : MenuList) {
+        auto menuItem = SerializationUtility::deserialize<MenuItem>(item);
+
+        std::cout << "Menu Item Details:" << std::endl
+          << "ID: " << menuItem.menuItemId << std::endl
+          << "Name: " << menuItem.menuItemName << std::endl
+          << "Type: " << static_cast<int>(menuItem.menuItemType) << std::endl  // Assuming you want to print the enum as an integer
+          << "Availability: " << (menuItem.availability ? "Yes" : "No") << std::endl
+          << "Price: " << menuItem.price << std::endl;
         std::cout << std::endl;
     }
 }

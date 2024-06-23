@@ -1,63 +1,43 @@
 #include "../../inc/controller/adminController.h"
 #include "../../inc/serverProcess/vectorSerializer.h"
 #include<iostream>
+#include<vector>
 
 AdminController::AdminController(MenuItemService* menuItemService, UserService* userService) : menuItemService(menuItemService), userService(userService){}
 
-std::vector<std::string> AdminController::handleRequest(std::vector<std::string> request) {
+std::string AdminController::handleRequest(Operation operation, std::string requestData) {
     std::cout<<"Handle request in Admin Controller\n";
-    std::vector<std::string> response;
-    bool operationDone;
-    switch (std::stoi(request[0])) {
-        case Operation::AddUser:
-            std::cout<<"Add User called\n";
-            request.erase(request.begin());
-            operationDone = userService->addUser(request);
-            if(operationDone)
-                response.push_back("User Added");
-            else
-                response.push_back("User Not Added");
-            break;
-        case Operation::AddMenuItem:
-            request.erase(request.begin());
-            operationDone = menuItemService->addMenuItem(request);
-            if(operationDone)
-                response.push_back("Menu Item Added");
-            else
-                response.push_back("Menu Item Not Added");
-            break;
-        case Operation::DeleteMenuItem:
-            request.erase(request.begin());
-            operationDone = menuItemService->deleteMenuItemByID(std::stoi(request[0]));
-            if(operationDone)
-                response.push_back("Menu Item Deleted");
-            else
-                response.push_back("Menu Item Not Deleted");
-            break;
-        // case Operation::UpdateMenuItem:
-        //     request.erase(request.begin());
-        //     menuItemService->updateMenuItem(request);
-        //     break;  
-        case Operation::ViewMenu:
-           {
-            
-                VectorSerializer vectorSerializer;
-                request.erase(request.begin());
-                std::vector<std::vector<std::string>> menuDetails = menuItemService->getAllMenuItems(); 
-                for(auto menu : menuDetails)
-                {
-                    std::vector<std::string> menuData;
-                    for(auto data : menu)
-                    {
-                        menuData.push_back(data);
-                    }
-                    response.push_back(vectorSerializer.serialize(menuData));
-                }
-                break;
-           }
-        default:
-            response.push_back("Invalid operation");
-            break;
+    std::string response;
+    if (operation == Operation::AddUser) {
+        std::cout << "Add User called\n";
+        User user = SerializationUtility::deserialize<User>(requestData);
+        int operationDone = userService->addUser(user);   
+        std::cout<<"operationDOne add user:"<<operationDone<<std::endl;
+        response = "User Added Succesfully";
+    }
+    else if (operation == Operation::AddMenuItem) {
+        std::cout<<"Add Menu Item Called\n";
+        MenuItem menuItem = SerializationUtility::deserialize<MenuItem>(requestData);
+        bool operationDone = menuItemService->addMenuItem(menuItem);
+        std::cout<<"operationDone add Menu:"<<operationDone<<std::endl;
+        response = "Menu Added Succesfully";
+    }
+    else if (operation == Operation::DeleteMenuItem) {
+        bool operationDone = menuItemService->deleteMenuItemByID(std::stoi(requestData));
+        std::cout<<"operationDOne deleteMenu:"<<operationDone<<std::endl;
+        response = "Menu Deleted Succesfully";
+    }
+    else if (operation == Operation::ViewMenu) {
+        std::vector<MenuItem> menuDetails = menuItemService->getAllMenuItems();
+        std::vector<std::string> menuSerializedData;
+        for (auto menu : menuDetails) {
+            menuSerializedData.push_back(SerializationUtility::serialize(menu));
+        }
+        response = VectorSerializer::serialize(menuSerializedData);
+        std::cout<<"operationDOne : view menu data send"<<std::endl;
+    }
+    else {
+        response = "Invalid operation";
     }
     return response;
 }

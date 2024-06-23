@@ -22,7 +22,7 @@ class RequestProcessor {
 
 public:
     RequestProcessor();
-    std::vector<std::string> processRequest(std::vector<std::string> request);
+    std::string processRequest(std::string request);
 };
 
 #endif // REQUESTPROCESSOR_H

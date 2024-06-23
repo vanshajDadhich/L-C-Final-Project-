@@ -1,9 +1,13 @@
+#ifndef CHEFCONTROLLER_H
+#define CHEFCONTROLLER_H
+
 #include "IUserController.h"
 
 class ChefController : public IUserController {
     
 public:
     ChefController();
-    std::vector<std::string> handleRequest(std::vector<std::string> request) override;
-
+    std::string handleRequest(Operation operation, std::string request) override;
 };
+
+#endif
