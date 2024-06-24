@@ -8,7 +8,8 @@
 #include "../service/menuItemService.h"
 #include "../service/userService.h"
 #include "../service/feedbackService.h"
-#include "../service/recommandationSelectionService.h"
+#include "../service/nextDayMenuVotingService.h"
+#include "../recommendationEngine/recommendationEngine.h"
 
 
 class RequestProcessor {
@@ -18,7 +19,8 @@ class RequestProcessor {
     MenuItemService* menuItemService;
     UserService* userService;
     FeedbackService* feedbackService;
-    RecommendationSelectionService* recommendationSelectionService;
+    NextDayMenuVotingService* nextDayMenuVotingService;
+    RecommendationEngine* recommendationEngine;
 
 public:
     RequestProcessor();

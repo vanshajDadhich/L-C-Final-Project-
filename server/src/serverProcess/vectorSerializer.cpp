@@ -13,12 +13,14 @@ std::string VectorSerializer::serialize(std::vector<std::string> vec) {
     return serializedString;
 }
 
-std::vector<std::string> VectorSerializer::deserialize(const std::string& serialized) {
+std::vector<std::string> VectorSerializer::deserialize(const std::string& serialized, char delimeter) {
     std::vector<std::string> result;
     std::string token;
     std::istringstream tokenStream(serialized);
-    while (std::getline(tokenStream, token, '$')) {
+    while (std::getline(tokenStream, token, delimeter)) {
         result.push_back(token);
     }
     return result;
 }
+
+

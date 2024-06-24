@@ -4,7 +4,7 @@
 #include"../../inc/DAO/userDAO.h"
 #include"../../inc/DAO/menuItemDAO.h"
 #include"../../inc/DAO/feedbackDAO.h"
-#include"../../inc/DAO/RecommendationSelectionDAO.h"
+#include"../../inc/DAO/nextDayMenuVotingDAO.h"
 #include"../../inc/controller/adminController.h"
 #include"../../inc/controller/chefController.h"
 #include"../../inc/controller/employeeController.h"
@@ -18,8 +18,9 @@ RequestProcessor::RequestProcessor() {
     this->menuItemService = new MenuItemService(menuItemDAO);
     FeedbackDAO* feedbackDAO = new FeedbackDAO();
     this->feedbackService = new FeedbackService(feedbackDAO);
-    RecommendationSelectionDAO* recommendationSelectionDAO = new RecommendationSelectionDAO();
-    this->recommendationSelectionService = new RecommendationSelectionService(recommendationSelectionDAO);
+    NextDayMenuVotingDAO* nextDayMenuVotingDAO = new NextDayMenuVotingDAO();
+    this->nextDayMenuVotingService = new NextDayMenuVotingService(nextDayMenuVotingDAO);
+    this->recommendationEngine = new RecommendationEngine();
 }
 
 std::string RequestProcessor::processRequest(std::string request){
@@ -31,17 +32,18 @@ std::string RequestProcessor::processRequest(std::string request){
         case Operation::login:
             userAuthenticated = authenticationController->authenticateUser(requestData.second);
             if(userAuthenticated == 1){
+                std::cout<<"Admin LoggedIn"<<std::endl;
                 userController = new AdminController(menuItemService, userService);
-                response = "1";
             }else if(userAuthenticated == 2){
-                response = "2";
-                userController = new ChefController();
+                std::cout<<"Chef LoggedIn"<<std::endl;
+                userController = new ChefController(menuItemService, nextDayMenuVotingService, feedbackService, recommendationEngine);
             }else if(userAuthenticated == 3){
-                response = "3";
-                userController = new EmployeeController(feedbackService, recommendationSelectionService);
+                std::cout<<"Employee LoggedIn"<<std::endl;
+                userController = new EmployeeController(feedbackService, nextDayMenuVotingService, menuItemService);
             }else{
-                response = "-1";
+                std::cout<<"Invalid Username Password"<<std::endl;
             }
+            response = std::to_string(userAuthenticated);
             break;
         case Operation::AddUser: 
         case Operation::AddMenuItem:
@@ -52,8 +54,11 @@ std::string RequestProcessor::processRequest(std::string request){
         case Operation::GenerateReport:
         case Operation::PublishMenuForToday:
         case Operation::ViewNotification:
-        case Operation::GetMenuAndProvideFeedback:
-        case Operation::SelectItemFromTomorrowMenu:
+        case Operation::ProvideFeedback:
+        case Operation::VoteItemFromTomorrowMenu:
+        case Operation::GetRecommandationFromEngine:
+        case Operation::GetTodaysMenu:
+        case Operation::GetChefRollOutMenuForTomorrow:
             std::cout<<"Handle Request called\n";
             response = userController->handleRequest(requestData.first, requestData.second);
             break;

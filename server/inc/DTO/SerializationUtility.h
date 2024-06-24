@@ -15,9 +15,12 @@ enum Operation : int {
    GenerateReport = 6,
    PublishMenuForToday = 7,
    ViewNotification = 8,
-   GetMenuAndProvideFeedback = 9,
-   SelectItemFromTomorrowMenu = 10,
-   login = 11
+   ProvideFeedback = 9,
+   VoteItemFromTomorrowMenu = 10,
+   login = 11,
+   GetRecommandationFromEngine = 12,
+   GetTodaysMenu = 13,
+   GetChefRollOutMenuForTomorrow = 14
 };
 
 class SerializationUtility {

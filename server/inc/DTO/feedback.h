@@ -19,8 +19,6 @@ struct Feedback : public Serializable {
         rating{rating}, comment{comment}, date{date} {}
 
 
-  Feedback(){}
-
   std::string serialize() const override {
     return std::to_string(feedbackId) + ";" +
            std::to_string(userId) + ";" +
