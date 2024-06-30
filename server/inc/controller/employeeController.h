@@ -6,16 +6,20 @@
 #include "../service/nextDayMenuVotingService.h"
 #include "../DTO/nextDayMenuRollout.h"
 #include "../service/menuItemService.h"
+#include "../service/todayMenuService.h"
 #include "../serverProcess/vectorSerializer.h"
+#include "../service/notificationService.h"
 
 class EmployeeController : public IUserController {
     private :
     FeedbackService* feedbackService;
     NextDayMenuVotingService* nextDayMenuVotingService;
     MenuItemService* menuItemService;
+    TodayMenuService* todayMenuService;
+    NotificationService* notificationService;
 
 public:
-    EmployeeController(FeedbackService* feedbackService, NextDayMenuVotingService* nextDayMenuVotingService, MenuItemService* menuItemService);
+    EmployeeController(FeedbackService* feedbackService, NextDayMenuVotingService* nextDayMenuVotingService, MenuItemService* menuItemService, TodayMenuService* todayMenuService, NotificationService* notificationService);
     std::string handleRequest(Operation operation, std::string request) override;
     std::vector<NextDayMenuRollOut> getNextDayMenuItemsToRollOut();
 

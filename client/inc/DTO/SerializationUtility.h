@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SERIALIZATION_UTILITY_H
+#define SERIALIZATION_UTILITY_H
 
 #include <string>
 #include <sstream>
@@ -21,7 +22,6 @@ enum Operation : int {
    GetRecommandationFromEngine = 12,
    GetTodaysMenu = 13,
    GetChefRollOutMenuForTomorrow = 14
-
 };
 
 class SerializationUtility {
@@ -56,3 +56,5 @@ public:
         return result;
     }
 };
+
+#endif

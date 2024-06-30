@@ -15,5 +15,5 @@ public:
 
     virtual bool updateMenuItem(const MenuItem& menuItem)= 0;
 
-    virtual bool deleteMenuItem(const int& menuItemId)= 0;
+    virtual MenuItem deleteMenuItem(const int& menuItemId)= 0;
 };

@@ -1,14 +1,19 @@
 #include "../../inc/controller/employeeController.h"
 
-EmployeeController::EmployeeController(FeedbackService* feedbackService, NextDayMenuVotingService* nextDayMenuVotingService, MenuItemService* menuItemService) 
-        : feedbackService(feedbackService), nextDayMenuVotingService(nextDayMenuVotingService), menuItemService(menuItemService) {}
+EmployeeController::EmployeeController(FeedbackService* feedbackService, NextDayMenuVotingService* nextDayMenuVotingService, MenuItemService* menuItemService, TodayMenuService* todayMenuService, NotificationService* notificationService) 
+        : feedbackService(feedbackService), nextDayMenuVotingService(nextDayMenuVotingService), menuItemService(menuItemService), todayMenuService(todayMenuService), notificationService(notificationService){}
 
 
 std::string EmployeeController::handleRequest(Operation operation,std::string request) {
     std::cout<<"Handle request in Chef Controller\n";
     std::string response;
     if (operation == Operation::ViewNotification) {
-        
+        std::vector<Notification> notificationDetails = notificationService->getAllNotifications();
+        std::vector<std::string> notificationSerializedData;
+        for (auto notification : notificationDetails) {
+            notificationSerializedData.push_back(SerializationUtility::serialize(notification));
+        }
+        response = VectorSerializer::serialize(notificationSerializedData);
     }
     else if(operation == Operation::ProvideFeedback){
         Feedback feedback = SerializationUtility::deserialize<Feedback>(request);
@@ -16,7 +21,12 @@ std::string EmployeeController::handleRequest(Operation operation,std::string re
         std::cout<<"FeedBack Added : "<<operationDone<<std::endl;
     }
     else if(operation == Operation::GetTodaysMenu){
-
+        std::vector<MenuItem> todaysMenu = todayMenuService->getAllTodayMenuItem();
+        std::vector<std::string> serializedMenuItem;
+        for (auto menuItem : todaysMenu) {
+            serializedMenuItem.push_back(SerializationUtility::serialize(menuItem));
+        }
+        response = VectorSerializer::serialize(serializedMenuItem);
     }
     else if(operation == Operation::VoteItemFromTomorrowMenu){
         int menuItemId = std::stoi(request);

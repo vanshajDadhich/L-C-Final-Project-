@@ -73,13 +73,20 @@ class RecommendationEngine {
 public:
     RecommendationEngine();
 
-     std::vector<NextDayMenuVoting> recommendTopFoodItems(MenuItemType menuType,
+    std::vector<NextDayMenuVoting> recommendTopFoodItems(MenuItemType menuType,
                                                 const std::unordered_map<int, std::vector<Feedback>>& feedbackMap,
                                                 const std::vector<MenuItem>& menuItems);
 
+    std::vector<NextDayMenuVoting> generateDiscardMenuList(
+                                    const std::unordered_map<int, std::vector<Feedback>>& feedbackMap,
+                                    const std::vector<MenuItem>& menuItems);
+    
+
 private:
     double evaluateFoodItem(const std::vector<Feedback>& feedbacks, double& rating, double& sentimentScore);
-    double analyzeSentiment(const std::string& comment);
+    double analyzeSentiment(const std::string& comment, std::vector<std::string>& foundSentiments);
+    std::string joinSentiments(const std::vector<std::string> &sentiments);
+    std::vector<std::string> getMostRepetativeSentiments(const std::vector<std::string>& words);
 
     std::unordered_set<std::string> positiveWords_;
     std::unordered_set<std::string> negativeWords_;

@@ -1,7 +1,7 @@
 #include "../../inc/controller/chefController.h"
 
-ChefController::ChefController(MenuItemService* menuItemService, NextDayMenuVotingService* nextDayMenuVotingService, FeedbackService* feedbackService, RecommendationEngine* recommendationEngine): 
-        menuItemService(menuItemService), nextDayMenuVotingService(nextDayMenuVotingService), feedbackService(feedbackService), recommendationEngine(recommendationEngine) {}
+ChefController::ChefController(MenuItemService* menuItemService, NextDayMenuVotingService* nextDayMenuVotingService, FeedbackService* feedbackService, RecommendationEngine* recommendationEngine,TodayMenuService* todayMenuService, NotificationService* notificationService): 
+        menuItemService(menuItemService), nextDayMenuVotingService(nextDayMenuVotingService), feedbackService(feedbackService), recommendationEngine(recommendationEngine), todayMenuService(todayMenuService), notificationService(notificationService) {}
 
 std::string ChefController::handleRequest(Operation operation, std::string requestData) {
     std::cout<<"Handle request in Chef Controller\n"<<std::endl;
@@ -26,6 +26,7 @@ std::string ChefController::handleRequest(Operation operation, std::string reque
             }
         }
         bool operationDone = rollOutFinalMenuByChefForNextDay(menuItemIdsForNextDayMenu);
+        pushNotification(operation);
     }
     else if(operation == Operation::GetRecommandationFromEngine){
        std::vector<NextDayMenuRollOut> recommendedMenuItem = getTopMenuRecommendationFromEngine(static_cast<MenuItemType>(std::stoi(requestData)));
@@ -37,12 +38,13 @@ std::string ChefController::handleRequest(Operation operation, std::string reque
         std::cout<<"operationDOne : Recommended Menu from Engine Send"<<std::endl;
 
     }else if(operation == Operation::PublishMenuForToday){
-
+        response = std::to_string(publishMostVotedMenuItems());
+        pushNotification(operation);
     }else {
         response = "Invalid operation";
     }
     return response;
-
+    
 }
 
 
@@ -110,4 +112,23 @@ bool ChefController::rollOutFinalMenuByChefForNextDay(std::vector<int> menuItemI
     bool operationDone = nextDayMenuVotingService->addNextDayMenuRollout(finalChefMenuForNextDay);
     nextDayMenuRecommendation.clear();
     return operationDone;
+}
+
+bool ChefController::publishMostVotedMenuItems(){
+    std::vector<int> mostVotedMenuItemIds = nextDayMenuVotingService->getMostVotedMenuItemIds();
+    bool menuItemAdded = todayMenuService->addTodayMenu(mostVotedMenuItemIds);
+    return menuItemAdded;
+}
+
+bool ChefController::pushNotification(Operation operation) {
+    Notification notification;
+    if(Operation::PublishMenuForToday == operation) {
+        notification.notificationTitle = "Today's Menu Published";
+        notification.message = "Today's Menu has been published";
+    }else {
+        notification.notificationTitle = "Menu RollOut For Next Day";
+        notification.message = "Chef had RollOut Menu Item For Next Day check it out in the UserMenu";
+    }
+
+    return notificationService->addNotification(notification);
 }

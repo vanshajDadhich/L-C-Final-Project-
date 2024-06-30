@@ -14,6 +14,7 @@ public:
     std::vector<NextDayMenuVoting> getAllNextDayMenuRollOutItem() override;
     bool increaseVoteCountForMenuItemId(const int& menuItemId) override;
     bool deleteMenuRolledOut() override;
+    int getMostVotedMenuItemIdForMenuType(MenuItemType menuItemType) override;
 
 private:
     std::shared_ptr<DatabaseConnection> databaseConnection;

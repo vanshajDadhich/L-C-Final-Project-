@@ -181,3 +181,26 @@ bool NextDayMenuVotingDAO::deleteMenuRolledOut(){
         return false;
     }
 }
+
+
+int NextDayMenuVotingDAO::getMostVotedMenuItemIdForMenuType(MenuItemType menuItemType) {
+    try {
+        std::unique_ptr<sql::PreparedStatement> pstmt(
+            databaseConnection->getConnection()->prepareStatement(
+                "SELECT menuItemId FROM NextDayMenuVoting WHERE menuItemId IN "
+                "(SELECT menuItemId FROM MenuItem WHERE menuItemType = ?) "
+                "ORDER BY voteCount DESC LIMIT 1"));
+        pstmt->setInt(1, static_cast<int>(menuItemType));
+        std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
+
+        if (res->next()) {
+            return res->getInt("menuItemId");
+        }
+        
+    } catch (sql::SQLException &e) {
+        std::cerr << "SQL error: " << e.what() << std::endl;
+    }
+
+    return -1;
+}
+

@@ -10,7 +10,8 @@
 #include "../service/feedbackService.h"
 #include "../service/nextDayMenuVotingService.h"
 #include "../recommendationEngine/recommendationEngine.h"
-
+#include "../service/todayMenuService.h"
+#include "../service/notificationService.h"
 
 class RequestProcessor {
     private :
@@ -21,6 +22,8 @@ class RequestProcessor {
     FeedbackService* feedbackService;
     NextDayMenuVotingService* nextDayMenuVotingService;
     RecommendationEngine* recommendationEngine;
+    TodayMenuService* todayMenuService;
+    NotificationService* notificationService;
 
 public:
     RequestProcessor();

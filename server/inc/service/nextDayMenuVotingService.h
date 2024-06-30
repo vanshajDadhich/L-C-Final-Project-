@@ -13,8 +13,9 @@ public:
     std::vector<NextDayMenuVoting> getAllNextDayMenuRollOutItem();
     bool increaseVoteCountForMenuItemId(const int& menuItemId);
     bool deleteMenuRolledOut();
+    std::vector<int> getMostVotedMenuItemIds();
     ~NextDayMenuVotingService() = default;
 private:
-    INextDayMenuVotingDAO* NextDayMenuVotingDAO;
+    INextDayMenuVotingDAO* nextDayMenuVotingDAO;
 };
 #endif

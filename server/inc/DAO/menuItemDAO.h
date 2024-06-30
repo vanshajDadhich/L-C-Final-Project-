@@ -20,7 +20,7 @@ public:
 
     bool updateMenuItem(const MenuItem& menuItem);
 
-    bool deleteMenuItem(const int& menuItemId);
+    MenuItem deleteMenuItem(const int& menuItemId);
 
 private:
     std::shared_ptr<DatabaseConnection> databaseConnection;

@@ -20,7 +20,7 @@ int UserService::authenticateUser(const int& userId, const std::string& password
     std::cout<<"Authenticating User : userService 27\n";
     User user = userDAO->getUserByID(userId);
     std::cout<<"user "<<user.userId<<" "<<user.name<<" "<<user.password<<" "<<user.role<<" "<<"\n";
-    if(user.userId == userId || user.password == password) {
+    if(user.userId == userId && user.password == password) {
         return user.role;
     }
     return -1;

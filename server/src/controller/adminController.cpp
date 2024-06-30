@@ -3,7 +3,8 @@
 #include<iostream>
 #include<vector>
 
-AdminController::AdminController(MenuItemService* menuItemService, UserService* userService) : menuItemService(menuItemService), userService(userService){}
+AdminController::AdminController(MenuItemService* menuItemService, UserService* userService, NotificationService* notificationService) 
+            : menuItemService(menuItemService), userService(userService), notificationService(notificationService){}
 
 std::string AdminController::handleRequest(Operation operation, std::string requestData) {
     std::cout<<"Handle request in Admin Controller\n";
@@ -20,12 +21,13 @@ std::string AdminController::handleRequest(Operation operation, std::string requ
         MenuItem menuItem = SerializationUtility::deserialize<MenuItem>(requestData);
         bool operationDone = menuItemService->addMenuItem(menuItem);
         std::cout<<"operationDone add Menu:"<<operationDone<<std::endl;
-        response = "Menu Added Succesfully";
+        response = "Menu Item Added Succesfully";
+        pushNotification(menuItem, Operation::AddMenuItem);
     }
     else if (operation == Operation::DeleteMenuItem) {
-        bool operationDone = menuItemService->deleteMenuItemByID(std::stoi(requestData));
-        std::cout<<"operationDOne deleteMenu:"<<operationDone<<std::endl;
-        response = "Menu Deleted Succesfully";
+        MenuItem menuItem = menuItemService->deleteMenuItemByID(std::stoi(requestData));
+        response = "Menu Item Deleted Succesfully";
+        pushNotification(menuItem, Operation::DeleteMenuItem);
     }
     else if (operation == Operation::ViewMenu) {
         std::vector<MenuItem> menuDetails = menuItemService->getAllMenuItems();
@@ -40,4 +42,18 @@ std::string AdminController::handleRequest(Operation operation, std::string requ
         response = "Invalid operation";
     }
     return response;
+}
+
+bool AdminController::pushNotification(const MenuItem& menuItem, Operation operation) {
+    Notification notification;
+    std::string  menuType = menuItem.menuItemType == 1 ? "Breakfast" : menuItem.menuItemType == 2 ? "Lunch" : "Dinner";
+    if(Operation::AddMenuItem == operation) {
+       notification.notificationTitle = "New Menu Item Added";
+       notification.message = menuItem.menuItemName + " has been added to the menu" + " with price " + std::to_string(menuItem.price) + " and type " + menuType;
+    }else {
+        notification.notificationTitle = "Menu Item Deleted";
+        notification.message = menuItem.menuItemName + " has been deleted from the menu";
+    }
+
+    return notificationService->addNotification(notification);
 }

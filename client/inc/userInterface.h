@@ -12,6 +12,7 @@
 #include "./DTO/menuItem.h"
 #include "./DTO/SerializationUtility.h"
 #include "./DTO/nextDayMenuRollOut.h"
+#include "./DTO/notification.h"
 
 class UserInterface {
 public:

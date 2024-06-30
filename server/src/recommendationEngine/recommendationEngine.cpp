@@ -1,188 +1,3 @@
-// #include "../../inc/recommendationEngine/recommendationEngine.h"
-// #include <queue>
-
-// RecommendationEngine::RecommendationEngine(FeedbackService *feedbackService, MenuItemService* menuItemService) : positiveWords_(Utility::readWordsFromFile("PositiveWords.txt")),
-//                                                negativeWords_(Utility::readWordsFromFile("NegativeWords.txt")),
-//                                                negationWords_(Utility::readWordsFromFile("NegationWords.txt")),
-//                                                feedbackService(feedbackService), menuItemService(menuItemService)
-// {}
-
-// std::vector<std::string> RecommendationEngine::recommendTopFoodItems()
-// {
-//     std::priority_queue<std::pair<double, std::string>> foodItemScores;
-//     std::unordered_set<std::string> seenItems;
-//     MenuService menuService = MenuService();
-//     std::vector<std::string> ids = menuService.getMenuItemIds();
-//     std::cout << "ids" << std::endl;
-//     for (const auto &id : ids)
-//     {
-//         if (seenItems.find(id) == seenItems.end())
-//         {
-//             double score = evaluateFoodItem(id);
-//             foodItemScores.push({score, id});
-//             std::cout << "ids" << std::endl;
-//             seenItems.insert(id);
-//         }
-//     }
-//     std::cout << "ids" << std::endl;
-//     std::vector<std::string> topFoodItemIds;
-//     while (topFoodItemIds.size() < 4 && !foodItemScores.empty())
-//     {
-//         topFoodItemIds.push_back(foodItemScores.top().second);
-//         foodItemScores.pop();
-//     }
-//     std::cout << "ids" << std::endl;
-//     std::vector<std::string> topFoodItemName;
-//     for (std::string itemId : topFoodItemIds)
-//     {
-//         std::string itemName= menuService.getMenuItemNameFromId(itemId);
-//         topFoodItemName.push_back(itemName);
-//     }
-//     return topFoodItemName;
-// }
-
-// double RecommendationEngine::evaluateFoodItem(const std::string &ItemId)
-// {
-//     double totalScore = 0.0;
-
-//     Feedback *feedback = feedbackService->getItemFeedback(ItemId);
-//     double averageSentimentScore = 0.0;
-
-//     // for (const auto &comment : feedback.comments)
-//     //     averageSentimentScore += analyzeSentiment(comment);
-//     averageSentimentScore += analyzeSentiment(feedback->comment);
-//     // averageSentimentScore /= feedbackcomments.size();
-
-//     totalScore = (averageSentimentScore + feedback->rating) / 2.0;
-
-//     return totalScore;
-// }
-
-// double RecommendationEngine::analyzeSentiment(const std::string &comment)
-// {
-//     std::string lowerComment = Utility::toLower(comment);
-//     std::vector<std::string> words = Utility::splitWords(lowerComment);
-
-//     int sentimentScore = 0;
-//     for (size_t i = 0; i < words.size(); ++i)
-//     {
-//         std::string word = words[i];
-//         bool isNegated = (i > 0 && negationWords_.find(words[i - 1]) != negationWords_.end());
-
-//         if (isNegated && i > 1 && negationWords_.find(words[i - 2]) != negationWords_.end())
-//         {
-//             isNegated = false;
-//         }
-
-//         if (positiveWords_.find(word) != positiveWords_.end())
-//         {
-//             sentimentScore += isNegated ? -1 : 1;
-//         }
-//         else if (negativeWords_.find(word) != negativeWords_.end())
-//         {
-//             sentimentScore += isNegated ? 1 : -1;
-//         }
-//     }
-
-//     if (sentimentScore > 1)
-//     {
-//         sentimentScore = 1;
-//     }
-//     else if (sentimentScore < -1)
-//     {
-//         sentimentScore = -1;
-//     }
-
-//     return ((sentimentScore + 1) / 2) * 5;
-// }
-
-
-
-// #include "../../inc/recommendationEngine/recommendationEngine.h"
-// #include <queue>
-
-// RecommendationEngine::RecommendationEngine()
-//     : positiveWords_(Utility::readWordsFromFile("PositiveWords.txt")),
-//       negativeWords_(Utility::readWordsFromFile("NegativeWords.txt")),
-//       negationWords_(Utility::readWordsFromFile("NegationWords.txt")) {}
-
-// std::vector<std::string> RecommendationEngine::recommendTopFoodItems(
-//     MenuItemType menuType,
-//     const std::unordered_map<int, std::vector<Feedback>>& feedbackMap,
-//     const std::unordered_map<int, MenuItem>& menuItems) {
-
-//     std::priority_queue<std::pair<double, int>> foodItemScores;
-
-//     for (const auto& pair : feedbackMap) {
-//         int menuItemId = pair.first;
-//         if (menuItems.find(menuItemId) != menuItems.end() && menuItems.at(menuItemId).menuItemType == menuType) {
-//             double score = evaluateFoodItem(pair.second);
-//             foodItemScores.push({score, menuItemId});
-//         }
-//     }
-
-//     std::vector<std::string> topFoodItemNames;
-//     while (topFoodItemNames.size() < 4 && !foodItemScores.empty()) {
-//         int menuItemId = foodItemScores.top().second;
-//         topFoodItemNames.push_back(menuItems.at(menuItemId).menuItemName);
-//         foodItemScores.pop();
-//     }
-
-//     return topFoodItemNames;
-// }
-
-// double RecommendationEngine::evaluateFoodItem(const std::vector<Feedback>& feedbacks) {
-//     double totalScore = 0.0;
-//     double averageSentimentScore = 0.0;
-
-//     for (const auto& feedback : feedbacks) {
-//         averageSentimentScore += analyzeSentiment(feedback.comment);
-//     }
-
-//     averageSentimentScore /= feedbacks.size();
-
-//     double averageRating = 0.0;
-//     for (const auto& feedback : feedbacks) {
-//         averageRating += feedback.rating;
-//     }
-
-//     averageRating /= feedbacks.size();
-//     totalScore = (averageSentimentScore + averageRating) / 2.0;
-
-//     return totalScore;
-// }
-
-// double RecommendationEngine::analyzeSentiment(const std::string& comment) {
-//     std::string lowerComment = Utility::toLower(comment);
-//     std::vector<std::string> words = Utility::splitWords(lowerComment);
-
-//     int sentimentScore = 0;
-//     for (size_t i = 0; i < words.size(); ++i) {
-//         std::string word = words[i];
-//         bool isNegated = (i > 0 && negationWords_.find(words[i - 1]) != negationWords_.end());
-
-//         if (isNegated && i > 1 && negationWords_.find(words[i - 2]) != negationWords_.end()) {
-//             isNegated = false;
-//         }
-
-//         if (positiveWords_.find(word) != positiveWords_.end()) {
-//             sentimentScore += isNegated ? -1 : 1;
-//         } else if (negativeWords_.find(word) != negativeWords_.end()) {
-//             sentimentScore += isNegated ? 1 : -1;
-//         }
-//     }
-
-//     if (sentimentScore > 1) {
-//         sentimentScore = 1;
-//     } else if (sentimentScore < -1) {
-//         sentimentScore = -1;
-//     }
-
-//     return ((sentimentScore + 1) / 2) * 5;
-// }
-
-
-
 #include "../../inc/recommendationEngine/recommendationEngine.h"
 #include <queue>
 
@@ -209,7 +24,10 @@ std::vector<NextDayMenuVoting> RecommendationEngine::recommendTopFoodItems(
         auto it = std::find_if(menuItems.begin(), menuItems.end(),
                                [&](const MenuItem& item) { return item.menuItemId == menuItemId; });
 
-        if (it != menuItems.end() && it->menuItemType == menuType) {
+
+        //recommend only available food Items : assumption that avaiablity of items for tomorrow will be updated today only by admin.
+
+        if (it != menuItems.end() && it->menuItemType == menuType && it->availability) {
             double rating, sentimentScore;
             double score = evaluateFoodItem(pair.second, rating, sentimentScore);
             NextDayMenuVoting nextDayMenuVoting(menuItemId, 0, rating, sentimentScore);
@@ -227,12 +45,42 @@ std::vector<NextDayMenuVoting> RecommendationEngine::recommendTopFoodItems(
     return topFoodItems;
 }
 
+std::vector<std::string> RecommendationEngine::getMostRepetativeSentiments(const std::vector<std::string>& words) {
+    std::unordered_map<std::string, int> wordCount;
+
+    // Count occurrences of each word
+    for (const std::string& word : words) {
+        wordCount[word]++;
+    }
+
+    // Create a vector of pairs (word, count) from the map
+    std::vector<std::pair<std::string, int>> wordFreq(wordCount.begin(), wordCount.end());
+
+    // Sort the vector based on count (in descending order)
+    std::sort(wordFreq.begin(), wordFreq.end(), [](const auto& a, const auto& b) {
+        return a.second > b.second;
+    });
+
+    // Extract top 4 words
+    std::vector<std::string> topWords;
+    int count = 0;
+    for (const auto& pair : wordFreq) {
+        topWords.push_back(pair.first);
+        count++;
+        if (count >= 4) break;
+    }
+
+    return topWords;
+}
+
+
 double RecommendationEngine::evaluateFoodItem(const std::vector<Feedback>& feedbacks, double &rating, double &sentimentScore) {
     double totalScore = 0.0;
     double averageSentimentScore = 0.0;
+    std::vector<std::string> sentiments;
 
     for (const auto& feedback : feedbacks) {
-        averageSentimentScore += analyzeSentiment(feedback.comment);
+        averageSentimentScore += analyzeSentiment(feedback.comment, sentiments);
     }
 
     averageSentimentScore /= feedbacks.size();
@@ -247,10 +95,19 @@ double RecommendationEngine::evaluateFoodItem(const std::vector<Feedback>& feedb
     sentimentScore = averageSentimentScore;
     totalScore = (averageSentimentScore + averageRating) / 2.0;
 
+    for (const std::string& sentiment : sentiments) {
+        std::cout <<"Vansh 123 "<< sentiment << std::endl;
+    }
+    sentiments = getMostRepetativeSentiments(sentiments);
+    std::cout<<"Vanshaj Dadhich "<<totalScore<<std::endl;
+    for (const std::string& sentiment : sentiments) {
+        std::cout <<"Vanshu "<< sentiment << std::endl;
+    }
+
     return totalScore;
 }
 
-double RecommendationEngine::analyzeSentiment(const std::string& comment) {
+double RecommendationEngine::analyzeSentiment(const std::string& comment, std::vector<std::string>& foundSentiments) {
     std::string lowerComment = Utility::toLower(comment);
     std::vector<std::string> words = Utility::splitWords(lowerComment);
 
@@ -265,10 +122,19 @@ double RecommendationEngine::analyzeSentiment(const std::string& comment) {
 
         if (positiveWords_.find(word) != positiveWords_.end()) {
             sentimentScore += isNegated ? -1 : 1;
+            foundSentiments.push_back(isNegated ? words[i - 1] + " " + word : word);
         } else if (negativeWords_.find(word) != negativeWords_.end()) {
             sentimentScore += isNegated ? 1 : -1;
+            foundSentiments.push_back(isNegated ? words[i - 1] + " " + word : word);
         }
     }
+
+    for (const std::string& sentiment : foundSentiments) {
+        std::cout <<"Vansh inside analyze sentiment "<< sentiment << std::endl;
+    }
+
+
+    
 
     if (sentimentScore > 1) {
         sentimentScore = 1;
@@ -277,4 +143,31 @@ double RecommendationEngine::analyzeSentiment(const std::string& comment) {
     }
 
     return ((sentimentScore + 1) / 2) * 5;
+}
+
+std::vector<NextDayMenuVoting> RecommendationEngine::generateDiscardMenuList(
+    const std::unordered_map<int, std::vector<Feedback>>& feedbackMap,
+    const std::vector<MenuItem>& menuItems) {
+
+    std::vector<NextDayMenuVoting> discardList;
+
+    for (const auto& pair : feedbackMap) {
+        int menuItemId = pair.first;
+
+        // Find the MenuItem object corresponding to menuItemId
+        auto it = std::find_if(menuItems.begin(), menuItems.end(),
+                               [&](const MenuItem& item) { return item.menuItemId == menuItemId; });
+
+        if (it != menuItems.end()) {
+            double rating, sentimentScore;
+            double score = evaluateFoodItem(pair.second, rating, sentimentScore);
+
+            if (rating < 2 || sentimentScore < 2) {
+                NextDayMenuVoting nextDayMenuVoting(menuItemId, 0, rating, sentimentScore);
+                discardList.push_back(nextDayMenuVoting);
+            }
+        }
+    }
+
+    return discardList;
 }

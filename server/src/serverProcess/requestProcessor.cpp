@@ -8,6 +8,8 @@
 #include"../../inc/controller/adminController.h"
 #include"../../inc/controller/chefController.h"
 #include"../../inc/controller/employeeController.h"
+#include "../../inc/DAO/todayMenuDAO.h"
+#include "../../inc/DAO/notificationDAO.h"
 
 RequestProcessor::RequestProcessor() {
     DatabaseConnection::initDbConnection("tcp://127.0.0.1:3306", "root", "Vanshaj@123", "databaseRecommendationEngine");
@@ -21,6 +23,10 @@ RequestProcessor::RequestProcessor() {
     NextDayMenuVotingDAO* nextDayMenuVotingDAO = new NextDayMenuVotingDAO();
     this->nextDayMenuVotingService = new NextDayMenuVotingService(nextDayMenuVotingDAO);
     this->recommendationEngine = new RecommendationEngine();
+    std::shared_ptr<ITodayMenuDAO> todayMenuDAO = std::make_shared<TodayMenuDAO>();
+    this->todayMenuService = new TodayMenuService(todayMenuDAO);
+    std::shared_ptr<NotificationDAO> notificationDAO = std::make_shared<NotificationDAO>();
+    this->notificationService = new NotificationService(notificationDAO);
 }
 
 std::string RequestProcessor::processRequest(std::string request){
@@ -33,13 +39,13 @@ std::string RequestProcessor::processRequest(std::string request){
             userAuthenticated = authenticationController->authenticateUser(requestData.second);
             if(userAuthenticated == 1){
                 std::cout<<"Admin LoggedIn"<<std::endl;
-                userController = new AdminController(menuItemService, userService);
+                userController = new AdminController(menuItemService, userService, notificationService);
             }else if(userAuthenticated == 2){
                 std::cout<<"Chef LoggedIn"<<std::endl;
-                userController = new ChefController(menuItemService, nextDayMenuVotingService, feedbackService, recommendationEngine);
+                userController = new ChefController(menuItemService, nextDayMenuVotingService, feedbackService, recommendationEngine, todayMenuService, notificationService);
             }else if(userAuthenticated == 3){
                 std::cout<<"Employee LoggedIn"<<std::endl;
-                userController = new EmployeeController(feedbackService, nextDayMenuVotingService, menuItemService);
+                userController = new EmployeeController(feedbackService, nextDayMenuVotingService, menuItemService, todayMenuService, notificationService);
             }else{
                 std::cout<<"Invalid Username Password"<<std::endl;
             }
@@ -66,6 +72,7 @@ std::string RequestProcessor::processRequest(std::string request){
             response = {"Invalid Operation"};
             break;
     }
+    
     
     return response;
 }

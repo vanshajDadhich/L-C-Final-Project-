@@ -15,11 +15,11 @@ void signalHandlerWrapper(int signal) {
 }
 
 int main() {
-    Server server(8081);
+    Server server(8082);
     serverInstance = &server;
     server.start();
 
-    std::cout << "Server started on port 8081. Press Ctrl+C to stop the server." << std::endl;
+    std::cout << "Server started on port 8082. Press Ctrl+C to stop the server." << std::endl;
 
     std::signal(SIGINT, signalHandlerWrapper);
 

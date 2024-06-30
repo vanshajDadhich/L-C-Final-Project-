@@ -115,7 +115,25 @@ void UserInterface::showEmployeeMenu(){
 }
 
 void UserInterface::viewTodayMenu(){
+    Operation operation = Operation::GetTodaysMenu;
+    std::string viewTodaysMenuSerializedRequest = SerializationUtility::serializeOperation(operation, "");
+    requestHandler->sendRequest(viewTodaysMenuSerializedRequest);
 
+    std::string serializedMenuList = requestHandler->receiveResponse();
+
+    std::cout<<"serializedMenuList"<<serializedMenuList<<std::endl;
+
+    std::vector<std::string>MenuList = VectorSerializer::deserialize(serializedMenuList);
+
+    for (const auto& item : MenuList) {
+        auto menuItem = SerializationUtility::deserialize<MenuItem>(item);
+        std::cout << "Menu Item Details:" << std::endl
+          << "ID: " << menuItem.menuItemId << std::endl
+          << "Name: " << menuItem.menuItemName << std::endl
+          << "Type: " << static_cast<int>(menuItem.menuItemType) << std::endl
+          << "Price: " << menuItem.price << std::endl;
+        std::cout << std::endl;
+    }
 }
 
 void UserInterface::provideFeedbackForTodayMenu(){
@@ -196,7 +214,23 @@ void UserInterface::showChefRollOutMenu(){
 }
 
 void UserInterface::viewNotification(){
+    Operation operation = Operation::ViewNotification;
+    std::string viewNotificationSerializedRequest = SerializationUtility::serializeOperation(operation, "");
+    requestHandler->sendRequest(viewNotificationSerializedRequest);
 
+    std::string serializedNotificationList = requestHandler->receiveResponse();
+
+    std::vector<std::string>notificationList = VectorSerializer::deserialize(serializedNotificationList);
+
+    for (const auto& item : notificationList) {
+        auto notification = SerializationUtility::deserialize<Notification>(item);
+        std::cout << "Notification Details:" << std::endl
+          << "ID: " << notification.notificationId << std::endl
+          << "Title: " << notification.notificationTitle << std::endl
+          << "Message: " << notification.message << std::endl
+          << "Date: " << notification.date << std::endl;
+        
+    }
 }
 
 void UserInterface::showChefMenu(){
@@ -273,6 +307,9 @@ void UserInterface::rollOutMenuForTomorrow(){
 
 void UserInterface::publishMenuForToday(){
     std::cout<<"publishMenuForToday";
+    Operation operation = Operation::PublishMenuForToday;
+    std::string publishMenuSerializedRequest = SerializationUtility::serializeOperation(operation, "");
+    requestHandler->sendRequest(publishMenuSerializedRequest);
 }
 
 
@@ -403,6 +440,10 @@ void UserInterface::addUserPrompt() {
     auto userData = SerializationUtility::serialize(user);
     auto addUserSerializedRequest = SerializationUtility::serializeOperation(operation, userData);
     requestHandler->sendRequest(addUserSerializedRequest);
+
+    std::string userAddedResponse = requestHandler->receiveResponse();
+    
+    std::cout<<userAddedResponse<<std::endl;
 }
 
 void UserInterface::showAddItemPrompt() {
@@ -430,6 +471,10 @@ void UserInterface::showAddItemPrompt() {
 
     std::cout << "Sending addItem request to server\n";
     requestHandler->sendRequest(addMenuSerializedRequest);
+
+    std::string menuItemAddedResponse = requestHandler->receiveResponse();
+    
+    std::cout<<menuItemAddedResponse<<std::endl;
 }
 
 
@@ -443,6 +488,10 @@ void UserInterface::showDeleteItemPrompt() {
     auto deleteMenuItemSerializedRequest = SerializationUtility::serializeOperation(operation,menuItemIdStr);
 
     requestHandler->sendRequest(deleteMenuItemSerializedRequest);
+    
+    std::string menuDeletedResponse = requestHandler->receiveResponse();
+    
+    std::cout<<menuDeletedResponse<<std::endl;
 }
 
 

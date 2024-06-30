@@ -11,7 +11,7 @@ bool MenuItemService::updateMenuItem(const MenuItem& menuItem) {
     return menuItemDAO->updateMenuItem(menuItem);
 }
 
-bool MenuItemService::deleteMenuItemByID(int menuItemId) {
+MenuItem MenuItemService::deleteMenuItemByID(int menuItemId) {
     return menuItemDAO->deleteMenuItem(menuItemId);
 }
 
