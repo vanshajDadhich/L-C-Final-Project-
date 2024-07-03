@@ -12,6 +12,8 @@
 #include "../recommendationEngine/recommendationEngine.h"
 #include "../service/todayMenuService.h"
 #include "../service/notificationService.h"
+#include "../service/discardMenuItemDetailedFeedbackService.h"
+#include "../service/userProfileService.h"
 
 class RequestProcessor {
     private :
@@ -24,6 +26,8 @@ class RequestProcessor {
     RecommendationEngine* recommendationEngine;
     TodayMenuService* todayMenuService;
     NotificationService* notificationService;
+    DiscardMenuItemDetailedFeedbackService* discardMenuItemDetailedFeedbackService;
+    UserProfileService* userProfileService;
 
 public:
     RequestProcessor();

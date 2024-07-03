@@ -58,8 +58,8 @@ std::string ChefController::handleRequest(Operation operation, std::string reque
         response = "Menu Item Deleted Succesfully";
         pushNotification(Operation::DeleteMenuItem, menuItem.menuItemName);
     }
-    else if(operation == Operation::GetDiscardMenuItemDetailedFeedback){
-        pushNotification(Operation::GetDiscardMenuItemDetailedFeedback, requestData);
+    else if(operation == Operation::GetMenuItemIdForDetailFeedbackFromChef){
+        pushNotification(Operation::GetMenuItemIdForDetailFeedbackFromChef, requestData);
     }
     else {
         response = "Invalid operation";
@@ -152,7 +152,7 @@ bool ChefController::pushNotification(Operation operation, std::string message) 
         notification.notificationTitle = "Menu Item Deleted";
         notification.message = message + " has been deleted from the menu";
     }
-    else if(Operation::GetDiscardMenuItemDetailedFeedback == operation) {
+    else if(Operation::GetMenuItemIdForDetailFeedbackFromChef == operation) {
         notification.notificationTitle = "Feedback for Discarded Menu Item";
         notification.message = "Menu Item ID : "+ message + " has low rating and bad comments , please share detail feedback on this menu item\n";
     }

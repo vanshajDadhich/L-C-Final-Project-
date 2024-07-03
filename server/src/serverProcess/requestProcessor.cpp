@@ -10,6 +10,8 @@
 #include"../../inc/controller/employeeController.h"
 #include "../../inc/DAO/todayMenuDAO.h"
 #include "../../inc/DAO/notificationDAO.h"
+#include "../../inc/DAO/discardMenuItemDetailedFeedbackDAO.h"
+#include"../../inc/DAO/userProfileDAO.h"
 
 RequestProcessor::RequestProcessor() {
     DatabaseConnection::initDbConnection("tcp://127.0.0.1:3306", "root", "Vanshaj@123", "databaseRecommendationEngine");
@@ -27,6 +29,10 @@ RequestProcessor::RequestProcessor() {
     this->todayMenuService = new TodayMenuService(todayMenuDAO);
     std::shared_ptr<NotificationDAO> notificationDAO = std::make_shared<NotificationDAO>();
     this->notificationService = new NotificationService(notificationDAO);
+    std::shared_ptr<DiscardMenuItemDetailedFeedbackDAO> discardMenuItemDetailedFeedbackDAO = std::make_shared<DiscardMenuItemDetailedFeedbackDAO>();
+    this->discardMenuItemDetailedFeedbackService = new DiscardMenuItemDetailedFeedbackService(discardMenuItemDetailedFeedbackDAO);
+    std::shared_ptr<IUserProfileDAO> userProfileDAO = std::make_shared<UserProfileDAO>();
+    this->userProfileService = new UserProfileService(userProfileDAO);
 }
 
 std::string RequestProcessor::processRequest(std::string request){
@@ -42,7 +48,7 @@ std::string RequestProcessor::processRequest(std::string request){
                 userController = new AdminController(menuItemService, userService, notificationService);
             }else if(userAuthenticated == 2){
                 std::cout<<"Employee LoggedIn"<<std::endl;
-                userController = new EmployeeController(feedbackService, nextDayMenuVotingService, menuItemService, todayMenuService, notificationService);
+                userController = new EmployeeController(feedbackService, nextDayMenuVotingService, menuItemService, todayMenuService, notificationService, discardMenuItemDetailedFeedbackService, userProfileService);
             }else if(userAuthenticated == 3){
                 std::cout<<"Chef LoggedIn"<<std::endl;
                 userController = new ChefController(menuItemService, nextDayMenuVotingService, feedbackService, recommendationEngine, todayMenuService, notificationService);
@@ -67,6 +73,8 @@ std::string RequestProcessor::processRequest(std::string request){
         case Operation::GetChefRollOutMenuForTomorrow:
         case Operation::GetDiscardMenuList:
         case Operation::RemoveMenuItemFromList:
+        case Operation::provideDiscardMenuItemDetailedFeedback:
+        case Operation::GetMenuItemIdForDetailFeedbackFromChef:
             std::cout<<"Handle Request called\n";
             response = userController->handleRequest(requestData.first, requestData.second);
             break;

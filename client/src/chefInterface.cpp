@@ -148,7 +148,7 @@ void ChefInterface::getMenuItemIdForDetailedFeedback(const std::vector<int>& dis
             return;
         }
 
-        Operation operation = Operation::GetDiscardMenuItemDetailedFeedback;
+        Operation operation = Operation::GetMenuItemIdForDetailFeedbackFromChef;
         std::string getDetailedFeedbackSerializedRequest = SerializationUtility::serializeOperation(operation, std::to_string(menuItemId));
         requestHandler->sendRequest(getDetailedFeedbackSerializedRequest);
 
@@ -326,25 +326,47 @@ std::vector<std::pair<MenuItemType, int>> ChefInterface::showRecommendedMenu(Men
 
 void ChefInterface::showMenuItemList() {
     try {
-        std::cout<<"Inside Show Menu\n";
         Operation operation = Operation::ViewMenu;
         std::string viewMenuSerializedRequest = SerializationUtility::serializeOperation(operation, "");
         requestHandler->sendRequest(viewMenuSerializedRequest);
 
         std::string serializedMenuList = requestHandler->receiveResponse();
 
-        std::cout<<"serializedMenuList"<<serializedMenuList<<std::endl;
+        std::vector<std::string>menuList = VectorSerializer::deserialize(serializedMenuList);
 
-        std::vector<std::string>MenuList = VectorSerializer::deserialize(serializedMenuList);
-
-        for (const auto& item : MenuList) {
+        for (const auto& item : menuList) {
             auto menuItem = SerializationUtility::deserialize<MenuItem>(item);
+
+            std::cout<<"VegetarianPreference"<<menuItem.vegetarianPreference<<"spice level"<<menuItem.spiceLevelOption<<"food preference"<<menuItem.foodPreference<<"sweet tooth"<<menuItem.sweetToothPreference<<"\n";
+
+            std::string menuItemType = menuItem.menuItemType == MenuItemType::Breakfast ? "Breakfast" :
+                                    menuItem.menuItemType == MenuItemType::Lunch ? "Lunch" :
+                                    menuItem.menuItemType == MenuItemType::Dinner ? "Dinner" : "Unknown";
+
+            std::string vegetarianPreferenceStr = menuItem.vegetarianPreference == VegetarianPreference::Vegetarian ? "Vegetarian" :
+                                                menuItem.vegetarianPreference == VegetarianPreference::NonVegetarian ? "Non Vegetarian" :
+                                                menuItem.vegetarianPreference == VegetarianPreference::Eggetarian ? "Eggetarian" : "Unknown";
+
+            std::string spiceLevelOptionStr = menuItem.spiceLevelOption == SpiceLevelOption::High ? "High" :
+                                            menuItem.spiceLevelOption == SpiceLevelOption::Medium ? "Medium" :
+                                            menuItem.spiceLevelOption == SpiceLevelOption::Low ? "Low" : "Unknown";
+
+            std::string foodPreferenceStr = menuItem.foodPreference == FoodPreference::NorthIndian ? "North Indian" :
+                                            menuItem.foodPreference == FoodPreference::SouthIndian ? "South Indian" :
+                                            menuItem.foodPreference == FoodPreference::Other ? "Other" : "Unknown";
+
+            std::string sweetToothPreferenceStr = menuItem.sweetToothPreference == SweetToothPreference::Yes ? "Yes" : "No";
+
             std::cout << "Menu Item Details:" << std::endl
-              << "ID: " << menuItem.menuItemId << std::endl
-              << "Name: " << menuItem.menuItemName << std::endl
-              << "Type: " << static_cast<int>(menuItem.menuItemType) << std::endl  // Assuming you want to print the enum as an integer
-              << "Availability: " << (menuItem.availability ? "Yes" : "No") << std::endl
-              << "Price: " << menuItem.price << std::endl;
+                    << "ID: " << menuItem.menuItemId << std::endl
+                    << "Name: " << menuItem.menuItemName << std::endl
+                    << "Type: " << menuItemType << std::endl
+                    << "Availability: " << (menuItem.availability ? "Yes" : "No") << std::endl
+                    << "Price: " << menuItem.price << std::endl
+                    << "Vegetarian Preference: " << vegetarianPreferenceStr << std::endl
+                    << "Spice Level Option: " << spiceLevelOptionStr << std::endl
+                    << "Food Preference: " << foodPreferenceStr << std::endl
+                    << "Sweet Tooth Preference: " << sweetToothPreferenceStr << std::endl;
             std::cout << std::endl;
         }
     } catch (const std::exception& e) {

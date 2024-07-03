@@ -150,7 +150,7 @@ double RecommendationEngine::evaluateFoodItem(const std::vector<Feedback>& feedb
     rating = averageRating;
     totalScore = (averageSentimentScore + averageRating) / 2.0;
     sentimentsString = getMostRepetativeSentiments(sentiments);
-    // std::cout<<"sentimentsString : "<<sentimentsString<<std::endl;
+    std::cout<<"sentimentsString : "<<sentimentsString<<std::endl;
     return totalScore;
 }
 
@@ -202,7 +202,7 @@ std::vector<NextDayMenuVoting> RecommendationEngine::generateDiscardMenuList(
             std::string sentiments;
             double score = evaluateFoodItem(pair.second, rating, sentiments);
             std::cout<<"menuItemId : "<<menuItemId<<" score : "<<score<<" rating : "<<rating<<" sentiments : "<<sentiments<<std::endl;
-            if (score < 3 && rating < 3) {
+            if (score < 4 && rating < 4) {
                 NextDayMenuVoting nextDayMenuVoting(menuItemId, 0, rating, sentiments);
                 discardList.push_back(nextDayMenuVoting);
                 std::cout<<"pushing list in it discard Menu list"<<std::endl;
@@ -212,3 +212,5 @@ std::vector<NextDayMenuVoting> RecommendationEngine::generateDiscardMenuList(
 
     return discardList;
 }
+
+

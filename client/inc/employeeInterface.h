@@ -18,6 +18,7 @@ private:
     void viewTodayMenu();
     void provideFeedbackForTodayMenu();
     std::string getCurrentTimestamp();
+    void getDetailedFeedbackForDiscardedMenuItem();
 
 public:
     EmployeeInterface(RequestHandler* requestHandler, int userIdLoggedIn);

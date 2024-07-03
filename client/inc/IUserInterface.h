@@ -2,7 +2,7 @@
 #define IUSERINTERFACE_H
 
 #include "requestHandler.h"
-#include "../inc/DTO/serializationUtility.h"
+#include "DTO/SerializationUtility.h"
 
 class IUserInterface {
     public:

@@ -1,15 +1,15 @@
 #pragma once
 #include "databaseConnection.h"
-#include "../DTO/discardMenuItemDetailedFeedback.h"
+#include "IDiscardMenuItemDetailedFeedbackDAO.h"
 #include <vector>
 
-class DiscardMenuItemDetailedFeedbackDAO {
+class DiscardMenuItemDetailedFeedbackDAO : public IDiscardMenuItemDetailedFeedbackDAO{
 public:
     DiscardMenuItemDetailedFeedbackDAO();
 
-    int addFeedback(const DiscardMenuItemDetailedFeedback& feedback);
-    DiscardMenuItemDetailedFeedback getFeedbackByID(const int& id);
-    std::vector<DiscardMenuItemDetailedFeedback> getAllFeedbacks();
+    int addFeedback(const DiscardMenuItemDetailedFeedback& feedback) override;
+    DiscardMenuItemDetailedFeedback getFeedbackByID(const int& id) override;
+    std::vector<DiscardMenuItemDetailedFeedback> getAllFeedbacks() override;
 
 private:
     std::shared_ptr<DatabaseConnection> databaseConnection;

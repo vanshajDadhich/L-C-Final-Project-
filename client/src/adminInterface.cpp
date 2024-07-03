@@ -55,19 +55,40 @@ void AdminInterface::showAddItemPrompt() {
     Operation operation = Operation::AddMenuItem;
     MenuItem menuItem;
     int menuItemTypeInt;
+    int vegetarianPreferenceInt;
+    int spiceLevelOptionInt;
+    int foodPreferenceInt;
+    int sweetToothPreferenceInt;
 
     std::cout << "Enter Item name: " << std::endl;
     std::getline(std::cin >> std::ws, menuItem.menuItemName);
 
     std::cout << "Enter Item price:" << std::endl;
-    std::cin>>menuItem.price;
+    std::cin >> menuItem.price;
 
-    std::cout << "Enter Item availability: (0 for not avaialable and 1 for available )" << std::endl;
-    std::cin>>menuItem.availability;
+    std::cout << "Enter Item availability: (0 for not available and 1 for available )" << std::endl;
+    std::cin >> menuItem.availability;
 
-    std::cout << "Enter meal type (1 for Breakfast, 2 for Lunch, 3 for Dinner): "<<std::endl;
-    std::cin>>menuItemTypeInt;
+    std::cout << "Enter meal type (1 for Breakfast, 2 for Lunch, 3 for Dinner): " << std::endl;
+    std::cin >> menuItemTypeInt;
     menuItem.menuItemType = static_cast<MenuItemType>(menuItemTypeInt);
+
+    // Additional fields
+    std::cout << "Enter vegetarian preference (1 for Vegetarian, 2 for Non Vegetarian, 3 for Eggetarian): " << std::endl;
+    std::cin >> vegetarianPreferenceInt;
+    menuItem.vegetarianPreference = static_cast<VegetarianPreference>(vegetarianPreferenceInt);
+
+    std::cout << "Enter spice level option (1 for High, 2 for Medium, 3 for Low): " << std::endl;
+    std::cin >> spiceLevelOptionInt;
+    menuItem.spiceLevelOption = static_cast<SpiceLevelOption>(spiceLevelOptionInt);
+
+    std::cout << "Enter food preference (1 for North Indian, 2 for South Indian, 3 for Other): " << std::endl;
+    std::cin >> foodPreferenceInt;
+    menuItem.foodPreference = static_cast<FoodPreference>(foodPreferenceInt);
+
+    std::cout << "Enter sweet tooth preference (1 for Yes, 2 for No): " << std::endl;
+    std::cin >> sweetToothPreferenceInt;
+    menuItem.sweetToothPreference = static_cast<SweetToothPreference>(sweetToothPreferenceInt);
 
     auto menuItemData = SerializationUtility::serialize(menuItem);
     auto addMenuSerializedRequest = SerializationUtility::serializeOperation(operation, menuItemData);
@@ -76,9 +97,10 @@ void AdminInterface::showAddItemPrompt() {
     requestHandler->sendRequest(addMenuSerializedRequest);
 
     std::string menuItemAddedResponse = requestHandler->receiveResponse();
-    
-    std::cout<<menuItemAddedResponse<<std::endl;
+
+    std::cout << menuItemAddedResponse << std::endl;
 }
+
 
 
 void AdminInterface::showDeleteItemPrompt() {
@@ -104,20 +126,43 @@ void AdminInterface::showMenuItemList() {
 
     std::string serializedMenuList = requestHandler->receiveResponse();
 
-    std::vector<std::string>MenuList = VectorSerializer::deserialize(serializedMenuList);
+    std::vector<std::string>menuList = VectorSerializer::deserialize(serializedMenuList);
 
-    for (const auto& item : MenuList) {
-        auto menuItem = SerializationUtility::deserialize<MenuItem>(item);
-        std::string menuItemType = menuItem.menuItemType == MenuItemType::Breakfast ? "Breakfast" : menuItem.menuItemType == MenuItemType::Lunch ? "Lunch" : "Dinner";
+    for (const auto& item : menuList) {
+         auto menuItem = SerializationUtility::deserialize<MenuItem>(item);
+
+        std::string menuItemType = menuItem.menuItemType == MenuItemType::Breakfast ? "Breakfast" :
+                                   menuItem.menuItemType == MenuItemType::Lunch ? "Lunch" :
+                                   menuItem.menuItemType == MenuItemType::Dinner ? "Dinner" : "Unknown";
+
+        std::string vegetarianPreferenceStr = menuItem.vegetarianPreference == VegetarianPreference::Vegetarian ? "Vegetarian" :
+                                              menuItem.vegetarianPreference == VegetarianPreference::NonVegetarian ? "Non Vegetarian" :
+                                              menuItem.vegetarianPreference == VegetarianPreference::Eggetarian ? "Eggetarian" : "Unknown";
+
+        std::string spiceLevelOptionStr = menuItem.spiceLevelOption == SpiceLevelOption::High ? "High" :
+                                          menuItem.spiceLevelOption == SpiceLevelOption::Medium ? "Medium" :
+                                          menuItem.spiceLevelOption == SpiceLevelOption::Low ? "Low" : "Unknown";
+
+        std::string foodPreferenceStr = menuItem.foodPreference == FoodPreference::NorthIndian ? "North Indian" :
+                                        menuItem.foodPreference == FoodPreference::SouthIndian ? "South Indian" :
+                                        menuItem.foodPreference == FoodPreference::Other ? "Other" : "Unknown";
+
+        std::string sweetToothPreferenceStr = menuItem.sweetToothPreference == SweetToothPreference::Yes ? "Yes" : "No";
+
         std::cout << "Menu Item Details:" << std::endl
-          << "ID: " << menuItem.menuItemId << std::endl
-          << "Name: " << menuItem.menuItemName << std::endl
-          << "Type: " << menuItemType << std::endl 
-          << "Availability: " << (menuItem.availability ? "Yes" : "No") << std::endl
-          << "Price: " << menuItem.price << std::endl;
+                  << "ID: " << menuItem.menuItemId << std::endl
+                  << "Name: " << menuItem.menuItemName << std::endl
+                  << "Type: " << menuItemType << std::endl
+                  << "Availability: " << (menuItem.availability ? "Yes" : "No") << std::endl
+                  << "Price: " << menuItem.price << std::endl
+                  << "Vegetarian Preference: " << vegetarianPreferenceStr << std::endl
+                  << "Spice Level Option: " << spiceLevelOptionStr << std::endl
+                  << "Food Preference: " << foodPreferenceStr << std::endl
+                  << "Sweet Tooth Preference: " << sweetToothPreferenceStr << std::endl;
         std::cout << std::endl;
     }
 }
+
 
 void AdminInterface::addUserPrompt() {
     User user;

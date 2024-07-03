@@ -9,6 +9,8 @@
 #include "../service/todayMenuService.h"
 #include "../serverProcess/vectorSerializer.h"
 #include "../service/notificationService.h"
+#include "../service/discardMenuItemDetailedFeedbackService.h"
+#include "../service/userProfileService.h"
 
 class EmployeeController : public IUserController {
     private :
@@ -17,9 +19,11 @@ class EmployeeController : public IUserController {
     MenuItemService* menuItemService;
     TodayMenuService* todayMenuService;
     NotificationService* notificationService;
+    DiscardMenuItemDetailedFeedbackService* discardMenuItemDetailedFeedbackService;
+    UserProfileService* userProfileService;
 
 public:
-    EmployeeController(FeedbackService* feedbackService, NextDayMenuVotingService* nextDayMenuVotingService, MenuItemService* menuItemService, TodayMenuService* todayMenuService, NotificationService* notificationService);
+    EmployeeController(FeedbackService* feedbackService, NextDayMenuVotingService* nextDayMenuVotingService, MenuItemService* menuItemService, TodayMenuService* todayMenuService, NotificationService* notificationService, DiscardMenuItemDetailedFeedbackService* discardMenuItemDetailedFeedbackService, UserProfileService* userProfileService);
     std::string handleRequest(Operation operation, std::string request) override;
     std::vector<NextDayMenuRollOut> getNextDayMenuItemsToRollOut();
 

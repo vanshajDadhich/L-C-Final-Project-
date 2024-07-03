@@ -1,7 +1,7 @@
 #include "../../inc/controller/employeeController.h"
 
-EmployeeController::EmployeeController(FeedbackService* feedbackService, NextDayMenuVotingService* nextDayMenuVotingService, MenuItemService* menuItemService, TodayMenuService* todayMenuService, NotificationService* notificationService) 
-        : feedbackService(feedbackService), nextDayMenuVotingService(nextDayMenuVotingService), menuItemService(menuItemService), todayMenuService(todayMenuService), notificationService(notificationService){}
+EmployeeController::EmployeeController(FeedbackService* feedbackService, NextDayMenuVotingService* nextDayMenuVotingService, MenuItemService* menuItemService, TodayMenuService* todayMenuService, NotificationService* notificationService, DiscardMenuItemDetailedFeedbackService* discardMenuItemDetailedFeedbackService, UserProfileService* userProfileService) 
+        : feedbackService(feedbackService), nextDayMenuVotingService(nextDayMenuVotingService), menuItemService(menuItemService), todayMenuService(todayMenuService), notificationService(notificationService), discardMenuItemDetailedFeedbackService(discardMenuItemDetailedFeedbackService), userProfileService(userProfileService){}
 
 
 std::string EmployeeController::handleRequest(Operation operation,std::string request) {
@@ -42,6 +42,11 @@ std::string EmployeeController::handleRequest(Operation operation,std::string re
         }
         response = VectorSerializer::serialize(recommendedMenuItemSerializedData);
 
+    }else if(operation == Operation::provideDiscardMenuItemDetailedFeedback){
+        DiscardMenuItemDetailedFeedback feedback = SerializationUtility::deserialize<DiscardMenuItemDetailedFeedback>(request);
+        int operationDone = discardMenuItemDetailedFeedbackService->addFeedback(feedback);
+        response = "Discard Menu Item Detail Feedback Added\n";
+        std::cout<<"Feedback Added : "<<operationDone<<std::endl;
     }
     else {
         response = "Invalid operation";

@@ -23,7 +23,8 @@ enum Operation : int {
    GetChefRollOutMenuForTomorrow = 14,
    GetDiscardMenuList = 15,
    RemoveMenuItemFromList = 16,
-   GetDiscardMenuItemDetailedFeedback = 17
+   provideDiscardMenuItemDetailedFeedback = 17,
+   GetMenuItemIdForDetailFeedbackFromChef = 18
 };
 
 class SerializationUtility {

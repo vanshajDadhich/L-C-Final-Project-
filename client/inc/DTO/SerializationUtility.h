@@ -11,6 +11,7 @@
 #include "nextDayMenuRollOut.h"
 #include "notification.h"
 #include "../vectorSerializer.h"
+#include "discardMenuItemDetailedFeedback.h"
 
 enum Operation : int {
    AddUser = 0,
@@ -30,7 +31,8 @@ enum Operation : int {
    GetChefRollOutMenuForTomorrow = 14,
    GetDiscardMenuList = 15,
    RemoveMenuItemFromList = 16,
-   GetDiscardMenuItemDetailedFeedback = 17
+   provideDiscardMenuItemDetailedFeedback = 17,
+   GetMenuItemIdForDetailFeedbackFromChef = 18
 };
 
 class SerializationUtility {

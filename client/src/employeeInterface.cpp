@@ -16,7 +16,8 @@ void EmployeeInterface::showMenu(){
                      "3. Select Item you want For tomorrow\n"
                      "4. Today's Menu \n"
                      "5. Provide feedback for today's Menu\n"
-                     "6. Exit\n"
+                     "6. Provide Detailed Feedback for Discarded Menu Item\n"
+                     "7. Exit\n"
                      "Enter your choice: " << std::endl;
 
         int employeeChoice;
@@ -25,7 +26,7 @@ void EmployeeInterface::showMenu(){
         while (!(std::cin >> employeeChoice)) {
             std::cin.clear();  // clear the error flags
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // discard invalid input
-            std::cout << "Invalid input. Please enter a number between 1 and 5: " << std::endl;
+            std::cout << "Invalid input. Please enter a number between 1 and 7: " << std::endl;
         }
 
         switch (employeeChoice) {
@@ -44,6 +45,8 @@ void EmployeeInterface::showMenu(){
                 provideFeedbackForTodayMenu();
                 break;
             case 6:
+                getDetailedFeedbackForDiscardedMenuItem();
+            case 7:
                 flag = false;
                 break;
             default:
@@ -51,6 +54,28 @@ void EmployeeInterface::showMenu(){
                 break;
         }
     }
+}
+
+void EmployeeInterface::getDetailedFeedbackForDiscardedMenuItem(){
+    Operation operation = Operation::provideDiscardMenuItemDetailedFeedback;
+    DiscardMenuItemDetailedFeedback discardMenuItemDetailedFeedback;
+    std::cout<<"Provide MenuItem Id you want to provide detailed feedback for: \n";
+    std::cin>>discardMenuItemDetailedFeedback.menuItemId;
+    std::cout<<"What did you like about the menu item? \n";
+    std::cin.ignore();  // Ignore leftover newline character from previous input
+    std::getline(std::cin, discardMenuItemDetailedFeedback.whatYouLiked);
+    std::cout<<"How Would you like this food Item to taste? \n";
+    std::cin.ignore();  // Ignore leftover newline character from previous input
+    std::getline(std::cin, discardMenuItemDetailedFeedback.howWouldItTaste);
+    std::cout<<" Share your moms recipe. \n";
+    std::cin.ignore();  // Ignore leftover newline character from previous input
+    std::getline(std::cin, discardMenuItemDetailedFeedback.shareRecipe);
+    
+    std::string serializedData = SerializationUtility::serialize(discardMenuItemDetailedFeedback);
+    std::string serializedDataForRequest = SerializationUtility::serializeOperation(operation, serializedData);
+    requestHandler->sendRequest(serializedDataForRequest);
+    std::string response = requestHandler->receiveResponse();
+    std::cout<<"Response : "<<response<<std::endl;
 }
 
 void EmployeeInterface::viewTodayMenu(){
