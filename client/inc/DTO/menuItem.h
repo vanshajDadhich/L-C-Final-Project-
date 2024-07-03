@@ -19,8 +19,6 @@ struct MenuItem : public Serializable {
         menuItemType(static_cast<MenuItemType>(menuItemType)), 
         availability(availability), price(price) {}
 
-  // MenuItem() 
-  //       : menuItemId(0), menuItemName(""), menuItemType(MenuItemType::Breakfast), availability(false), price(0) {}
 
   std::string serialize() const override {
     return std::to_string(menuItemId) + ";" +

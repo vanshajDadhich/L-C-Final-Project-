@@ -28,7 +28,7 @@ class ChefController : public IUserController {
         std::vector<NextDayMenuRollOut> getNextDayMenuItemsToRollOut(std::vector<NextDayMenuVoting> nextDayMenuToRollOut);
         bool rollOutFinalMenuByChefForNextDay(std::vector<int> menuItemId);
         bool publishMostVotedMenuItems();
-        bool pushNotification(Operation operation);
+        bool pushNotification(Operation operation, std::string message);
 };
 
 #endif

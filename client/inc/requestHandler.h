@@ -2,19 +2,19 @@
 #define REQUESTHANDLER_H
 
 #include <string>
-#include <vector>
 #include <netinet/in.h>
-#include "vectorSerializer.h"
+#include "socketException.h"
 
 class RequestHandler {
 public:
     RequestHandler(int clientSocket, struct sockaddr_in serv_addr);
-    void sendRequest(std::string request);
+    void sendRequest(const std::string& request);
     std::string receiveResponse();
+
 private:
     int clientSocket;
     struct sockaddr_in serv_addr;
-    VectorSerializer vectorSerializer;
+    void handleError(const std::string& errorMessage) const;
 };
 
 #endif // REQUESTHANDLER_H

@@ -1,0 +1,173 @@
+#include "../inc/employeeInterface.h"
+#include <iostream>
+#include <limits> 
+#include<vector>
+
+EmployeeInterface::EmployeeInterface(RequestHandler* requestHandler, int userIdLoggedIn)
+    : requestHandler(requestHandler), userIdLoggedIn(userIdLoggedIn) {}
+
+void EmployeeInterface::showMenu(){
+    std::cout << "Welcome Employee\n\n";
+    bool flag = true;
+    while (flag) {
+        std::cout << "Select the operation which you like to perform\n"
+                     "1. View Notification\n"
+                     "2. View Chef Roll Out Menu For Tomorrow\n" 
+                     "3. Select Item you want For tomorrow\n"
+                     "4. Today's Menu \n"
+                     "5. Provide feedback for today's Menu\n"
+                     "6. Exit\n"
+                     "Enter your choice: " << std::endl;
+
+        int employeeChoice;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        while (!(std::cin >> employeeChoice)) {
+            std::cin.clear();  // clear the error flags
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // discard invalid input
+            std::cout << "Invalid input. Please enter a number between 1 and 5: " << std::endl;
+        }
+
+        switch (employeeChoice) {
+            case 1:
+                viewNotification();
+                break;
+            case 2:
+                showChefRollOutMenu();
+                break;
+            case 3:
+                voteForTomorrowMenu();
+                break;
+            case 4:
+                viewTodayMenu();
+            case 5:
+                provideFeedbackForTodayMenu();
+                break;
+            case 6:
+                flag = false;
+                break;
+            default:
+                std::cout << "Invalid Choice" << std::endl;
+                break;
+        }
+    }
+}
+
+void EmployeeInterface::viewTodayMenu(){
+    Operation operation = Operation::GetTodaysMenu;
+    std::string viewTodaysMenuSerializedRequest = SerializationUtility::serializeOperation(operation, "");
+    requestHandler->sendRequest(viewTodaysMenuSerializedRequest);
+
+    std::string serializedMenuList = requestHandler->receiveResponse();
+
+    std::cout<<"serializedMenuList"<<serializedMenuList<<std::endl;
+
+    std::vector<std::string>MenuList = VectorSerializer::deserialize(serializedMenuList);
+
+    for (const auto& item : MenuList) {
+        auto menuItem = SerializationUtility::deserialize<MenuItem>(item);
+        std::cout << "Menu Item Details:" << std::endl
+          << "ID: " << menuItem.menuItemId << std::endl
+          << "Name: " << menuItem.menuItemName << std::endl
+          << "Type: " << static_cast<int>(menuItem.menuItemType) << std::endl
+          << "Price: " << menuItem.price << std::endl;
+        std::cout << std::endl;
+    }
+}
+
+void EmployeeInterface::provideFeedbackForTodayMenu(){
+    Operation operation = Operation::ProvideFeedback;
+    Feedback feedback;
+    std::cout<<"Provide Feeback "<<std::endl;
+    feedback.userId = this->userIdLoggedIn;
+    std::cout << "Enter Menu Item ID: ";
+    std::cin >> feedback.menuItemId;
+    
+    std::cout << "Enter Rating: ";
+    std::cin >> feedback.rating;
+    
+    std::cout << "Enter Comment: ";
+    std::cin.ignore();  // Ignore leftover newline character from previous input
+    std::getline(std::cin, feedback.comment);
+    
+
+    feedback.date = getCurrentTimestamp();
+
+    std::string serializedData = SerializationUtility::serialize(feedback);
+    std::string serializedDataForRequest = SerializationUtility::serializeOperation(operation, serializedData);
+
+    requestHandler->sendRequest(serializedDataForRequest);
+}
+
+
+std::string EmployeeInterface::getCurrentTimestamp(){
+    auto now = std::chrono::system_clock::now();
+    std::time_t now_time_t = std::chrono::system_clock::to_time_t(now);
+
+    std::tm now_tm;
+#ifdef _WIN32
+    localtime_s(&now_tm, &now_time_t); // Use localtime_s on Windows
+#else
+    localtime_r(&now_time_t, &now_tm); // Use localtime_r on POSIX-compliant systems
+#endif
+    
+    // Create a string stream to format the time
+    std::ostringstream oss;
+    oss << std::put_time(&now_tm, "%Y-%m-%d %H:%M:%S");
+    
+    return oss.str();
+}
+
+void EmployeeInterface::voteForTomorrowMenu(){
+    Operation operation = Operation::VoteItemFromTomorrowMenu;
+    std::cout<<"Provide MenuItem Id you want to vote for: \n";
+    int menuItemId;
+    std::cin>>menuItemId;
+    std::string menuItemIdStr =  std::to_string(menuItemId);
+    auto voteForTomorrowItemSerializedRequest = SerializationUtility::serializeOperation(operation,menuItemIdStr);
+    requestHandler->sendRequest(voteForTomorrowItemSerializedRequest);
+}
+
+
+
+void EmployeeInterface::showChefRollOutMenu(){
+    Operation operation = Operation::GetChefRollOutMenuForTomorrow;
+    std::string viewMenuSerializedRequest = SerializationUtility::serializeOperation(operation, "");
+    requestHandler->sendRequest(viewMenuSerializedRequest);
+
+    std::string serializedMenuList = requestHandler->receiveResponse();
+
+     std::vector<std::string>MenuList = VectorSerializer::deserialize(serializedMenuList);
+
+    for (const auto& item : MenuList) {
+        auto menuItem = SerializationUtility::deserialize<NextDayMenuRollOut>(item);
+
+        std::cout << "Menu Item Details:" << std::endl
+          << "Menu Item ID: " << menuItem.menuItemId << "\t"
+          << "Menu Item Name: " << menuItem.menuItemName << "\t"
+          << "Menu Item Type: " << static_cast<int>(menuItem.menuItemType) << "\t"
+          << "Price: " << menuItem.price << "\t"
+          << "Average Rating: " << menuItem.averageRating << "\t"
+          << "Sentiment Score: " << menuItem.sentiments << std::endl;
+    }
+}
+
+void EmployeeInterface::viewNotification(){
+    Operation operation = Operation::ViewNotification;
+    std::string viewNotificationSerializedRequest = SerializationUtility::serializeOperation(operation, "");
+    requestHandler->sendRequest(viewNotificationSerializedRequest);
+
+    std::string serializedNotificationList = requestHandler->receiveResponse();
+
+    std::vector<std::string>notificationList = VectorSerializer::deserialize(serializedNotificationList);
+
+    for (const auto& item : notificationList) {
+        auto notification = SerializationUtility::deserialize<Notification>(item);
+        std::cout << "Notification Details:" << std::endl
+          << "ID: " << notification.notificationId << std::endl
+          << "Title: " << notification.notificationTitle << std::endl
+          << "Message: " << notification.message << std::endl
+          << "Date: " << notification.date << std::endl;
+        
+    }
+}

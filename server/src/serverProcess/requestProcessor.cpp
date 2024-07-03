@@ -41,11 +41,11 @@ std::string RequestProcessor::processRequest(std::string request){
                 std::cout<<"Admin LoggedIn"<<std::endl;
                 userController = new AdminController(menuItemService, userService, notificationService);
             }else if(userAuthenticated == 2){
-                std::cout<<"Chef LoggedIn"<<std::endl;
-                userController = new ChefController(menuItemService, nextDayMenuVotingService, feedbackService, recommendationEngine, todayMenuService, notificationService);
-            }else if(userAuthenticated == 3){
                 std::cout<<"Employee LoggedIn"<<std::endl;
                 userController = new EmployeeController(feedbackService, nextDayMenuVotingService, menuItemService, todayMenuService, notificationService);
+            }else if(userAuthenticated == 3){
+                std::cout<<"Chef LoggedIn"<<std::endl;
+                userController = new ChefController(menuItemService, nextDayMenuVotingService, feedbackService, recommendationEngine, todayMenuService, notificationService);
             }else{
                 std::cout<<"Invalid Username Password"<<std::endl;
             }
@@ -65,6 +65,8 @@ std::string RequestProcessor::processRequest(std::string request){
         case Operation::GetRecommandationFromEngine:
         case Operation::GetTodaysMenu:
         case Operation::GetChefRollOutMenuForTomorrow:
+        case Operation::GetDiscardMenuList:
+        case Operation::RemoveMenuItemFromList:
             std::cout<<"Handle Request called\n";
             response = userController->handleRequest(requestData.first, requestData.second);
             break;

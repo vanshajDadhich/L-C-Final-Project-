@@ -50,15 +50,15 @@ INSERT INTO MenuItem (menuItemId, menuItemName, menuItemType, Availability, Pric
 
 INSERT INTO User (userId, userName, password, Role) VALUES
 (1, 'john_doe', 'password123', 1),     -- Admin is 1
-(2, 'jane_smith', 'securepass456', 2), -- Chef is 2
-(3, 'chef_ravi', 'delicious789', 2),   -- Chef is 2
-(4, 'employee_mike', 'workhard101', 3),-- Employee is 3
-(5, 'employee_susan', 'greatjob202', 3),-- Employee is 3
+(2, 'jane_smith', 'securepass456', 2), -- Employee is 2
+(3, 'chef_ravi', 'delicious789', 2),   -- Employee is 2
+(4, 'employee_mike', 'workhard101', 3),-- chef is 3
+(5, 'employee_susan', 'greatjob202', 3),-- chef is 3
 (6, 'admin_anna', 'adminpass303', 1),  -- Admin is 1
-(7, 'chef_kumar', 'tastyfood404', 2),  -- Chef is 2
-(8, 'employee_johnny', 'service505', 3),-- Employee is 3
+(7, 'chef_kumar', 'tastyfood404', 2),  -- Employee is 2
+(8, 'employee_johnny', 'service505', 3),-- Chef is 3
 (9, 'admin_sam', 'manager606', 1),     -- Admin is 1
-(10, 'chef_alia', 'spicy707', 2);      -- Chef is 2
+(10, 'chef_alia', 'spicy707', 2);      -- Employee is 2
 
 INSERT INTO Feedback (feedbackId, userId, MenuItemId, Rating, comment, timestamp) VALUES
 (1, 1, 1, 5, 'Delicious and perfect!', '2024-06-01'),

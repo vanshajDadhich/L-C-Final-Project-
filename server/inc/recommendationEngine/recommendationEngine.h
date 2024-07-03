@@ -83,10 +83,10 @@ public:
     
 
 private:
-    double evaluateFoodItem(const std::vector<Feedback>& feedbacks, double& rating, double& sentimentScore);
+    double evaluateFoodItem(const std::vector<Feedback>& feedbacks, double& rating, std::string &sentiments);
     double analyzeSentiment(const std::string& comment, std::vector<std::string>& foundSentiments);
     std::string joinSentiments(const std::vector<std::string> &sentiments);
-    std::vector<std::string> getMostRepetativeSentiments(const std::vector<std::string>& words);
+    std::string getMostRepetativeSentiments(const std::vector<std::string>& words);
 
     std::unordered_set<std::string> positiveWords_;
     std::unordered_set<std::string> negativeWords_;

@@ -65,7 +65,7 @@ std::vector<NextDayMenuRollOut> EmployeeController::getNextDayMenuItemsToRollOut
             menuItem.price,
             nextDayMenuItemId.voteCount,        // Assuming this should be set as selectionCount
             nextDayMenuItemId.rating,
-            nextDayMenuItemId.sentimentScore
+            nextDayMenuItemId.sentiments
         );
 
         // Add to the result vector

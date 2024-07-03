@@ -12,12 +12,12 @@ struct NextDayMenuRollOut : public Serializable {
     int price;
     int selectionCount;
     double averageRating;
-    double sentimentScore;
+    std::string sentiments;
 
     NextDayMenuRollOut(int menuItemId = 0, const std::string& menuItemName = "", MenuItemType menuItemType = MenuItemType::Breakfast,
-                       int price = 0, int selectionCount = 0, double averageRating = 0, double sentimentScore = 0)
+                       int price = 0, int selectionCount = 0, double averageRating = 0, std::string sentiments = "")
         : menuItemId(menuItemId), menuItemName(menuItemName), menuItemType(menuItemType), price(price),
-          selectionCount(selectionCount), averageRating(averageRating), sentimentScore(sentimentScore) {}
+          selectionCount(selectionCount), averageRating(averageRating), sentiments(sentiments) {}
 
     std::string serialize() const override {
         return std::to_string(menuItemId) + ";" +
@@ -26,7 +26,7 @@ struct NextDayMenuRollOut : public Serializable {
                std::to_string(price) + ";" +
                std::to_string(selectionCount) + ";" +
                std::to_string(averageRating) + ";" +
-               std::to_string(sentimentScore);
+               sentiments;
     }
 
     void deserialize(const std::string& data) override {
@@ -50,7 +50,6 @@ struct NextDayMenuRollOut : public Serializable {
         std::getline(iss, token, ';');
         averageRating = std::stod(token);
 
-        std::getline(iss, token, ';');
-        sentimentScore = std::stod(token);
+        std::getline(iss, sentiments, ';');
     }
 };

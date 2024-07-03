@@ -1,5 +1,45 @@
 USE databaseRecommendationEngine;
 
-ALTER TABLE NextDayMenuVoting
-MODIFY rating DOUBLE,
-MODIFY sentimentScore DOUBLE;
+USE databaseRecommendationEngine;
+
+USE databaseRecommendationEngine;
+
+INSERT INTO Feedback (feedbackId, userId, MenuItemId, Rating, comment, timestamp) VALUES
+(42, 2, 1, 5, 'Masala Dosa was fantastic, crispy and flavorful.', '2024-07-12'),
+(43, 3, 2, 1, 'Aloo Paratha was too oily and bland.', '2024-07-13'),
+(44, 4, 2, 5, 'Aloo Paratha was perfect, loved it!', '2024-07-14'),
+(45, 5, 3, 2, 'Paneer Butter Masala was okay, but not great.', '2024-07-15'),
+(46, 6, 3, 4, 'Paneer Butter Masala was delicious, creamy and rich.', '2024-07-16'),
+(47, 7, 4, 1, 'Chole Bhature was awful, too salty.', '2024-07-17'),
+(48, 8, 4, 5, 'Chole Bhature was amazing, just like home.', '2024-07-18'),
+(49, 9, 5, 3, 'Chicken Biryani was average, expected more.', '2024-07-19'),
+(50, 10, 5, 4, 'Chicken Biryani was good, nice spices.', '2024-07-20'),
+(51, 1, 6, 1, 'Rogan Josh was too spicy and overcooked.', '2024-07-21'),
+(52, 2, 6, 5, 'Rogan Josh was tender and perfectly spiced.', '2024-07-22'),
+(53, 3, 7, 2, 'Butter Chicken was too sweet.', '2024-07-23'),
+(54, 4, 7, 4, 'Butter Chicken was creamy and flavorful.', '2024-07-24'),
+(55, 5, 8, 3, 'Palak Paneer was bland, needed more spices.', '2024-07-25'),
+(56, 6, 8, 4, 'Palak Paneer was delicious, very flavorful.', '2024-07-26'),
+(57, 7, 9, 1, 'Idli Sambar was dry and tasteless.', '2024-07-27'),
+(58, 8, 9, 5, 'Idli Sambar was soft and delicious.', '2024-07-28'),
+(59, 9, 10, 2, 'Lamb Vindaloo was too tough.', '2024-07-29'),
+(60, 1, 10, 5, 'Lamb Vindaloo was tender and spicy.', '2024-07-30'),
+(61, 1, 11, 1, 'Egg Benedict was undercooked.', '2024-07-31'),
+(62, 2, 11, 5, 'Egg Benedict was perfect, loved the sauce.', '2024-08-01'),
+(63, 3, 21, 2, 'Pancakes were too thick and dry.', '2024-08-02'),
+(64, 4, 21, 5, 'Pancakes were fluffy and delicious.', '2024-08-03'),
+(65, 5, 13, 1, 'Pulao lacked flavor and was undercooked.', '2024-08-04'),
+(66, 6, 13, 4, 'Pulao was well-cooked and tasty.', '2024-08-05'),
+(67, 7, 14, 2, 'Chicken Curry was too oily.', '2024-08-06'),
+(68, 8, 14, 5, 'Chicken Curry was rich and flavorful.', '2024-08-07'),
+(69, 9, 15, 3, 'Fish Tacos were okay, not very fresh.', '2024-08-08'),
+(70, 10, 15, 4, 'Fish Tacos were fresh and tasty.', '2024-08-09'),
+(71, 1, 16, 1, 'Steak was tough and overcooked.', '2024-08-10'),
+(72, 2, 16, 5, 'Steak was tender and juicy.', '2024-08-11'),
+(73, 3, 17, 2, 'Vegetable Biryani was bland.', '2024-08-12'),
+(74, 4, 17, 4, 'Vegetable Biryani was flavorful and well-cooked.', '2024-08-13'),
+(75, 5, 18, 3, 'Chocolate Cake was too sweet.', '2024-08-14'),
+(76, 6, 18, 5, 'Chocolate Cake was rich and moist.', '2024-08-15'),
+(77, 9, 20, 3, 'Fruit Salad was okay, not very fresh.', '2024-08-18'),
+(78, 10, 20, 4, 'Fruit Salad was fresh and refreshing.', '2024-08-19'),
+(79, 1, 1, 1, 'Masala Dosa was cold and lacked flavor.', '2024-07-11');

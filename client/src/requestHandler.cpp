@@ -1,5 +1,5 @@
 #include "../inc/requestHandler.h"
-#include <sys/socket.h> 
+#include <sys/socket.h>
 #include <unistd.h>
 #include <iostream>
 #include <cstring>
@@ -11,32 +11,26 @@
 RequestHandler::RequestHandler(int clientSocket, struct sockaddr_in serv_addr)
     : clientSocket(clientSocket), serv_addr(serv_addr) {}
 
+void RequestHandler::sendRequest(const std::string& request) {
+    std::vector<unsigned char> requestBuffer(request.begin(), request.end());
 
-void RequestHandler::sendRequest(std::string request) {
-    std::vector<unsigned char> requestBuffer;
-    requestBuffer.insert(requestBuffer.end(), request.begin(), request.end());
-
-    int valsend = send(clientSocket, requestBuffer.data(), requestBuffer.size(), 0);
-    if (valsend < 0) {
-        std::cerr << "Send failed with error code: " << valsend << "\n";
-    } else {
-        std::cout << "Number of bytes sent: " << valsend << "\n";
+    int bytesSent = send(clientSocket, requestBuffer.data(), requestBuffer.size(), 0);
+    if (bytesSent < 0) {
+        throw RequestException("Send failed with error code: " + std::to_string(bytesSent));
     }
+    std::cout << "Number of bytes sent: " << bytesSent << std::endl;
 }
 
 std::string RequestHandler::receiveResponse() {
     char buffer[BUFFER_SIZE] = {0};
 
-    int valread = read(clientSocket, buffer, BUFFER_SIZE);
-    if (valread < 0) {
-        std::cerr << "Read failed with error code: " << valread << "\n";
-        return "";
+    int bytesRead = read(clientSocket, buffer, BUFFER_SIZE);
+    if (bytesRead < 0) {
+        throw ResponseException("Read failed with error code: " + std::to_string(bytesRead));
     }
-    if(valread >0){
-      std::cout << "Number of bytes read: " << valread << "\n";
+    if (bytesRead > 0) {
+        std::cout << "Number of bytes read: " << bytesRead << std::endl;
     }
 
-    std::vector<unsigned char> data(buffer, buffer + valread);
-    std::string request(buffer, buffer + valread);
-    return request;
+    return std::string(buffer, bytesRead);
 }

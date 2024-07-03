@@ -20,7 +20,10 @@ enum Operation : int {
    login = 11,
    GetRecommandationFromEngine = 12,
    GetTodaysMenu = 13,
-   GetChefRollOutMenuForTomorrow = 14
+   GetChefRollOutMenuForTomorrow = 14,
+   GetDiscardMenuList = 15,
+   RemoveMenuItemFromList = 16,
+   GetDiscardMenuItemDetailedFeedback = 17
 };
 
 class SerializationUtility {
