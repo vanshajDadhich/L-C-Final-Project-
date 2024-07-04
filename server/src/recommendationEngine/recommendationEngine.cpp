@@ -129,7 +129,6 @@ std::string RecommendationEngine::getMostRepetativeSentiments(const std::vector<
     return result;
 }
 
-
 double RecommendationEngine::evaluateFoodItem(const std::vector<Feedback>& feedbacks, double &rating, std::string &sentimentsString) {
     double totalScore = 0.0;
     double averageSentimentScore = 0.0;
@@ -202,7 +201,7 @@ std::vector<NextDayMenuVoting> RecommendationEngine::generateDiscardMenuList(
             std::string sentiments;
             double score = evaluateFoodItem(pair.second, rating, sentiments);
             std::cout<<"menuItemId : "<<menuItemId<<" score : "<<score<<" rating : "<<rating<<" sentiments : "<<sentiments<<std::endl;
-            if (score < 4 && rating < 4) {
+            if (score < 3 && rating < 2) {
                 NextDayMenuVoting nextDayMenuVoting(menuItemId, 0, rating, sentiments);
                 discardList.push_back(nextDayMenuVoting);
                 std::cout<<"pushing list in it discard Menu list"<<std::endl;
@@ -213,4 +212,51 @@ std::vector<NextDayMenuVoting> RecommendationEngine::generateDiscardMenuList(
     return discardList;
 }
 
+std::vector<NextDayMenuRollOut> RecommendationEngine::sortRecommendedMenuItemsBasedOnProfile(
+    const UserProfile& userProfile, 
+    const std::vector<NextDayMenuRollOut>& chefRolloutMenuForNextDay, 
+    const std::vector<MenuItem>& menuItems) {
+    
+    if(userProfile.userId == 0){
+        return chefRolloutMenuForNextDay;
+    }
+    std::vector<NextDayMenuRollOut> sortedMenuItems = chefRolloutMenuForNextDay;
+
+    std::sort(sortedMenuItems.begin(), sortedMenuItems.end(), [&](const NextDayMenuRollOut& a, const NextDayMenuRollOut& b) {
+        int scoreA = 0, scoreB = 0;
+
+        // Get the MenuItem for each NextDayMenuRollOut item
+        auto itA = std::find_if(menuItems.begin(), menuItems.end(),
+                                [&](const MenuItem& item) { return item.menuItemId == a.menuItemId; });
+        auto itB = std::find_if(menuItems.begin(), menuItems.end(),
+                                [&](const MenuItem& item) { return item.menuItemId == b.menuItemId; });
+
+        if (itA != menuItems.end()) {
+            // Evaluate vegetarian preference
+            if (userProfile.vegetarianPreference == itA->vegetarianPreference) scoreA++;
+            // Evaluate spice level
+            if (userProfile.spiceLevelOption == itA->spiceLevelOption) scoreA++;
+            // Evaluate food preference
+            if (userProfile.foodPreference == itA->foodPreference) scoreA++;
+            // Evaluate sweet tooth preference
+            if (userProfile.sweetToothPreference == itA->sweetToothPreference) scoreA++;
+        }
+
+        if (itB != menuItems.end()) {
+            // Evaluate vegetarian preference
+            if (userProfile.vegetarianPreference == itB->vegetarianPreference) scoreB++;
+            // Evaluate spice level
+            if (userProfile.spiceLevelOption == itB->spiceLevelOption) scoreB++;
+            // Evaluate food preference
+            if (userProfile.foodPreference == itB->foodPreference) scoreB++;
+            // Evaluate sweet tooth preference
+            if (userProfile.sweetToothPreference == itB->sweetToothPreference) scoreB++;
+        }
+
+        // Higher score items should come first
+        return scoreA > scoreB;
+    });
+
+    return sortedMenuItems;
+}
 

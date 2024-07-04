@@ -1,7 +1,7 @@
 #include "../../inc/controller/employeeController.h"
 
-EmployeeController::EmployeeController(FeedbackService* feedbackService, NextDayMenuVotingService* nextDayMenuVotingService, MenuItemService* menuItemService, TodayMenuService* todayMenuService, NotificationService* notificationService, DiscardMenuItemDetailedFeedbackService* discardMenuItemDetailedFeedbackService, UserProfileService* userProfileService) 
-        : feedbackService(feedbackService), nextDayMenuVotingService(nextDayMenuVotingService), menuItemService(menuItemService), todayMenuService(todayMenuService), notificationService(notificationService), discardMenuItemDetailedFeedbackService(discardMenuItemDetailedFeedbackService), userProfileService(userProfileService){}
+EmployeeController::EmployeeController(FeedbackService* feedbackService, NextDayMenuVotingService* nextDayMenuVotingService, MenuItemService* menuItemService, TodayMenuService* todayMenuService, NotificationService* notificationService, DiscardMenuItemDetailedFeedbackService* discardMenuItemDetailedFeedbackService, UserProfileService* userProfileService, RecommendationEngine* recommendationEngine) 
+        : feedbackService(feedbackService), nextDayMenuVotingService(nextDayMenuVotingService), menuItemService(menuItemService), todayMenuService(todayMenuService), notificationService(notificationService), discardMenuItemDetailedFeedbackService(discardMenuItemDetailedFeedbackService), userProfileService(userProfileService), recommendationEngine(recommendationEngine){}
 
 
 std::string EmployeeController::handleRequest(Operation operation,std::string request) {
@@ -35,15 +35,23 @@ std::string EmployeeController::handleRequest(Operation operation,std::string re
     }
     else if(operation == Operation::GetChefRollOutMenuForTomorrow)
     {  
+        int userId = std::stoi(request);
+        std::vector<NextDayMenuRollOut> preferenceBasedNextDayMenuRollOut = {};
         std::vector<NextDayMenuRollOut> chefRolloutMenuForNextDay = getNextDayMenuItemsToRollOut();
+        for(int i=0; i<3; i++){
+            auto chefRollOutMenuForMealType = filterMenuItemsByType(static_cast<MenuItemType>(i+1), chefRolloutMenuForNextDay);
+            chefRollOutMenuForMealType = recommendationEngine->sortRecommendedMenuItemsBasedOnProfile(userProfileService->getUserProfileByID(userId), chefRollOutMenuForMealType, menuItemService->getAllMenuItems());
+            preferenceBasedNextDayMenuRollOut.insert(preferenceBasedNextDayMenuRollOut.end(), chefRollOutMenuForMealType.begin(), chefRollOutMenuForMealType.end());
+        }
         std::vector<std::string> recommendedMenuItemSerializedData;
-        for (auto menu : chefRolloutMenuForNextDay) {
+        for (auto menu : preferenceBasedNextDayMenuRollOut) {
             recommendedMenuItemSerializedData.push_back(SerializationUtility::serialize(menu));
         }
         response = VectorSerializer::serialize(recommendedMenuItemSerializedData);
 
     }else if(operation == Operation::provideDiscardMenuItemDetailedFeedback){
         DiscardMenuItemDetailedFeedback feedback = SerializationUtility::deserialize<DiscardMenuItemDetailedFeedback>(request);
+        std::cout<<"Feedback Received : "<<feedback.menuItemId<<" userId : "<<feedback.userId<<" whatYouLiked : "<<feedback.whatYouLiked<<" howWouldItTaste : "<<feedback.howWouldItTaste<<" shareRecipe : "<<feedback.shareRecipe<<std::endl;
         int operationDone = discardMenuItemDetailedFeedbackService->addFeedback(feedback);
         response = "Discard Menu Item Detail Feedback Added\n";
         std::cout<<"Feedback Added : "<<operationDone<<std::endl;
@@ -80,3 +88,16 @@ std::vector<NextDayMenuRollOut> EmployeeController::getNextDayMenuItemsToRollOut
     return nextDayMenuRollOutItems;
 }
 
+std::vector<NextDayMenuRollOut> EmployeeController::filterMenuItemsByType(
+    MenuItemType menuItemType,
+    const std::vector<NextDayMenuRollOut>& chefRolloutMenuForNextDay) {
+
+    std::vector<NextDayMenuRollOut> filteredMenuItems;
+    for (const auto& menuItem : chefRolloutMenuForNextDay) {
+        if (menuItem.menuItemType == menuItemType) {
+            filteredMenuItems.push_back(menuItem);
+        }
+    }
+
+    return filteredMenuItems;
+}

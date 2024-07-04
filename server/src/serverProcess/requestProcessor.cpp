@@ -48,7 +48,7 @@ std::string RequestProcessor::processRequest(std::string request){
                 userController = new AdminController(menuItemService, userService, notificationService);
             }else if(userAuthenticated == 2){
                 std::cout<<"Employee LoggedIn"<<std::endl;
-                userController = new EmployeeController(feedbackService, nextDayMenuVotingService, menuItemService, todayMenuService, notificationService, discardMenuItemDetailedFeedbackService, userProfileService);
+                userController = new EmployeeController(feedbackService, nextDayMenuVotingService, menuItemService, todayMenuService, notificationService, discardMenuItemDetailedFeedbackService, userProfileService, recommendationEngine);
             }else if(userAuthenticated == 3){
                 std::cout<<"Chef LoggedIn"<<std::endl;
                 userController = new ChefController(menuItemService, nextDayMenuVotingService, feedbackService, recommendationEngine, todayMenuService, notificationService);

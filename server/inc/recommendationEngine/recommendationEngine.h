@@ -68,6 +68,7 @@
 #include "../service/menuItemService.h"
 #include "utility.h"
 #include "../DTO/nextDayMenuVoting.h"
+#include "../DTO/nextDayMenuRollout.h"
 
 class RecommendationEngine {
 public:
@@ -80,6 +81,11 @@ public:
     std::vector<NextDayMenuVoting> generateDiscardMenuList(
                                     const std::unordered_map<int, std::vector<Feedback>>& feedbackMap,
                                     const std::vector<MenuItem>& menuItems);
+
+    std::vector<NextDayMenuRollOut> sortRecommendedMenuItemsBasedOnProfile(
+                                            const UserProfile& userProfile, 
+                                            const std::vector<NextDayMenuRollOut>& chefRolloutMenuForNextDay, 
+                                            const std::vector<MenuItem>& menuItems);
     
 
 private:

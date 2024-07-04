@@ -73,7 +73,7 @@ void UserInterfaceController::initializeUserInterface(Role userRole)
     }
     else if(userRole == Role::Employee)
     {
-        this->userInterface = new EmployeeInterface(requestHandler, userIdLoggedIn);
+        this->userInterface = new EmployeeInterface(requestHandler, this->userIdLoggedIn);
     }
     else
     {

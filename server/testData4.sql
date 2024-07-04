@@ -64,35 +64,73 @@ USE databaseRecommendationEngine;
 --     FOREIGN KEY (userId) REFERENCES User(userId) ON DELETE CASCADE
 -- );
 
--- Clear the existing data from MenuItem table
-DELETE FROM MenuItem;
+-- -- Clear the existing data from MenuItem table
+-- DELETE FROM MenuItem;
 
--- Adding columns to MenuItem table
-ALTER TABLE MenuItem
-ADD COLUMN vegetarianPreference INT,
-ADD COLUMN spiceLevelOption INT,
-ADD COLUMN foodPreference INT,
-ADD COLUMN sweetToothPreference INT;
+-- -- Adding columns to MenuItem table
+-- ALTER TABLE MenuItem
+-- ADD COLUMN vegetarianPreference INT,
+-- ADD COLUMN spiceLevelOption INT,
+-- ADD COLUMN foodPreference INT,
+-- ADD COLUMN sweetToothPreference INT;
 
--- Inserting new menu items with updated columns
-INSERT INTO MenuItem (menuItemId, menuItemName, menuItemType, Availability, Price, vegetarianPreference, spiceLevelOption, foodPreference, sweetToothPreference) VALUES
-(1, 'Masala Dosa', 1, true, 6.99, 1, 3, 2, 0),          -- Breakfast, Vegetarian, High Spice, South Indian, No Sweet
-(2, 'Aloo Paratha', 1, true, 5.49, 1, 2, 1, 0),         -- Breakfast, Vegetarian, Medium Spice, North Indian, No Sweet
-(3, 'Paneer Butter Masala', 2, true, 8.99, 1, 2, 1, 0), -- Lunch, Vegetarian, Medium Spice, North Indian, No Sweet
-(4, 'Chole Bhature', 2, true, 7.49, 1, 2, 1, 0),        -- Lunch, Vegetarian, Medium Spice, North Indian, No Sweet
-(5, 'Chicken Biryani', 2, true, 10.99, 2, 3, 1, 0),     -- Lunch, Non-Vegetarian, High Spice, North Indian, No Sweet
-(6, 'Rogan Josh', 3, true, 12.99, 2, 3, 1, 0),          -- Dinner, Non-Vegetarian, High Spice, North Indian, No Sweet
-(7, 'Butter Chicken', 3, true, 11.49, 2, 2, 1, 0),      -- Dinner, Non-Vegetarian, Medium Spice, North Indian, No Sweet
-(8, 'Palak Paneer', 3, true, 9.99, 1, 2, 1, 0),         -- Dinner, Vegetarian, Medium Spice, North Indian, No Sweet
-(9, 'Idli Sambar', 1, true, 4.99, 1, 2, 2, 0),          -- Breakfast, Vegetarian, Medium Spice, South Indian, No Sweet
-(10, 'Lamb Vindaloo', 3, true, 13.99, 2, 3, 1, 0),      -- Dinner, Non-Vegetarian, High Spice, North Indian, No Sweet
-(11, 'Egg Benedict', 1, true, 7.99, 3, 1, 3, 0),        -- Breakfast, Eggetarian, Low Spice, Other, No Sweet
-(12, 'Pancakes', 1, true, 5.99, 1, 1, 3, 1),            -- Breakfast, Vegetarian, Low Spice, Other, Sweet
-(13, 'Pulao', 2, true, 8.49, 1, 2, 1, 0),               -- Lunch, Vegetarian, Medium Spice, North Indian, No Sweet
-(14, 'Chicken Curry', 2, true, 9.99, 2, 3, 1, 0),       -- Lunch, Non-Vegetarian, High Spice, North Indian, No Sweet
-(15, 'Fish Tacos', 2, true, 10.49, 2, 2, 3, 0),         -- Lunch, Non-Vegetarian, Medium Spice, Other, No Sweet
-(16, 'Steak', 3, true, 15.99, 2, 3, 3, 0),              -- Dinner, Non-Vegetarian, High Spice, Other, No Sweet
-(17, 'Vegetable Biryani', 2, true, 9.49, 1, 3, 1, 0),   -- Lunch, Vegetarian, High Spice, North Indian, No Sweet
-(18, 'Chocolate Cake', 3, true, 6.99, 1, 1, 3, 1),      -- Dinner, Vegetarian, Low Spice, Other, Sweet
-(19, 'Spicy Chicken Wings', 3, true, 11.49, 2, 3, 3, 0),-- Dinner, Non-Vegetarian, High Spice, Other, No Sweet
-(20, 'Fruit Salad', 1, true, 4.99, 1, 1, 3, 1);         -- Breakfast, Vegetarian, Low Spice, Other, Sweet
+-- -- Inserting new menu items with updated columns
+-- INSERT INTO MenuItem (menuItemId, menuItemName, menuItemType, Availability, Price, vegetarianPreference, spiceLevelOption, foodPreference, sweetToothPreference) VALUES
+-- (1, 'Masala Dosa', 1, true, 6.99, 1, 3, 2, 0),          -- Breakfast, Vegetarian, High Spice, South Indian, No Sweet
+-- (2, 'Aloo Paratha', 1, true, 5.49, 1, 2, 1, 0),         -- Breakfast, Vegetarian, Medium Spice, North Indian, No Sweet
+-- (3, 'Paneer Butter Masala', 2, true, 8.99, 1, 2, 1, 0), -- Lunch, Vegetarian, Medium Spice, North Indian, No Sweet
+-- (4, 'Chole Bhature', 2, true, 7.49, 1, 2, 1, 0),        -- Lunch, Vegetarian, Medium Spice, North Indian, No Sweet
+-- (5, 'Chicken Biryani', 2, true, 10.99, 2, 3, 1, 0),     -- Lunch, Non-Vegetarian, High Spice, North Indian, No Sweet
+-- (6, 'Rogan Josh', 3, true, 12.99, 2, 3, 1, 0),          -- Dinner, Non-Vegetarian, High Spice, North Indian, No Sweet
+-- (7, 'Butter Chicken', 3, true, 11.49, 2, 2, 1, 0),      -- Dinner, Non-Vegetarian, Medium Spice, North Indian, No Sweet
+-- (8, 'Palak Paneer', 3, true, 9.99, 1, 2, 1, 0),         -- Dinner, Vegetarian, Medium Spice, North Indian, No Sweet
+-- (9, 'Idli Sambar', 1, true, 4.99, 1, 2, 2, 0),          -- Breakfast, Vegetarian, Medium Spice, South Indian, No Sweet
+-- (10, 'Lamb Vindaloo', 3, true, 13.99, 2, 3, 1, 0),      -- Dinner, Non-Vegetarian, High Spice, North Indian, No Sweet
+-- (11, 'Egg Benedict', 1, true, 7.99, 3, 1, 3, 0),        -- Breakfast, Eggetarian, Low Spice, Other, No Sweet
+-- (12, 'Pancakes', 1, true, 5.99, 1, 1, 3, 1),            -- Breakfast, Vegetarian, Low Spice, Other, Sweet
+-- (13, 'Pulao', 2, true, 8.49, 1, 2, 1, 0),               -- Lunch, Vegetarian, Medium Spice, North Indian, No Sweet
+-- (14, 'Chicken Curry', 2, true, 9.99, 2, 3, 1, 0),       -- Lunch, Non-Vegetarian, High Spice, North Indian, No Sweet
+-- (15, 'Fish Tacos', 2, true, 10.49, 2, 2, 3, 0),         -- Lunch, Non-Vegetarian, Medium Spice, Other, No Sweet
+-- (16, 'Steak', 3, true, 15.99, 2, 3, 3, 0),              -- Dinner, Non-Vegetarian, High Spice, Other, No Sweet
+-- (17, 'Vegetable Biryani', 2, true, 9.49, 1, 3, 1, 0),   -- Lunch, Vegetarian, High Spice, North Indian, No Sweet
+-- (18, 'Chocolate Cake', 3, true, 6.99, 1, 1, 3, 1),      -- Dinner, Vegetarian, Low Spice, Other, Sweet
+-- (19, 'Spicy Chicken Wings', 3, true, 11.49, 2, 3, 3, 0),-- Dinner, Non-Vegetarian, High Spice, Other, No Sweet
+-- (20, 'Fruit Salad', 1, true, 4.99, 1, 1, 3, 1);         -- Breakfast, Vegetarian, Low Spice, Other, Sweet
+
+
+-- INSERT INTO UserProfile (userId, vegetarianPreference, spiceLevelOption, foodPreference, sweetToothPreference) VALUES
+-- (1, 1, 1, 1, 1), -- john_doe
+-- (2, 2, 2, 2, 0), -- jane_smith
+-- (3, 3, 3, 3, 1), -- chef_ravi
+-- (4, 1, 1, 1, 1), -- employee_mike
+-- (5, 2, 2, 2, 0), -- employee_susan
+-- (6, 3, 3, 3, 1), -- admin_anna
+-- (7, 1, 1, 1, 1), -- chef_kumar
+-- (8, 2, 2, 2, 0), -- employee_johnny
+-- (9, 3, 3, 3, 1), -- admin_sam
+-- (10, 1, 1, 1, 1), -- chef_alia
+-- (11, 2, 2, 2, 0), -- vanshaj
+-- (12, 3, 3, 3, 1), -- DadhichV
+-- (13, 1, 1, 1, 1); -- InTimeTec
+
+
+-- Insert new items into MenuItem table
+INSERT INTO MenuItem (menuItemId, menuItemName, menuItemType, availability, price, vegetarianPreference, spiceLevelOption, foodPreference, sweetToothPreference) VALUES
+(21, 'Mixed Vegetable Curry', 2, true, 130, 1, 2, 1, 0),
+(22, 'Fish Fry', 2, true, 180, 2, 1, 2, 0),
+(23, 'Mushroom Soup', 3, true, 100, 1, 3, 3, 0),
+(24, 'Pasta Alfredo', 2, true, 160, 1, 1, 3, 0),
+(25, 'Apple Pie', 4, true, 70, 1, 3, 3, 1);
+
+-- Insert bad feedback into Feedback table
+INSERT INTO Feedback (feedbackId, userId, menuItemId, rating, comment, timestamp) VALUES
+(81, 1, 21, 1, 'The curry was too watery and bland.', '2024-07-04'),
+(82, 2, 21, 1, 'Vegetables were not cooked properly.', '2024-07-04'),
+(83, 3, 22, 1, 'The fish was overcooked and dry.', '2024-07-04'),
+(84, 4, 22, 1, 'Too salty and greasy.', '2024-07-04'),
+(85, 5, 23, 1, 'Mushroom soup was too watery and tasteless.', '2024-07-04'),
+(86, 6, 23, 1, 'No flavor and too much cream.', '2024-07-04'),
+(87, 7, 24, 1, 'Pasta was undercooked and sauce was bland.', '2024-07-04'),
+(88, 8, 24, 1, 'Terrible taste, not worth the price.', '2024-07-04'),
+(89, 9, 25, 1, 'Apple pie crust was too hard and filling was bland.', '2024-07-04'),
+(90, 10, 25, 1, 'Worst dessert I have ever tasted.', '2024-07-04');

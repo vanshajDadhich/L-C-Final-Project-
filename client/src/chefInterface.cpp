@@ -95,7 +95,7 @@ void ChefInterface::showDiscardMenuItemActionPrompt(const std::vector<int>& disc
         try {
             std::cout << "Select the operation which you like to perform\n"
                          "1. Select MenuItem Id to Remove From Menu List\n"
-                         "2. Select MenuItem Id Get Detailed Feedback\n"
+                         "2. Select MenuItem Id To Get Detailed Feedback on\n"
                          "3. Exit\n"
                          "Enter your choice: " << std::endl;
 
@@ -195,11 +195,10 @@ void ChefInterface::removeMenuItemFromList(const std::vector<int>& discardMenuIt
 void ChefInterface::rollOutMenuForTomorrow(std::vector<std::pair<MenuItemType, int>> recommendedMenuItem){
     try {
         Operation operation = Operation::RollOutMenuForNextDay;
-        std::cout<<"Roll out Menu For Tomorrow (choose MenuItem Id from Recommended Items)\n"
-                 <<"Select MenuItemID for BreakFast seprated by comma \n";
+        std::cout<<"Roll out Menu For Tomorrow (choose MenuItem Id from Recommended Items)\n";
         
         std::vector<std::string> chefRollOutMenuForTomorrow;
-        for (int i = 1; i < 2; ++i) {
+        for (int i = 1; i < 4; ++i) {
             std::string menuItemIdsforMealType = getValidMenuItemIdsForMealType(recommendedMenuItem, static_cast<MenuItemType>(i));
             chefRollOutMenuForTomorrow.push_back(menuItemIdsforMealType);
         }

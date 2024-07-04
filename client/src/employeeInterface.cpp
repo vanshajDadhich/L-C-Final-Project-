@@ -41,11 +41,13 @@ void EmployeeInterface::showMenu(){
                 break;
             case 4:
                 viewTodayMenu();
+                break;
             case 5:
                 provideFeedbackForTodayMenu();
                 break;
             case 6:
                 getDetailedFeedbackForDiscardedMenuItem();
+                break;
             case 7:
                 flag = false;
                 break;
@@ -59,6 +61,7 @@ void EmployeeInterface::showMenu(){
 void EmployeeInterface::getDetailedFeedbackForDiscardedMenuItem(){
     Operation operation = Operation::provideDiscardMenuItemDetailedFeedback;
     DiscardMenuItemDetailedFeedback discardMenuItemDetailedFeedback;
+    discardMenuItemDetailedFeedback.userId = this->userIdLoggedIn;
     std::cout<<"Provide MenuItem Id you want to provide detailed feedback for: \n";
     std::cin>>discardMenuItemDetailedFeedback.menuItemId;
     std::cout<<"What did you like about the menu item? \n";
@@ -157,7 +160,7 @@ void EmployeeInterface::voteForTomorrowMenu(){
 
 void EmployeeInterface::showChefRollOutMenu(){
     Operation operation = Operation::GetChefRollOutMenuForTomorrow;
-    std::string viewMenuSerializedRequest = SerializationUtility::serializeOperation(operation, "");
+    std::string viewMenuSerializedRequest = SerializationUtility::serializeOperation(operation, std::to_string(this->userIdLoggedIn));
     requestHandler->sendRequest(viewMenuSerializedRequest);
 
     std::string serializedMenuList = requestHandler->receiveResponse();

@@ -60,6 +60,7 @@ std::string ChefController::handleRequest(Operation operation, std::string reque
     }
     else if(operation == Operation::GetMenuItemIdForDetailFeedbackFromChef){
         pushNotification(Operation::GetMenuItemIdForDetailFeedbackFromChef, requestData);
+        response = "Notification Sent to User for Detail Feedback";
     }
     else {
         response = "Invalid operation";

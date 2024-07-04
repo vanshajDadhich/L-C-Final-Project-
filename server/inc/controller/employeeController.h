@@ -11,6 +11,7 @@
 #include "../service/notificationService.h"
 #include "../service/discardMenuItemDetailedFeedbackService.h"
 #include "../service/userProfileService.h"
+#include "../recommendationEngine/recommendationEngine.h"
 
 class EmployeeController : public IUserController {
     private :
@@ -21,11 +22,15 @@ class EmployeeController : public IUserController {
     NotificationService* notificationService;
     DiscardMenuItemDetailedFeedbackService* discardMenuItemDetailedFeedbackService;
     UserProfileService* userProfileService;
+    RecommendationEngine* recommendationEngine;
+    
 
 public:
-    EmployeeController(FeedbackService* feedbackService, NextDayMenuVotingService* nextDayMenuVotingService, MenuItemService* menuItemService, TodayMenuService* todayMenuService, NotificationService* notificationService, DiscardMenuItemDetailedFeedbackService* discardMenuItemDetailedFeedbackService, UserProfileService* userProfileService);
+    EmployeeController(FeedbackService* feedbackService, NextDayMenuVotingService* nextDayMenuVotingService, MenuItemService* menuItemService, TodayMenuService* todayMenuService, NotificationService* notificationService, DiscardMenuItemDetailedFeedbackService* discardMenuItemDetailedFeedbackService, UserProfileService* userProfileService, RecommendationEngine* recommendationEngine);
     std::string handleRequest(Operation operation, std::string request) override;
     std::vector<NextDayMenuRollOut> getNextDayMenuItemsToRollOut();
+    std::vector<NextDayMenuRollOut> filterMenuItemsByType(MenuItemType menuItemType,
+    const std::vector<NextDayMenuRollOut>& chefRolloutMenuForNextDay);
 
 };
 
