@@ -1,4 +1,6 @@
-#pragma once
+#ifndef USERPROFILE_H
+#define USERPROFILE_H
+
 #include "serializable.h"
 #include <sstream>
 
@@ -27,17 +29,15 @@ enum SweetToothPreference : int {
 
 struct UserProfile : public Serializable {
     int userId = 0;
-    VegetarianPreference vegetarianPreference = VegetarianPreference::Vegetarian;
-    SpiceLevelOption spiceLevelOption = SpiceLevelOption::High;
-    FoodPreference foodPreference = FoodPreference::NorthIndian;
-    SweetToothPreference sweetToothPreference = SweetToothPreference::Yes;
+    VegetarianPreference vegetarianPreference ;
+    SpiceLevelOption spiceLevelOption;
+    FoodPreference foodPreference;
+    SweetToothPreference sweetToothPreference;
 
-    UserProfile(int userId, VegetarianPreference vegetarianPreference, SpiceLevelOption spiceLevelOption, 
-                FoodPreference foodPreference, SweetToothPreference sweetToothPreference)
+    UserProfile(int userId = 0, VegetarianPreference vegetarianPreference = VegetarianPreference::Vegetarian, SpiceLevelOption spiceLevelOption  = SpiceLevelOption::High, 
+                FoodPreference foodPreference = FoodPreference::NorthIndian, SweetToothPreference sweetToothPreference = SweetToothPreference::Yes)
         : userId(userId), vegetarianPreference(vegetarianPreference), spiceLevelOption(spiceLevelOption), 
           foodPreference(foodPreference), sweetToothPreference(sweetToothPreference) {}
-
-    UserProfile() {}
 
     std::string serialize() const override {
         return std::to_string(userId) + ";" + std::to_string(static_cast<int>(vegetarianPreference)) + ";" + 
@@ -60,3 +60,5 @@ struct UserProfile : public Serializable {
         sweetToothPreference = static_cast<SweetToothPreference>(std::stoi(token));
     }
 };
+
+#endif

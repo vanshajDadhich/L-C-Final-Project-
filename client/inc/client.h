@@ -23,4 +23,4 @@ private:
     void handleError(const std::string& errorMessage) const;
 };
 
-#endif // CLIENT_H
+#endif

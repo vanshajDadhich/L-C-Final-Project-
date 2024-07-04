@@ -2,21 +2,20 @@
 #define USERSERVICE_H
 
 #include"../DAO/IUserDAO.h"
+#include<memory>
 
 class UserService
 {
 public:
-    UserService(IUserDAO* userDAO);
+    UserService(std::unique_ptr<IUserDAO> userDAO);
     bool addUser(const User& user);
     User getUserById(int userId);
 
     std::vector<User> getAllUsers();
-    int authenticateUser(const int& userId, const std::string& password);
 
     ~UserService() = default;
 private:    
-    IUserDAO* userDAO;
-    int userIdcounter = 10;
+    std::unique_ptr<IUserDAO> userDAO;
 };
 
-#endif // USERSERVICE_H
+#endif 

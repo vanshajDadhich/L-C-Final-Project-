@@ -1,16 +1,16 @@
 #include "../../inc/service/discardMenuItemDetailedFeedbackService.h"
 
-DiscardMenuItemDetailedFeedbackService::DiscardMenuItemDetailedFeedbackService(std::shared_ptr<IDiscardMenuItemDetailedFeedbackDAO> dao)
-    : dao(dao) {}
+DiscardMenuItemDetailedFeedbackService::DiscardMenuItemDetailedFeedbackService(std::unique_ptr<IDiscardMenuItemDetailedFeedbackDAO> discardMenuItemDetailedFeedbackDAO)
+    : discardMenuItemDetailedFeedbackDAO(std::move(discardMenuItemDetailedFeedbackDAO)) {}
 
 int DiscardMenuItemDetailedFeedbackService::addFeedback(const DiscardMenuItemDetailedFeedback& feedback) {
-    return dao->addFeedback(feedback);
+    return discardMenuItemDetailedFeedbackDAO->addFeedback(feedback);
 }
 
-DiscardMenuItemDetailedFeedback DiscardMenuItemDetailedFeedbackService::getFeedbackByID(const int& id) {
-    return dao->getFeedbackByID(id);
+DiscardMenuItemDetailedFeedback DiscardMenuItemDetailedFeedbackService::getFeedbackById(const int& id) {
+    return discardMenuItemDetailedFeedbackDAO->getFeedbackById(id);
 }
 
 std::vector<DiscardMenuItemDetailedFeedback> DiscardMenuItemDetailedFeedbackService::getAllFeedbacks() {
-    return dao->getAllFeedbacks();
+    return discardMenuItemDetailedFeedbackDAO->getAllFeedbacks();
 }

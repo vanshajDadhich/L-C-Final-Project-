@@ -11,23 +11,16 @@ std::shared_ptr<sql::Connection> DatabaseConnection::getConnection() {
   if (connection != nullptr) {
     return connection;
   }
-  return std::shared_ptr<sql::Connection>();
-  std::runtime_error(
-      "Connection is not initialized.Need to call InitDbConnection first");
+  throw std::runtime_error("Connection is not initialized. Need to call InitDbConnection first");
 }
 
-void DatabaseConnection::initDbConnection(const std::string &hostName,
-                                    const std::string &userName,
-                                    const std::string &password,
-                                    const std::string &schemaName) {
-  sql::mysql::MySQL_Driver *driver;
-  driver = sql::mysql::get_mysql_driver_instance();
-  connection = std::shared_ptr<sql::Connection>(
-      driver->connect(hostName, userName, password));
+void DatabaseConnection::initDbConnection(const std::string& hostName,
+                                          const std::string& userName,
+                                          const std::string& password,
+                                          const std::string& schemaName) {
+  sql::mysql::MySQL_Driver* driver = sql::mysql::get_mysql_driver_instance();
+  connection = std::shared_ptr<sql::Connection>(driver->connect(hostName, userName, password));
   connection->setSchema(schemaName);
-  // connection = std::shared_ptr<sql::Connection>(
-  //     driver->connect("tcp://localhost:3306", "cppserver", "cppserver"));
-  // connection->setSchema("FoodRecommendationSystem");
 }
 
 DatabaseConnection::DatabaseConnection() {}

@@ -4,11 +4,12 @@
 #include"../DAO/INextDayMenuVotingDAO.h"
 #include"../DTO/menuItem.h"
 #include <vector>
+#include<memory>
 
 class NextDayMenuVotingService
 {
 public:
-    NextDayMenuVotingService(INextDayMenuVotingDAO* NextDayMenuVotingDAO);
+    NextDayMenuVotingService(std::unique_ptr<INextDayMenuVotingDAO> nextDayMenuVotingDAO);
     bool addNextDayMenuRollout(const std::vector<NextDayMenuVoting>& nextDayMenu);
     std::vector<NextDayMenuVoting> getAllNextDayMenuRollOutItem();
     bool increaseVoteCountForMenuItemId(const int& menuItemId);
@@ -16,6 +17,6 @@ public:
     std::vector<int> getMostVotedMenuItemIds();
     ~NextDayMenuVotingService() = default;
 private:
-    INextDayMenuVotingDAO* nextDayMenuVotingDAO;
+    std::unique_ptr<INextDayMenuVotingDAO> nextDayMenuVotingDAO;
 };
 #endif

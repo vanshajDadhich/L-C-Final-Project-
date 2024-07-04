@@ -8,10 +8,8 @@ struct Login : public Serializable {
     int userId;
     std::string password;
 
-    Login(int userId, std::string password)
+    Login(int userId = 0, std::string password = "")
        : userId(userId), password(password){}
-
-    Login(){}
 
     std::string serialize() const override {
         return std::to_string(userId)+ ";" + password;

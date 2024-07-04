@@ -9,7 +9,8 @@ UserProfileDAO::UserProfileDAO() : databaseConnection{DatabaseConnection::getIns
 int UserProfileDAO::addUserProfile(const UserProfile& userProfile) {
     try {
         std::unique_ptr<sql::PreparedStatement> pstmt(
-            databaseConnection->getConnection()->prepareStatement("INSERT INTO UserProfile (userId, vegetarianPreference, spiceLevelOption, foodPreference, sweetToothPreference) VALUES (?, ?, ?, ?, ?)"));
+            databaseConnection->getConnection()->prepareStatement(
+                "INSERT INTO UserProfile (userId, vegetarianPreference, spiceLevelOption, foodPreference, sweetToothPreference) VALUES (?, ?, ?, ?, ?)"));
         pstmt->setInt(1, userProfile.userId);
         pstmt->setInt(2, static_cast<int>(userProfile.vegetarianPreference));
         pstmt->setInt(3, static_cast<int>(userProfile.spiceLevelOption));
@@ -26,7 +27,7 @@ int UserProfileDAO::addUserProfile(const UserProfile& userProfile) {
         return userProfile.userId;
     } catch (sql::SQLException &e) {
         std::cerr << "SQL error: " << e.what() << std::endl;
-        return -1; // Return -1 on error
+        return -1;
     }
 }
 
@@ -50,7 +51,6 @@ UserProfile UserProfileDAO::getUserProfileByID(const int& userId) {
         std::cerr << "SQL error: " << e.what() << std::endl;
     }
 
-    // Return a default-constructed UserProfile if not found or error
     return UserProfile();
 }
 

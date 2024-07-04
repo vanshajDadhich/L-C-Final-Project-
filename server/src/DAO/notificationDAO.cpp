@@ -21,7 +21,7 @@ std::vector<Notification> NotificationDAO::getAllNotifications() {
                 res->getString("date")
             ));
         }
-    } catch (sql::SQLException &e) {
+    } catch (const sql::SQLException &e) {
         std::cerr << "SQL error: " << e.what() << std::endl;
     }
 
@@ -43,11 +43,10 @@ Notification NotificationDAO::getNotificationById(const int& notificationId) {
                 res->getString("date")
             );
         }
-    } catch (sql::SQLException &e) {
+    } catch (const sql::SQLException &e) {
         std::cerr << "SQL error: " << e.what() << std::endl;
     }
 
-    // Return a default-constructed Notification if not found or error
     return Notification(0, "", "", "");
 }
 
@@ -60,7 +59,7 @@ bool NotificationDAO::addNotification(const Notification& notification) {
         pstmt->executeUpdate();
 
         return true;
-    } catch (sql::SQLException &e) {
+    } catch (const sql::SQLException &e) {
         std::cerr << "SQL error: " << e.what() << std::endl;
         return false;
     }
@@ -73,7 +72,7 @@ bool NotificationDAO::deleteNotification(const int& notificationId) {
         pstmt->setInt(1, notificationId);
         pstmt->executeUpdate();
         return true;
-    } catch (sql::SQLException &e) {
+    } catch (const sql::SQLException &e) {
         std::cerr << "SQL error: " << e.what() << std::endl;
         return false;
     }
@@ -96,7 +95,7 @@ std::vector<Notification> NotificationDAO::getAllNotificationsFromId(const int& 
                 res->getString("date")
             ));
         }
-    } catch (sql::SQLException &e) {
+    } catch (const sql::SQLException &e) {
         std::cerr << "SQL error: " << e.what() << std::endl;
     }
 

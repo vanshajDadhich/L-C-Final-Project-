@@ -2,16 +2,20 @@
 #define AUTHENTICATION_CONTROLLER_H
 
 #include "../service/userService.h"
-#include "../DTO/SerializationUtility.h"
+#include "../DTO/serializationUtility.h"
 #include "../DTO/login.h"
+#include <memory>
 
-class AuthenticationController
-{
+class AuthenticationController {
 public:
-    AuthenticationController(UserService* userService);
-    int authenticateUser(std::string request);
+    explicit AuthenticationController(std::unique_ptr<UserService> userService);
+    int authenticateUser(const std::string& requestData);
     ~AuthenticationController() = default;
+
 private:
-    UserService* userService;
+    std::unique_ptr<UserService> userService;
+
+    bool isValidLogin(const Login& loginCredentials, const User& user) const;
 };
+
 #endif

@@ -15,4 +15,4 @@ public:
     virtual int getMostVotedMenuItemIdForMenuType(MenuItemType menuItemType) = 0;
 };
 
-#endif // INextDayMenuVotingDAO_H
+#endif

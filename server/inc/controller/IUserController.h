@@ -3,14 +3,12 @@
 
 #include <vector>
 #include <string>
-#include "../DTO/SerializationUtility.h"
-
-
+#include "../DTO/serializationUtility.h"
 
 class IUserController
 {
 public:
-    virtual std::string handleRequest(Operation operation, std::string request) = 0;
+    virtual std::string handleRequest(Operation operation, const std::string& request) = 0;
 };
 
-#endif // IUSERCONTROLLER_H
+#endif

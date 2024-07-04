@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DATABASECONNECTION_H
+#define DATABASECONNECTION_H
 
 #include <cppconn/connection.h>
 #include <memory>
@@ -20,3 +21,5 @@ public:
   ~DatabaseConnection();
   
 };
+
+#endif

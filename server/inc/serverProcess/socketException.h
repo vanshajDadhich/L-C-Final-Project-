@@ -3,6 +3,7 @@
 
 #include <exception>
 #include <string>
+#include<iostream>
 
 class SocketException : public std::exception {
 public:

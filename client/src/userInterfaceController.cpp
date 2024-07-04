@@ -21,7 +21,7 @@ void UserInterfaceController::loginPrompt() {
     std::cin >> login.userId;
     std::cout << "Password: ";
     std::cin >> login.password;
-    Operation operation = Operation::login;
+    Operation operation = Operation::LoginUser;
     auto loginData = SerializationUtility::serialize(login);
     this->userIdLoggedIn = login.userId;
     auto loginSerializedRequest = SerializationUtility::serializeOperation(operation, loginData);

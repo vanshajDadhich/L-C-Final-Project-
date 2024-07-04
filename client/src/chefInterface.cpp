@@ -2,7 +2,7 @@
 #include <iostream>
 #include <limits> 
 #include <vector>
-#include <stdexcept> // For std::runtime_error
+#include <stdexcept>
 
 ChefInterface::ChefInterface(RequestHandler* requestHandler)
     : requestHandler(requestHandler) {}
@@ -66,7 +66,7 @@ void ChefInterface::showDiscardMenuList(){
 
         std::cout<<"serializedMenuList"<<serializedMenuList<<std::endl;
 
-        std::vector<std::string>MenuList = VectorSerializer::deserialize(serializedMenuList);
+        std::vector<std::string>MenuList = SerializationUtility::deserializeStringToVector(serializedMenuList);
         std::cout<< "Menu Item Details:" << std::endl;
         std::vector<int> discardMenuItemIdList = {};
         
@@ -84,7 +84,7 @@ void ChefInterface::showDiscardMenuList(){
         showDiscardMenuItemActionPrompt(discardMenuItemIdList);
     } catch (const std::exception& e) {
         std::cerr << "Error in showing recommended menu: " << e.what() << std::endl;
-        throw; // Re-throw the exception to propagate it
+        throw;
     }
 }
 
@@ -203,7 +203,7 @@ void ChefInterface::rollOutMenuForTomorrow(std::vector<std::pair<MenuItemType, i
             chefRollOutMenuForTomorrow.push_back(menuItemIdsforMealType);
         }
 
-        std::string serializeRequestData = VectorSerializer::serialize(chefRollOutMenuForTomorrow);
+        std::string serializeRequestData = SerializationUtility::serializeStringVector(chefRollOutMenuForTomorrow);
 
         std::string serializedRequestWithOperation = SerializationUtility::serializeOperation(operation, serializeRequestData);
         std::cout<<"Roll Out Menu Serialized Data"<<serializedRequestWithOperation<<std::endl;
@@ -233,7 +233,7 @@ std::string ChefInterface::getValidMenuItemIdsForMealType(const std::vector<std:
         }
     } catch (const std::exception& e) {
         std::cerr << "Error in getting valid menu item IDs for meal type: " << e.what() << std::endl;
-        throw; // Re-throw the exception to propagate it
+        throw;
     }
 }
 
@@ -302,7 +302,7 @@ std::vector<std::pair<MenuItemType, int>> ChefInterface::showRecommendedMenu(Men
 
         std::string serializedMenuList = requestHandler->receiveResponse();
 
-        std::vector<std::string>MenuList = VectorSerializer::deserialize(serializedMenuList);
+        std::vector<std::string>MenuList = SerializationUtility::deserializeStringToVector(serializedMenuList);
         std::cout<< "Menu Item Details:" << std::endl;
         
         for (const auto& item : MenuList) {
@@ -319,7 +319,7 @@ std::vector<std::pair<MenuItemType, int>> ChefInterface::showRecommendedMenu(Men
         return recommendedMenuItem;
     } catch (const std::exception& e) {
         std::cerr << "Error in showing recommended menu: " << e.what() << std::endl;
-        throw; // Re-throw the exception to propagate it
+        throw;
     }
 }
 
@@ -331,7 +331,7 @@ void ChefInterface::showMenuItemList() {
 
         std::string serializedMenuList = requestHandler->receiveResponse();
 
-        std::vector<std::string>menuList = VectorSerializer::deserialize(serializedMenuList);
+        std::vector<std::string>menuList = SerializationUtility::deserializeStringToVector(serializedMenuList);
 
         for (const auto& item : menuList) {
             auto menuItem = SerializationUtility::deserialize<MenuItem>(item);
@@ -370,7 +370,7 @@ void ChefInterface::showMenuItemList() {
         }
     } catch (const std::exception& e) {
         std::cerr << "Error in showing menu item list: " << e.what() << std::endl;
-        throw; // Re-throw the exception to propagate it
+        throw;
     }
 }
 
@@ -388,7 +388,6 @@ std::string ChefInterface::validateMenuItemsAgainstRecommendedItems(const std::v
             menuItemIds.push_back(menuItemId);
         }
 
-        // Check each menuItemId against recommendedMenuItem
         for (int menuItemId : menuItemIds) {
             bool found = false;
             for (const auto& item : recommendedMenuItem) {
@@ -408,6 +407,6 @@ std::string ChefInterface::validateMenuItemsAgainstRecommendedItems(const std::v
         return invalidItems;
     } catch (const std::exception& e) {
         std::cerr << "Error in validating menu items against recommended items: " << e.what() << std::endl;
-        throw; // Re-throw the exception to propagate it
+        throw;
     }
 }

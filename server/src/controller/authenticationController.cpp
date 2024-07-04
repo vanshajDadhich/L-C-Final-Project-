@@ -1,11 +1,23 @@
 #include "../../inc/controller/authenticationController.h"
-#include<iostream>
+#include <iostream>
 
-AuthenticationController::AuthenticationController(UserService* userService)
-    : userService(userService) {}
+AuthenticationController::AuthenticationController(std::unique_ptr<UserService> userService)
+    : userService(std::move(userService)) {}
 
-int AuthenticationController::authenticateUser(std::string request) {
-    Login loginData = SerializationUtility::deserialize<Login>(request);
-    std::cout<<"Authenticating User : 8\n";
-    return userService->authenticateUser(loginData.userId, loginData.password);
+int AuthenticationController::authenticateUser(const std::string& requestData) {
+    int userRole = -1;
+    Login loginCredentials = SerializationUtility::deserialize<Login>(requestData);
+    User user = userService->getUserById(loginCredentials.userId);
+
+    if (isValidLogin(loginCredentials, user)) {
+        std::cout << "[AuthenticationController] User authenticated successfully. UserID: " << loginCredentials.userId << "\n";
+        userRole =  user.role;
+    }
+
+    std::cout << "[AuthenticationController] Authentication failed for UserID: " << loginCredentials.userId << "\n";
+    return userRole;
+}
+
+bool AuthenticationController::isValidLogin(const Login& loginCredentials, const User& user) const {
+    return user.userId == loginCredentials.userId && user.password == loginCredentials.password;
 }

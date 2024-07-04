@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FEEDBACK_H
+#define FEEDBACK_H
 
 #include <cstdint>
 #include <string>
@@ -51,3 +52,5 @@ struct Feedback : public Serializable {
     date = token;
   }
 };
+
+#endif

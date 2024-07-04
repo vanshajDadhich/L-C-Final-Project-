@@ -4,13 +4,13 @@
 #include <string>
 #include <sstream>
 #include<iostream>
+#include<vector>
 #include "login.h"
 #include "feedback.h"
 #include "user.h"
 #include "menuItem.h"
 #include "nextDayMenuRollOut.h"
 #include "notification.h"
-#include "../vectorSerializer.h"
 #include "discardMenuItemDetailedFeedback.h"
 
 enum Operation : int {
@@ -25,13 +25,13 @@ enum Operation : int {
    ViewNotification = 8,
    ProvideFeedback = 9,
    VoteItemFromTomorrowMenu = 10,
-   login = 11,
+   LoginUser = 11,
    GetRecommandationFromEngine = 12,
    GetTodaysMenu = 13,
    GetChefRollOutMenuForTomorrow = 14,
    GetDiscardMenuList = 15,
    RemoveMenuItemFromList = 16,
-   provideDiscardMenuItemDetailedFeedback = 17,
+   ProvideDiscardMenuItemDetailedFeedback = 17,
    GetMenuItemIdForDetailFeedbackFromChef = 18
 };
 
@@ -66,6 +66,28 @@ public:
 
         return result;
     }
+
+    std::string static serializeStringVector(std::vector<std::string> vec) {
+        std::string serializedString;
+        for (const auto& str : vec) {
+            serializedString += str + '$';
+        }
+        if (!serializedString.empty()) {
+            serializedString.pop_back();
+        }
+        return serializedString;
+    }
+
+    std::vector<std::string> static deserializeStringToVector(const std::string& serialized) {
+        std::vector<std::string> result;
+    std::string token;
+    std::istringstream tokenStream(serialized);
+    while (std::getline(tokenStream, token, '$')) {
+        result.push_back(token);
+    }
+    return result;
+    }
+
 };
 
 #endif

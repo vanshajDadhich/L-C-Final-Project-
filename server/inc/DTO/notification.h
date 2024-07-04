@@ -40,4 +40,4 @@ struct Notification : public Serializable {
     }
 };
 
-#endif // NOTIFICATION_H
+#endif

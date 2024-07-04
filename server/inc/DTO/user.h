@@ -1,4 +1,6 @@
-#pragma once
+#ifndef USER_H
+#define USER_H
+
 #include "serializable.h"
 
 enum Role : int { Admin = 1, Employee = 2, Chef = 3 };
@@ -9,10 +11,8 @@ struct User : public Serializable {
     std::string password;
     Role role;
 
-    User(int userId, std::string name, int role, std::string password)
+    User(int userId = 0, std::string name = "", int role = 0, std::string password = "")
         : userId(userId), name(name), password(password), role(static_cast<Role>(role)) {}
-
-    User(){}
 
     std::string serialize() const override {
         return std::to_string(userId) + ";" + name + ";" + std::to_string(static_cast<int>(role)) + ";" + password;
@@ -31,3 +31,5 @@ struct User : public Serializable {
         password = token;
     }
 };
+
+#endif

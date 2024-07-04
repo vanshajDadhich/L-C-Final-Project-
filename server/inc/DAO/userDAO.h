@@ -7,13 +7,10 @@
 
 class UserDAO : public IUserDAO {
 public:
-
     UserDAO();
 
     int addUser(const User& user) override;
-
     User getUserByID(const int& userId) override;
-
     std::vector<User> getAllUsers() override;
 
 private:

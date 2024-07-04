@@ -1,8 +1,8 @@
 #include "../../inc/service/feedbackService.h"
 #include <iostream>
 
-FeedbackService::FeedbackService(IFeedbackDAO* feedbackDAO)
-    : feedbackDAO(feedbackDAO) {}
+FeedbackService::FeedbackService(std::unique_ptr<IFeedbackDAO> feedbackDAO)
+    : feedbackDAO(std::move(feedbackDAO)) {}
 
 bool FeedbackService::addFeedback(const Feedback& feedback) {
     return feedbackDAO->addFeedback(feedback);

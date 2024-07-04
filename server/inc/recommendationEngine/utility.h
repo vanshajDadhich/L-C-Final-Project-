@@ -1,21 +1,6 @@
-// #pragma once
-// #include <iostream>
-// #include <fstream>
-// #include <algorithm>
-// #include <unordered_set>
+#ifndef UTILITY_H
+#define UTILITY_H
 
-// class Utility
-// {
-// public:
-//    static std::string toLower(const std::string &str);
-
-//    static std::vector<std::string> splitWords(const std::string &str);
-
-//    static std::unordered_set<std::string> readWordsFromFile(const std::string &filename);
-// };
-
-
-#pragma once
 #include <iostream>
 #include <fstream>
 #include <algorithm>
@@ -24,7 +9,9 @@
 
 class Utility {
 public:
-    static std::string toLower(const std::string &str);
-    static std::vector<std::string> splitWords(const std::string &str);
-    static std::unordered_set<std::string> readWordsFromFile(const std::string &filename);
+    std::string toLower(const std::string &str);
+    std::vector<std::string> splitWords(const std::string &str);
+    std::unordered_set<std::string> readWordsFromCSV(const std::string &filename);
 };
+
+#endif

@@ -59,19 +59,19 @@ void EmployeeInterface::showMenu(){
 }
 
 void EmployeeInterface::getDetailedFeedbackForDiscardedMenuItem(){
-    Operation operation = Operation::provideDiscardMenuItemDetailedFeedback;
+    Operation operation = Operation::ProvideDiscardMenuItemDetailedFeedback;
     DiscardMenuItemDetailedFeedback discardMenuItemDetailedFeedback;
     discardMenuItemDetailedFeedback.userId = this->userIdLoggedIn;
     std::cout<<"Provide MenuItem Id you want to provide detailed feedback for: \n";
     std::cin>>discardMenuItemDetailedFeedback.menuItemId;
     std::cout<<"What did you like about the menu item? \n";
-    std::cin.ignore();  // Ignore leftover newline character from previous input
+    std::cin.ignore();
     std::getline(std::cin, discardMenuItemDetailedFeedback.whatYouLiked);
     std::cout<<"How Would you like this food Item to taste? \n";
-    std::cin.ignore();  // Ignore leftover newline character from previous input
+    std::cin.ignore();
     std::getline(std::cin, discardMenuItemDetailedFeedback.howWouldItTaste);
     std::cout<<" Share your moms recipe. \n";
-    std::cin.ignore();  // Ignore leftover newline character from previous input
+    std::cin.ignore();
     std::getline(std::cin, discardMenuItemDetailedFeedback.shareRecipe);
     
     std::string serializedData = SerializationUtility::serialize(discardMenuItemDetailedFeedback);
@@ -90,7 +90,7 @@ void EmployeeInterface::viewTodayMenu(){
 
     std::cout<<"serializedMenuList"<<serializedMenuList<<std::endl;
 
-    std::vector<std::string>MenuList = VectorSerializer::deserialize(serializedMenuList);
+    std::vector<std::string>MenuList = SerializationUtility::deserializeStringToVector(serializedMenuList);
 
     for (const auto& item : MenuList) {
         auto menuItem = SerializationUtility::deserialize<MenuItem>(item);
@@ -115,7 +115,7 @@ void EmployeeInterface::provideFeedbackForTodayMenu(){
     std::cin >> feedback.rating;
     
     std::cout << "Enter Comment: ";
-    std::cin.ignore();  // Ignore leftover newline character from previous input
+    std::cin.ignore();
     std::getline(std::cin, feedback.comment);
     
 
@@ -139,7 +139,6 @@ std::string EmployeeInterface::getCurrentTimestamp(){
     localtime_r(&now_time_t, &now_tm); // Use localtime_r on POSIX-compliant systems
 #endif
     
-    // Create a string stream to format the time
     std::ostringstream oss;
     oss << std::put_time(&now_tm, "%Y-%m-%d %H:%M:%S");
     
@@ -165,7 +164,7 @@ void EmployeeInterface::showChefRollOutMenu(){
 
     std::string serializedMenuList = requestHandler->receiveResponse();
 
-     std::vector<std::string>MenuList = VectorSerializer::deserialize(serializedMenuList);
+    std::vector<std::string>MenuList = SerializationUtility::deserializeStringToVector(serializedMenuList);
 
     for (const auto& item : MenuList) {
         auto menuItem = SerializationUtility::deserialize<NextDayMenuRollOut>(item);
@@ -187,7 +186,7 @@ void EmployeeInterface::viewNotification(){
 
     std::string serializedNotificationList = requestHandler->receiveResponse();
 
-    std::vector<std::string>notificationList = VectorSerializer::deserialize(serializedNotificationList);
+    std::vector<std::string>notificationList = SerializationUtility::deserializeStringToVector(serializedNotificationList);
 
     for (const auto& item : notificationList) {
         auto notification = SerializationUtility::deserialize<Notification>(item);

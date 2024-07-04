@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DISCARD_MENU_ITEM_DETAILED_FEEDBACK_SERVICE_H
+#define DISCARD_MENU_ITEM_DETAILED_FEEDBACK_SERVICE_H
+
 #include "../DTO/discardMenuItemDetailedFeedback.h"
 #include "../DAO/IDiscardMenuItemDetailedFeedbackDAO.h"
 #include <memory>
@@ -6,12 +8,14 @@
 
 class DiscardMenuItemDetailedFeedbackService {
 public:
-    DiscardMenuItemDetailedFeedbackService(std::shared_ptr<IDiscardMenuItemDetailedFeedbackDAO> dao);
+    DiscardMenuItemDetailedFeedbackService(std::unique_ptr<IDiscardMenuItemDetailedFeedbackDAO> dao);
 
     int addFeedback(const DiscardMenuItemDetailedFeedback& feedback);
-    DiscardMenuItemDetailedFeedback getFeedbackByID(const int& id);
+    DiscardMenuItemDetailedFeedback getFeedbackById(const int& id);
     std::vector<DiscardMenuItemDetailedFeedback> getAllFeedbacks();
 
 private:
-    std::shared_ptr<IDiscardMenuItemDetailedFeedbackDAO> dao;
+    std::unique_ptr<IDiscardMenuItemDetailedFeedbackDAO> discardMenuItemDetailedFeedbackDAO;
 };
+
+#endif

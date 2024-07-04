@@ -1,9 +1,11 @@
-#pragma once
+#ifndef SERIALIZATIONUTILITY_H
+#define SERIALIZATIONUTILITY_H
 
 #include <string>
 #include <sstream>
 #include "serializable.h"
 #include<iostream>
+#include<vector>
 
 enum Operation : int {
    AddUser = 0,
@@ -17,13 +19,13 @@ enum Operation : int {
    ViewNotification = 8,
    ProvideFeedback = 9,
    VoteItemFromTomorrowMenu = 10,
-   login = 11,
+   LoginUser = 11,
    GetRecommandationFromEngine = 12,
    GetTodaysMenu = 13,
    GetChefRollOutMenuForTomorrow = 14,
    GetDiscardMenuList = 15,
    RemoveMenuItemFromList = 16,
-   provideDiscardMenuItemDetailedFeedback = 17,
+   ProvideDiscardMenuItemDetailedFeedback = 17,
    GetMenuItemIdForDetailFeedbackFromChef = 18
 };
 
@@ -58,4 +60,27 @@ public:
 
         return result;
     }
+
+    std::string static serializeStringVector(std::vector<std::string> vec) {
+        std::string serializedString;
+        for (const auto& str : vec) {
+            serializedString += str + '$';
+        }
+        if (!serializedString.empty()) {
+            serializedString.pop_back();
+        }
+        return serializedString;
+    }
+
+    std::vector<std::string> static deserializeStringToVector(const std::string& serialized, char delimeter) {
+        std::vector<std::string> result;
+        std::string token;
+        std::istringstream tokenStream(serialized);
+        while (std::getline(tokenStream, token, delimeter)) {
+            result.push_back(token);
+        }
+        return result;
+    }
 };
+
+#endif

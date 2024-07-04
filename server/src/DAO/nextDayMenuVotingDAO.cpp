@@ -9,7 +9,8 @@ NextDayMenuVotingDAO::NextDayMenuVotingDAO() : databaseConnection{DatabaseConnec
 bool NextDayMenuVotingDAO::addNextDayMenuRollout(const std::vector<NextDayMenuVoting>& nextDayMenus) {
     try {
         std::unique_ptr<sql::PreparedStatement> pstmt(
-            databaseConnection->getConnection()->prepareStatement("INSERT INTO NextDayMenuVoting (menuItemId, voteCount, rating, sentiments) VALUES (?, ?, ?, ?)"));
+            databaseConnection->getConnection()->prepareStatement(
+                "INSERT INTO NextDayMenuVoting (menuItemId, voteCount, rating, sentiments) VALUES (?, ?, ?, ?)"));
         
         for (const auto& menu : nextDayMenus) {
             pstmt->setInt(1, menu.menuItemId);
@@ -51,7 +52,8 @@ std::vector<NextDayMenuVoting> NextDayMenuVotingDAO::getAllNextDayMenuRollOutIte
 bool NextDayMenuVotingDAO::increaseVoteCountForMenuItemId(const int& menuItemId) {
     try {
         std::unique_ptr<sql::PreparedStatement> pstmt(
-            databaseConnection->getConnection()->prepareStatement("UPDATE NextDayMenuVoting SET voteCount = voteCount + 1 WHERE menuItemId = ?"));
+            databaseConnection->getConnection()->prepareStatement(
+                "UPDATE NextDayMenuVoting SET voteCount = voteCount + 1 WHERE menuItemId = ?"));
         pstmt->setInt(1, menuItemId);
         pstmt->executeUpdate();
         return true;
@@ -61,11 +63,10 @@ bool NextDayMenuVotingDAO::increaseVoteCountForMenuItemId(const int& menuItemId)
     }
 }
 
-
-bool NextDayMenuVotingDAO::deleteMenuRolledOut(){
-     try {
+bool NextDayMenuVotingDAO::deleteMenuRolledOut() {
+    try {
         std::unique_ptr<sql::PreparedStatement> pstmt(
-        databaseConnection->getConnection()->prepareStatement("DELETE FROM NextDayMenuVoting"));
+            databaseConnection->getConnection()->prepareStatement("DELETE FROM NextDayMenuVoting"));
         pstmt->executeUpdate();
         return true;
     } catch (sql::SQLException &e) {
@@ -73,7 +74,6 @@ bool NextDayMenuVotingDAO::deleteMenuRolledOut(){
         return false;
     }
 }
-
 
 int NextDayMenuVotingDAO::getMostVotedMenuItemIdForMenuType(MenuItemType menuItemType) {
     try {
@@ -95,4 +95,3 @@ int NextDayMenuVotingDAO::getMostVotedMenuItemIdForMenuType(MenuItemType menuIte
 
     return -1;
 }
-

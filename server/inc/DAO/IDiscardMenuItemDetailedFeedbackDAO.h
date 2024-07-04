@@ -1,4 +1,6 @@
-#pragma once
+#ifndef IDISCARDMENUITEMDETAILEDFEEDBACKDAO_H
+#define IDISCARDMENUITEMDETAILEDFEEDBACKDAO_H
+
 #include "../DTO/discardMenuItemDetailedFeedback.h"
 #include <vector>
 
@@ -7,6 +9,8 @@ public:
     virtual ~IDiscardMenuItemDetailedFeedbackDAO() = default;
 
     virtual int addFeedback(const DiscardMenuItemDetailedFeedback& feedback) = 0;
-    virtual DiscardMenuItemDetailedFeedback getFeedbackByID(const int& id) = 0;
+    virtual DiscardMenuItemDetailedFeedback getFeedbackById(const int& id) = 0;
     virtual std::vector<DiscardMenuItemDetailedFeedback> getAllFeedbacks() = 0;
 };
+
+#endif

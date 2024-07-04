@@ -17,4 +17,4 @@ private:
     void handleError(const std::string& errorMessage) const;
 };
 
-#endif // REQUESTHANDLER_H
+#endif

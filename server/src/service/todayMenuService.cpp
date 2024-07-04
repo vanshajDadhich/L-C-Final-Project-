@@ -1,6 +1,6 @@
 #include "../../inc/service/todayMenuService.h"
 
-TodayMenuService::TodayMenuService(std::shared_ptr<ITodayMenuDAO> todayMenuDAO) : todayMenuDAO(todayMenuDAO) {}
+TodayMenuService::TodayMenuService(std::unique_ptr<ITodayMenuDAO> todayMenuDAO) : todayMenuDAO(std::move(todayMenuDAO)) {}
 
 bool TodayMenuService::addTodayMenu(const std::vector<int>& todayDayMenuItemId) {
     return todayMenuDAO->addTodayMenu(todayDayMenuItemId);

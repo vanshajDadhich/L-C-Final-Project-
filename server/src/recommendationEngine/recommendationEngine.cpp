@@ -3,9 +3,9 @@
 
 
 RecommendationEngine::RecommendationEngine()
-    // : positiveWords_(Utility::readWordsFromFile("PositiveWords.txt")),
-    //   negativeWords_(Utility::readWordsFromFile("NegativeWords.txt")),
-    //   negationWords_(Utility::readWordsFromFile("NegationWords.txt")) 
+    // : positiveWords_(utility_.readWordsFromCSV("positiveSentiments.csv")),
+    //   negativeWords_(utility_.readWordsFromCSV("negativeSentiments.csv")),
+    //   negationWords_(utility_.readWordsFromCSV("negationSentiments.csv")) 
 {
     negationWords_ = {
     "not", "never", "no", "none", "nothing", "nowhere", "neither", "hardly", "scarcely",
@@ -144,18 +144,21 @@ double RecommendationEngine::evaluateFoodItem(const std::vector<Feedback>& feedb
     for (const auto& feedback : feedbacks) {
         averageRating += feedback.rating;
     }
-
+    
     averageRating /= feedbacks.size();
     rating = averageRating;
     totalScore = (averageSentimentScore + averageRating) / 2.0;
+    for(auto i : sentiments){
+        std::cout<<"sentiments Vanshaj : "<<i<<std::endl;
+    }
     sentimentsString = getMostRepetativeSentiments(sentiments);
     std::cout<<"sentimentsString : "<<sentimentsString<<std::endl;
     return totalScore;
 }
 
 double RecommendationEngine::analyzeSentiment(const std::string& comment, std::vector<std::string>& foundSentiments) {
-    std::string lowerComment = Utility::toLower(comment);
-    std::vector<std::string> words = Utility::splitWords(lowerComment);
+    std::string lowerComment = utility_.toLower(comment);
+    std::vector<std::string> words = utility_.splitWords(lowerComment);
 
     int sentimentScore = 0; 
     for (size_t i = 0; i < words.size(); ++i) {
@@ -179,6 +182,9 @@ double RecommendationEngine::analyzeSentiment(const std::string& comment, std::v
         sentimentScore = 1;
     } else if (sentimentScore < -1) {
         sentimentScore = -1;
+    }
+    for(auto i : foundSentiments){
+        std::cout<<"foundSentiments : "<<i<<std::endl;
     }
 
     return ((sentimentScore + 1) / 2) * 5;

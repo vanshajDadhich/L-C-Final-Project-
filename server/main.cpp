@@ -15,18 +15,24 @@ void signalHandlerWrapper(int signal) {
 }
 
 int main() {
-    Server server(8081);
-    serverInstance = &server;
-    server.start();
+    try {
+        Server server(8081);
+        serverInstance = &server;
+        server.start();
 
-    std::cout << "Server started on port 8082. Press Ctrl+C to stop the server." << std::endl;
+        std::cout << "Server started on port 8081. Press Ctrl+C to stop the server." << std::endl;
+        std::signal(SIGINT, signalHandlerWrapper);
 
-    std::signal(SIGINT, signalHandlerWrapper);
-
-    // Main loop (example: sleeping for 1 second)
-    while (true) {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        while (true) {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
+    } catch (const SocketException& e) {
+        std::cerr << "Socket exception: " << e.what() << std::endl;
+        return EXIT_FAILURE;
+    } catch (const std::exception& e) {
+        std::cerr << "Exception: " << e.what() << std::endl;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    return EXIT_SUCCESS;
 }

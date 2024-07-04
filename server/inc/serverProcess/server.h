@@ -1,17 +1,16 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-#include <vector>
 #include <thread>
-#include <memory>
-#include <netinet/in.h>
 #include <mutex>
 #include <atomic>
+#include <arpa/inet.h>
+#include <netinet/in.h>
 #include "clientHandler.h"
 
 class Server {
 public:
-    Server(int port);
+    explicit Server(int port);
     ~Server();
     void start();
     void stop();
@@ -28,4 +27,4 @@ private:
     void acceptClients();
 };
 
-#endif // SERVER_H
+#endif

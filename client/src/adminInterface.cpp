@@ -73,7 +73,6 @@ void AdminInterface::showAddItemPrompt() {
     std::cin >> menuItemTypeInt;
     menuItem.menuItemType = static_cast<MenuItemType>(menuItemTypeInt);
 
-    // Additional fields
     std::cout << "Enter vegetarian preference (1 for Vegetarian, 2 for Non Vegetarian, 3 for Eggetarian): " << std::endl;
     std::cin >> vegetarianPreferenceInt;
     menuItem.vegetarianPreference = static_cast<VegetarianPreference>(vegetarianPreferenceInt);
@@ -126,7 +125,7 @@ void AdminInterface::showMenuItemList() {
 
     std::string serializedMenuList = requestHandler->receiveResponse();
 
-    std::vector<std::string>menuList = VectorSerializer::deserialize(serializedMenuList);
+    std::vector<std::string>menuList = SerializationUtility::deserializeStringToVector(serializedMenuList);
 
     for (const auto& item : menuList) {
          auto menuItem = SerializationUtility::deserialize<MenuItem>(item);

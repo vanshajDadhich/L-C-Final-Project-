@@ -1,25 +1,25 @@
-
 #ifndef CLIENTHANDLER_H
 #define CLIENTHANDLER_H
 
-#include <string>
 #include <vector>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <cstring>
 #include "requestProcessor.h"
-#include "vectorSerializer.h"
+#include "socketException.h"
 
 class ClientHandler {
 public:
-    ClientHandler(int clientSocket);
+    explicit ClientHandler(int clientSocket);
     void handle();
 
 private:
     int clientSocket;
     bool running;
     RequestProcessor requestProcessor;
-    VectorSerializer vectorSerializer;
-    
-    bool sendRequest(std::string request);
+
+    bool sendRequest(const std::string& request);
     std::string receiveRequest();
 };
 
-#endif // CLIENTHANDLER_H
+#endif

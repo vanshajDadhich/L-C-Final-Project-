@@ -1,4 +1,6 @@
-#pragma once
+#ifndef USER_PROFILE_SERVICE_H
+#define USER_PROFILE_SERVICE_H
+
 #include "../DTO/userProfile.h"
 #include "../DAO/IUserProfileDAO.h"
 #include <vector>
@@ -6,12 +8,14 @@
 
 class UserProfileService {
 public:
-    UserProfileService(std::shared_ptr<IUserProfileDAO> userProfileDAO);
+    UserProfileService(std::unique_ptr<IUserProfileDAO> userProfileDAO);
 
     int addUserProfile(const UserProfile& userProfile) ;
     UserProfile getUserProfileByID(const int& userId) ;
     std::vector<UserProfile> getAllUserProfiles() ;
 
 private:
-    std::shared_ptr<IUserProfileDAO> userProfileDAO;
+    std::unique_ptr<IUserProfileDAO> userProfileDAO;
 };
+
+#endif

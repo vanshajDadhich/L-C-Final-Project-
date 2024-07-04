@@ -1,4 +1,5 @@
-#pragma once
+#ifndef NEXTDAYMENUROLLOUT_H
+#define NEXTDAYMENUROLLOUT_H
 
 #include "serializable.h"
 #include "menuItem.h"
@@ -18,8 +19,6 @@ struct NextDayMenuRollOut : public Serializable {
                        int price = 0, int selectionCount = 0, double averageRating = 0, std::string sentiments = "")
         : menuItemId(menuItemId), menuItemName(menuItemName), menuItemType(menuItemType), price(price),
           selectionCount(selectionCount), averageRating(averageRating), sentiments(sentiments) {}
-
-    NextDayMenuRollOut(){}
 
     std::string serialize() const override {
         return std::to_string(menuItemId) + ";" +
@@ -55,3 +54,5 @@ struct NextDayMenuRollOut : public Serializable {
         std::getline(iss, sentiments, ';');
     }
 };
+
+#endif

@@ -2,36 +2,25 @@
 #define REQUESTPROCESSOR_H
 
 #include <string>
-#include <vector>
+#include <memory>
+#include <iostream>
 #include "../controller/authenticationController.h"
 #include "../controller/IUserController.h"
-#include "../service/menuItemService.h"
-#include "../service/userService.h"
-#include "../service/feedbackService.h"
-#include "../service/nextDayMenuVotingService.h"
-#include "../recommendationEngine/recommendationEngine.h"
-#include "../service/todayMenuService.h"
-#include "../service/notificationService.h"
-#include "../service/discardMenuItemDetailedFeedbackService.h"
-#include "../service/userProfileService.h"
 
 class RequestProcessor {
-    private :
-    AuthenticationController* authenticationController;
-    IUserController* userController;
-    MenuItemService* menuItemService;
-    UserService* userService;
-    FeedbackService* feedbackService;
-    NextDayMenuVotingService* nextDayMenuVotingService;
-    RecommendationEngine* recommendationEngine;
-    TodayMenuService* todayMenuService;
-    NotificationService* notificationService;
-    DiscardMenuItemDetailedFeedbackService* discardMenuItemDetailedFeedbackService;
-    UserProfileService* userProfileService;
+private:
+    std::unique_ptr<AuthenticationController> authenticationController;
+    std::unique_ptr<IUserController> userController;
+
+    std::unique_ptr<IUserController> initializeAdminController();
+    std::unique_ptr<IUserController> initializeEmployeeController();
+    std::unique_ptr<IUserController> initializeChefController();
+    std::string handleLoginRequest(const std::string& requestData);
+    std::string handleUserRequest(Operation operation, const std::string& requestData);
 
 public:
     RequestProcessor();
-    std::string processRequest(std::string request);
+    std::string processRequest(const std::string& request);
 };
 
-#endif // REQUESTPROCESSOR_H
+#endif

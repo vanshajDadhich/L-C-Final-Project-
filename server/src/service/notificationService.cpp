@@ -1,6 +1,6 @@
 #include"../../inc/service/notificationService.h"
 
-NotificationService::NotificationService(std::shared_ptr<NotificationDAO> notificationDAO)
+NotificationService::NotificationService(std::unique_ptr<NotificationDAO> notificationDAO)
     : notificationDAO(std::move(notificationDAO)) {}
 
 

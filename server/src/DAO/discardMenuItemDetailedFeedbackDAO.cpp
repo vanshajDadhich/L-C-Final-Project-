@@ -17,31 +17,29 @@ int DiscardMenuItemDetailedFeedbackDAO::addFeedback(const DiscardMenuItemDetaile
         pstmt->setString(5, feedback.shareRecipe);
         int updateCount = pstmt->executeUpdate();
 
-        // Check if the update was successful
         if (updateCount == 0) {
             std::cerr << "Failed to add feedback." << std::endl;
-            return -1; // Return -1 on failure
+            return -1;
         }
 
-        // Retrieve the last inserted id
         std::unique_ptr<sql::Statement> stmt(databaseConnection->getConnection()->createStatement());
         std::unique_ptr<sql::ResultSet> rs(stmt->executeQuery("SELECT LAST_INSERT_ID()"));
 
         int newFeedbackId = -1;
         if (rs->next()) {
-            newFeedbackId = rs->getInt(1); // Assuming id is the first column
+            newFeedbackId = rs->getInt(1); 
         } else {
             std::cerr << "Failed to retrieve last inserted id." << std::endl;
         }
 
         return newFeedbackId;
-    } catch (sql::SQLException &e) {
+    } catch (const sql::SQLException &e) {
         std::cerr << "SQL error: " << e.what() << std::endl;
-        return -1; // Return -1 on error
+        return -1;
     }
 }
 
-DiscardMenuItemDetailedFeedback DiscardMenuItemDetailedFeedbackDAO::getFeedbackByID(const int& id) {
+DiscardMenuItemDetailedFeedback DiscardMenuItemDetailedFeedbackDAO::getFeedbackById(const int& id) {
     try {
         std::unique_ptr<sql::PreparedStatement> pstmt(
             databaseConnection->getConnection()->prepareStatement("SELECT * FROM discardMenuItemDetailedFeedback WHERE id = ?"));
@@ -58,11 +56,10 @@ DiscardMenuItemDetailedFeedback DiscardMenuItemDetailedFeedbackDAO::getFeedbackB
                 res->getString("shareRecipe")
             );
         }
-    } catch (sql::SQLException &e) {
+    } catch (const sql::SQLException &e) {
         std::cerr << "SQL error: " << e.what() << std::endl;
     }
 
-    // Return a default-constructed DiscardMenuItemDetailedFeedback if not found or error
     return DiscardMenuItemDetailedFeedback();
 }
 
@@ -83,7 +80,7 @@ std::vector<DiscardMenuItemDetailedFeedback> DiscardMenuItemDetailedFeedbackDAO:
                 res->getString("shareRecipe")
             ));
         }
-    } catch (sql::SQLException &e) {
+    } catch (const sql::SQLException &e) {
         std::cerr << "SQL error: " << e.what() << std::endl;
     }
 

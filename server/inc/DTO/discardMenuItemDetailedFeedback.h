@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DISCARDMENUITEMDETAILEDFEEDBACK_H
+#define DISCARDMENUITEMDETAILEDFEEDBACK_H
+
 #include "serializable.h"
 #include <string>
 #include <sstream>
@@ -40,3 +42,5 @@ struct DiscardMenuItemDetailedFeedback : public Serializable {
         shareRecipe = token;
     }
 };
+
+#endif

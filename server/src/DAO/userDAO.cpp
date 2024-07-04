@@ -6,7 +6,6 @@
 
 UserDAO::UserDAO() : databaseConnection{DatabaseConnection::getInstance()} {}
 
-
 int UserDAO::addUser(const User& user) {
     try {
         std::unique_ptr<sql::PreparedStatement> pstmt(
@@ -16,19 +15,17 @@ int UserDAO::addUser(const User& user) {
         pstmt->setInt(3, static_cast<int>(user.role));
         int updateCount = pstmt->executeUpdate();
 
-        // Check if the update was successful
         if (updateCount == 0) {
             std::cerr << "Failed to add user." << std::endl;
-            return -1; // Return -1 on failure
+            return -1;
         }
 
-        // Retrieve the last inserted id
         std::unique_ptr<sql::Statement> stmt(databaseConnection->getConnection()->createStatement());
         std::unique_ptr<sql::ResultSet> rs(stmt->executeQuery("SELECT LAST_INSERT_ID()"));
 
         int newUserId = -1;
         if (rs->next()) {
-            newUserId = rs->getInt(1); // Assuming userId is the first column
+            newUserId = rs->getInt(1);
         } else {
             std::cerr << "Failed to retrieve last inserted id." << std::endl;
         }
@@ -36,11 +33,9 @@ int UserDAO::addUser(const User& user) {
         return newUserId;
     } catch (sql::SQLException &e) {
         std::cerr << "SQL error: " << e.what() << std::endl;
-        return -1; // Return -1 on error
+        return -1;
     }
 }
-
-
 
 User UserDAO::getUserByID(const int& userId) {
     try {
@@ -61,7 +56,6 @@ User UserDAO::getUserByID(const int& userId) {
         std::cerr << "SQL error: " << e.what() << std::endl;
     }
 
-    // Return a default-constructed User if not found or error
     return User(0, "", 0, "");
 }
 

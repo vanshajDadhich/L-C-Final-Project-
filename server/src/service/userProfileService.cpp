@@ -1,7 +1,7 @@
 #include "../../inc/service/userProfileService.h"
 
-UserProfileService::UserProfileService(std::shared_ptr<IUserProfileDAO> userProfileDAO)
-    : userProfileDAO(userProfileDAO) {}
+UserProfileService::UserProfileService(std::unique_ptr<IUserProfileDAO> userProfileDAO)
+    : userProfileDAO(std::move(userProfileDAO)) {}
 
 int UserProfileService::addUserProfile(const UserProfile& userProfile) {
     return userProfileDAO->addUserProfile(userProfile);

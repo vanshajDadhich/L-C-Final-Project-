@@ -17,7 +17,7 @@ bool TodayMenuDAO::addTodayMenu(const std::vector<int>& todayDayMenuItemId) {
         }
 
         return true;
-    } catch (sql::SQLException &e) {
+    } catch (sql::SQLException& e) {
         std::cerr << "SQL error: " << e.what() << std::endl;
         return false;
     }
@@ -39,7 +39,7 @@ std::vector<MenuItem> TodayMenuDAO::getAllTodayMenuItem() {
                 res->getInt("price")
             ));
         }
-    } catch (sql::SQLException &e) {
+    } catch (sql::SQLException& e) {
         std::cerr << "SQL error: " << e.what() << std::endl;
     }
 
@@ -51,7 +51,7 @@ bool TodayMenuDAO::deleteTodayMenu() {
         std::unique_ptr<sql::Statement> stmt(databaseConnection->getConnection()->createStatement());
         stmt->executeUpdate("DELETE FROM todayMenu");
         return true;
-    } catch (sql::SQLException &e) {
+    } catch (sql::SQLException& e) {
         std::cerr << "SQL error: " << e.what() << std::endl;
         return false;
     }

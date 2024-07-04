@@ -1,4 +1,5 @@
-#pragma once
+#ifndef NEXTDAYMENUVOTING_H
+#define NEXTDAYMENUVOTING_H
 
 #include "serializable.h"
 #include <sstream>
@@ -36,3 +37,5 @@ struct NextDayMenuVoting : public Serializable {
     std::getline(iss, sentiments, ';');
   }
 };
+
+#endif

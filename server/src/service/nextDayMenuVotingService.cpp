@@ -1,8 +1,8 @@
 #include "../../inc/service/nextDayMenuVotingService.h"
 
 
-NextDayMenuVotingService::NextDayMenuVotingService(INextDayMenuVotingDAO* recommandationSelectionDAO)
-    : nextDayMenuVotingDAO(recommandationSelectionDAO) {}
+NextDayMenuVotingService::NextDayMenuVotingService(std::unique_ptr<INextDayMenuVotingDAO> nextDayMenuVotingDAO)
+    : nextDayMenuVotingDAO(std::move(nextDayMenuVotingDAO)) {}
 
 bool NextDayMenuVotingService::addNextDayMenuRollout(const std::vector<NextDayMenuVoting>& nextDayMenu) {
     return nextDayMenuVotingDAO->addNextDayMenuRollout(nextDayMenu);
