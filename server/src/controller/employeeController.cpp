@@ -65,6 +65,10 @@ std::string EmployeeController::handleProvideFeedback(const std::string& request
 
 std::string EmployeeController::handleGetTodaysMenu() {
     std::vector<MenuItem> todaysMenu = todayMenuService->getAllTodayMenuItem();
+    if(todaysMenu.empty()) {
+        std::cerr << "[EmployeeController] No menu items for today\n";
+        return "Menu is Not yet Published By Chef for today";
+    }
     std::vector<std::string> serializedMenuItems;
     for (const auto& menuItem : todaysMenu) {
         serializedMenuItems.push_back(SerializationUtility::serialize(menuItem));
@@ -105,6 +109,11 @@ std::string EmployeeController::handleGetChefRollOutMenuForTomorrow(const std::s
     }
     std::vector<NextDayMenuRollOut> preferenceBasedNextDayMenuRollOut;
     std::vector<NextDayMenuRollOut> chefRolloutMenuForNextDay = getNextDayMenuItemsToRollOut();
+    if(chefRolloutMenuForNextDay.empty()) {
+        std::cerr << "[EmployeeController] No menu items rolled out for the next day\n";
+        response = "Menu is not yet rolled out by chef for the next day";
+        return response;
+    }
     for (int i = 0; i < 3; ++i) {
         auto chefRollOutMenuForMealType = filterMenuItemsByType(static_cast<MenuItemType>(i + 1), chefRolloutMenuForNextDay);
         chefRollOutMenuForMealType = recommendationEngine->sortRecommendedMenuItemsBasedOnProfile(userProfileService->getUserProfileByID(userId), chefRollOutMenuForMealType, menuItemService->getAllMenuItems());
@@ -136,7 +145,7 @@ std::string EmployeeController::handleProvideDiscardMenuItemDetailedFeedback(con
 
 std::vector<NextDayMenuRollOut> EmployeeController::getNextDayMenuItemsToRollOut() {
     std::vector<NextDayMenuVoting> nextDayMenuVotingList = nextDayMenuVotingService->getAllNextDayMenuRollOutItem();
-    std::vector<NextDayMenuRollOut> nextDayMenuRollOutItems;
+    std::vector<NextDayMenuRollOut> nextDayMenuRollOutItems = {};
 
     for (const auto& nextDayMenuItemId : nextDayMenuVotingList) {
         MenuItem menuItem = menuItemService->getMenuItemById(nextDayMenuItemId.menuItemId);

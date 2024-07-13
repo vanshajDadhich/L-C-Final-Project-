@@ -94,10 +94,13 @@ void EmployeeInterface::viewTodayMenu(){
 
     for (const auto& item : MenuList) {
         auto menuItem = SerializationUtility::deserialize<MenuItem>(item);
+        std::string menuItemType = menuItem.menuItemType == MenuItemType::Breakfast ? "Breakfast" :
+                                    menuItem.menuItemType == MenuItemType::Lunch ? "Lunch" :
+                                    menuItem.menuItemType == MenuItemType::Dinner ? "Dinner" : "Unknown";
         std::cout << "Menu Item Details:" << std::endl
           << "ID: " << menuItem.menuItemId << std::endl
           << "Name: " << menuItem.menuItemName << std::endl
-          << "Type: " << static_cast<int>(menuItem.menuItemType) << std::endl
+          << "Type: " << menuItemType << std::endl
           << "Price: " << menuItem.price << std::endl;
         std::cout << std::endl;
     }
@@ -119,12 +122,14 @@ void EmployeeInterface::provideFeedbackForTodayMenu(){
     std::getline(std::cin, feedback.comment);
     
 
-    feedback.date = getCurrentTimestamp();
+    feedback.date = "";
 
     std::string serializedData = SerializationUtility::serialize(feedback);
     std::string serializedDataForRequest = SerializationUtility::serializeOperation(operation, serializedData);
 
     requestHandler->sendRequest(serializedDataForRequest);
+    std::string response = requestHandler->receiveResponse();
+    std::cout<<"Response : "<<response<<std::endl;
 }
 
 
@@ -153,6 +158,8 @@ void EmployeeInterface::voteForTomorrowMenu(){
     std::string menuItemIdStr =  std::to_string(menuItemId);
     auto voteForTomorrowItemSerializedRequest = SerializationUtility::serializeOperation(operation,menuItemIdStr);
     requestHandler->sendRequest(voteForTomorrowItemSerializedRequest);
+    std::string response = requestHandler->receiveResponse();
+    std::cout<<"Response : "<<response<<std::endl;
 }
 
 
@@ -168,11 +175,13 @@ void EmployeeInterface::showChefRollOutMenu(){
 
     for (const auto& item : MenuList) {
         auto menuItem = SerializationUtility::deserialize<NextDayMenuRollOut>(item);
-
+        std::string menuItemType = menuItem.menuItemType == MenuItemType::Breakfast ? "Breakfast" :
+                                    menuItem.menuItemType == MenuItemType::Lunch ? "Lunch" :
+                                    menuItem.menuItemType == MenuItemType::Dinner ? "Dinner" : "Unknown";
         std::cout << "Menu Item Details:" << std::endl
           << "Menu Item ID: " << menuItem.menuItemId << "\t"
           << "Menu Item Name: " << menuItem.menuItemName << "\t"
-          << "Menu Item Type: " << static_cast<int>(menuItem.menuItemType) << "\t"
+          << "Menu Item Type: " << menuItemType << "\t"
           << "Price: " << menuItem.price << "\t"
           << "Average Rating: " << menuItem.averageRating << "\t"
           << "Sentiment Score: " << menuItem.sentiments << std::endl;

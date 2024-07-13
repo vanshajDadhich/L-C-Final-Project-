@@ -5,7 +5,8 @@
 #include <sstream>
 #include <string>
 
-struct NextDayMenuRollOut : public Serializable {
+struct NextDayMenuRollOut : public Serializable
+{
     int menuItemId;
     std::string menuItemName;
     MenuItemType menuItemType;
@@ -14,12 +15,13 @@ struct NextDayMenuRollOut : public Serializable {
     double averageRating;
     std::string sentiments;
 
-    NextDayMenuRollOut(int menuItemId = 0, const std::string& menuItemName = "", MenuItemType menuItemType = MenuItemType::Breakfast,
+    NextDayMenuRollOut(int menuItemId = 0, const std::string &menuItemName = "", MenuItemType menuItemType = MenuItemType::Breakfast,
                        int price = 0, int selectionCount = 0, double averageRating = 0, std::string sentiments = "")
         : menuItemId(menuItemId), menuItemName(menuItemName), menuItemType(menuItemType), price(price),
           selectionCount(selectionCount), averageRating(averageRating), sentiments(sentiments) {}
 
-    std::string serialize() const override {
+    std::string serialize() const override
+    {
         return std::to_string(menuItemId) + ";" +
                menuItemName + ";" +
                std::to_string(static_cast<int>(menuItemType)) + ";" +
@@ -29,7 +31,8 @@ struct NextDayMenuRollOut : public Serializable {
                sentiments;
     }
 
-    void deserialize(const std::string& data) override {
+    void deserialize(const std::string &data) override
+    {
         std::istringstream iss(data);
         std::string token;
 

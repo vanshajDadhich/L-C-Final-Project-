@@ -28,7 +28,7 @@ bool NextDayMenuVotingDAO::addNextDayMenuRollout(const std::vector<NextDayMenuVo
 }
 
 std::vector<NextDayMenuVoting> NextDayMenuVotingDAO::getAllNextDayMenuRollOutItem() {
-    std::vector<NextDayMenuVoting> nextDayMenus;
+    std::vector<NextDayMenuVoting> nextDayMenus = {};
 
     try {
         std::unique_ptr<sql::Statement> stmt(databaseConnection->getConnection()->createStatement());

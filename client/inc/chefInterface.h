@@ -21,6 +21,7 @@ private:
                               MenuItemType menuItemType);
 
     std::string getValidMenuItemIdsForMealType(const std::vector<std::pair<MenuItemType, int>>& recommendedMenuItem, MenuItemType menuItemType);
+    std::string getMenuType(MenuItemType menuItemType);
 
 public:
     ChefInterface(RequestHandler* requestHandler);

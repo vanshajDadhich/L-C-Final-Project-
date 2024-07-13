@@ -177,6 +177,7 @@ bool ChefController::rollOutFinalMenuByChefForNextDay(const std::vector<int>& me
 
 bool ChefController::publishMostVotedMenuItems() {
     std::vector<int> mostVotedMenuItemIds = nextDayMenuVotingService->getMostVotedMenuItemIds();
+    todayMenuService->deleteTodayMenu();
     return todayMenuService->addTodayMenu(mostVotedMenuItemIds);
 }
 

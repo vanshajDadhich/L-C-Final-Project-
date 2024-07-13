@@ -75,10 +75,10 @@ void ChefInterface::showDiscardMenuList(){
             discardMenuItemIdList.push_back(menuItem.menuItemId);
             std::cout << "Menu Item ID: " << menuItem.menuItemId << "\t"
               << "Menu Item Name: " << menuItem.menuItemName << "\t"
-              << "Menu Item Type: " << static_cast<int>(menuItem.menuItemType) << "\t"
+              << "Menu Item Type: " << getMenuType(menuItem.menuItemType)<< "\t"
               << "Price: " << menuItem.price << "\t"
               << "Average Rating: " << menuItem.averageRating << "\t"
-              << "Sentiments : " << menuItem.sentiments << std::endl;
+              << "Sentiments : " << menuItem.sentiments << std::endl<<std::endl;
         }
 
         showDiscardMenuItemActionPrompt(discardMenuItemIdList);
@@ -208,6 +208,8 @@ void ChefInterface::rollOutMenuForTomorrow(std::vector<std::pair<MenuItemType, i
         std::string serializedRequestWithOperation = SerializationUtility::serializeOperation(operation, serializeRequestData);
         std::cout<<"Roll Out Menu Serialized Data"<<serializedRequestWithOperation<<std::endl;
         requestHandler->sendRequest(serializedRequestWithOperation);
+        std::string response = requestHandler->receiveResponse();
+        std::cout<<response<<std::endl;
     } catch (const std::exception& e) {
         std::cerr << "Error in rolling out menu for tomorrow: " << e.what() << std::endl;
     }
@@ -216,8 +218,7 @@ void ChefInterface::rollOutMenuForTomorrow(std::vector<std::pair<MenuItemType, i
 std::string ChefInterface::getValidMenuItemIdsForMealType(const std::vector<std::pair<MenuItemType, int>>& recommendedMenuItem, MenuItemType menuItemType) {
     try {
         std::string menuItemIdsforBreakfast;
-        std::string menuItemTypeStr = menuItemType == MenuItemType::Breakfast ? "Breakfast" : menuItemType == MenuItemType::Lunch ? "Lunch" : "Dinner";
-        std::cout << "Enter MenuItemIds for "<<menuItemTypeStr<<" : ";
+        std::cout << "Enter MenuItemIds for "<<getMenuType(menuItemType)<<" : ";
         std::cin >> menuItemIdsforBreakfast;
         
         while (true) {
@@ -226,8 +227,8 @@ std::string ChefInterface::getValidMenuItemIdsForMealType(const std::vector<std:
             if (notRecommendedMenuItemIds.empty()) {
                 return menuItemIdsforBreakfast;
             } else {
-                std::cout << "Invalid Menu Item IDs for "<<menuItemTypeStr<<" : " << notRecommendedMenuItemIds << "\n";
-                std::cout << "Enter MenuItemIds for "<<menuItemTypeStr<<" again: ";
+                std::cout << "Invalid Menu Item IDs for "<<getMenuType(menuItemType)<<" : " << notRecommendedMenuItemIds << "\n";
+                std::cout << "Enter MenuItemIds for "<<getMenuType(menuItemType)<<" again: ";
                 std::cin >> menuItemIdsforBreakfast;
             }
         }
@@ -243,6 +244,8 @@ void ChefInterface::publishMenuForToday(){
         Operation operation = Operation::PublishMenuForToday;
         std::string publishMenuSerializedRequest = SerializationUtility::serializeOperation(operation, "");
         requestHandler->sendRequest(publishMenuSerializedRequest);
+        std::string response = requestHandler->receiveResponse();
+        std::cout<<response<<std::endl;
     } catch (const std::exception& e) {
         std::cerr << "Error in publishing menu for today: " << e.what() << std::endl;
     }
@@ -292,6 +295,13 @@ void ChefInterface::showRecommendedMenuAndRolloutForTomorrow(){
     }
 }
 
+std::string ChefInterface::getMenuType(MenuItemType menuItemType){
+    std::string menuItemTypeStr = menuItemType == MenuItemType::Breakfast ? "Breakfast" :
+                                menuItemType == MenuItemType::Lunch ? "Lunch" :
+                                menuItemType == MenuItemType::Dinner ? "Dinner" : "Unknown";
+    return menuItemTypeStr;
+}
+
 std::vector<std::pair<MenuItemType, int>> ChefInterface::showRecommendedMenu(MenuItemType menuItemType){
     try {
         std::vector<std::pair<MenuItemType, int>> recommendedMenuItem;
@@ -303,14 +313,14 @@ std::vector<std::pair<MenuItemType, int>> ChefInterface::showRecommendedMenu(Men
         std::string serializedMenuList = requestHandler->receiveResponse();
 
         std::vector<std::string>MenuList = SerializationUtility::deserializeStringToVector(serializedMenuList);
-        std::cout<< "Menu Item Details:" << std::endl;
+        std::cout<< "Recommend Menu Items For "<<getMenuType(menuItemType)<<" :" << std::endl;
         
         for (const auto& item : MenuList) {
             auto menuItem = SerializationUtility::deserialize<NextDayMenuRollOut>(item);
             recommendedMenuItem.push_back(std::make_pair(menuItem.menuItemType, menuItem.menuItemId));
             std::cout << "Menu Item ID: " << menuItem.menuItemId << "\t"
               << "Menu Item Name: " << menuItem.menuItemName << "\t"
-              << "Menu Item Type: " << static_cast<int>(menuItem.menuItemType) << "\t"
+              << "Menu Item Type: " << getMenuType(menuItem.menuItemType) << "\t"
               << "Price: " << menuItem.price << "\t"
               << "Average Rating: " << menuItem.averageRating << "\t"
               << "Sentiments : " << menuItem.sentiments << std::endl;
@@ -332,15 +342,9 @@ void ChefInterface::showMenuItemList() {
         std::string serializedMenuList = requestHandler->receiveResponse();
 
         std::vector<std::string>menuList = SerializationUtility::deserializeStringToVector(serializedMenuList);
-
+        std::cout << "Menu Item Details:" << std::endl;
         for (const auto& item : menuList) {
             auto menuItem = SerializationUtility::deserialize<MenuItem>(item);
-
-            std::cout<<"VegetarianPreference"<<menuItem.vegetarianPreference<<"spice level"<<menuItem.spiceLevelOption<<"food preference"<<menuItem.foodPreference<<"sweet tooth"<<menuItem.sweetToothPreference<<"\n";
-
-            std::string menuItemType = menuItem.menuItemType == MenuItemType::Breakfast ? "Breakfast" :
-                                    menuItem.menuItemType == MenuItemType::Lunch ? "Lunch" :
-                                    menuItem.menuItemType == MenuItemType::Dinner ? "Dinner" : "Unknown";
 
             std::string vegetarianPreferenceStr = menuItem.vegetarianPreference == VegetarianPreference::Vegetarian ? "Vegetarian" :
                                                 menuItem.vegetarianPreference == VegetarianPreference::NonVegetarian ? "Non Vegetarian" :
@@ -356,10 +360,9 @@ void ChefInterface::showMenuItemList() {
 
             std::string sweetToothPreferenceStr = menuItem.sweetToothPreference == SweetToothPreference::Yes ? "Yes" : "No";
 
-            std::cout << "Menu Item Details:" << std::endl
-                    << "ID: " << menuItem.menuItemId << std::endl
+            std::cout << "Menu Item ID: " << menuItem.menuItemId << std::endl
                     << "Name: " << menuItem.menuItemName << std::endl
-                    << "Type: " << menuItemType << std::endl
+                    << "Type: " << getMenuType(menuItem.menuItemType) << std::endl
                     << "Availability: " << (menuItem.availability ? "Yes" : "No") << std::endl
                     << "Price: " << menuItem.price << std::endl
                     << "Vegetarian Preference: " << vegetarianPreferenceStr << std::endl

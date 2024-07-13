@@ -114,23 +114,31 @@ USE databaseRecommendationEngine;
 -- (13, 1, 1, 1, 1); -- InTimeTec
 
 
--- Insert new items into MenuItem table
-INSERT INTO MenuItem (menuItemId, menuItemName, menuItemType, availability, price, vegetarianPreference, spiceLevelOption, foodPreference, sweetToothPreference) VALUES
-(21, 'Mixed Vegetable Curry', 2, true, 130, 1, 2, 1, 0),
-(22, 'Fish Fry', 2, true, 180, 2, 1, 2, 0),
-(23, 'Mushroom Soup', 3, true, 100, 1, 3, 3, 0),
-(24, 'Pasta Alfredo', 2, true, 160, 1, 1, 3, 0),
-(25, 'Apple Pie', 4, true, 70, 1, 3, 3, 1);
+-- -- Insert new items into MenuItem table
+-- INSERT INTO MenuItem (menuItemId, menuItemName, menuItemType, availability, price, vegetarianPreference, spiceLevelOption, foodPreference, sweetToothPreference) VALUES
+-- (21, 'Mixed Vegetable Curry', 2, true, 130, 1, 2, 1, 0),
+-- (22, 'Fish Fry', 2, true, 180, 2, 1, 2, 0),
+-- (23, 'Mushroom Soup', 3, true, 100, 1, 3, 3, 0),
+-- (24, 'Pasta Alfredo', 2, true, 160, 1, 1, 3, 0),
+-- (25, 'Apple Pie', 4, true, 70, 1, 3, 3, 1);
 
--- Insert bad feedback into Feedback table
-INSERT INTO Feedback (feedbackId, userId, menuItemId, rating, comment, timestamp) VALUES
-(81, 1, 21, 1, 'The curry was too watery and bland.', '2024-07-04'),
-(82, 2, 21, 1, 'Vegetables were not cooked properly.', '2024-07-04'),
-(83, 3, 22, 1, 'The fish was overcooked and dry.', '2024-07-04'),
-(84, 4, 22, 1, 'Too salty and greasy.', '2024-07-04'),
-(85, 5, 23, 1, 'Mushroom soup was too watery and tasteless.', '2024-07-04'),
-(86, 6, 23, 1, 'No flavor and too much cream.', '2024-07-04'),
-(87, 7, 24, 1, 'Pasta was undercooked and sauce was bland.', '2024-07-04'),
-(88, 8, 24, 1, 'Terrible taste, not worth the price.', '2024-07-04'),
-(89, 9, 25, 1, 'Apple pie crust was too hard and filling was bland.', '2024-07-04'),
-(90, 10, 25, 1, 'Worst dessert I have ever tasted.', '2024-07-04');
+-- -- Insert bad feedback into Feedback table
+-- INSERT INTO Feedback (feedbackId, userId, menuItemId, rating, comment, timestamp) VALUES
+-- (81, 1, 21, 1, 'The curry was too watery and bland.', '2024-07-04'),
+-- (82, 2, 21, 1, 'Vegetables were not cooked properly.', '2024-07-04'),
+-- (83, 3, 22, 1, 'The fish was overcooked and dry.', '2024-07-04'),
+-- (84, 4, 22, 1, 'Too salty and greasy.', '2024-07-04'),
+-- (85, 5, 23, 1, 'Mushroom soup was too watery and tasteless.', '2024-07-04'),
+-- (86, 6, 23, 1, 'No flavor and too much cream.', '2024-07-04'),
+-- (87, 7, 24, 1, 'Pasta was undercooked and sauce was bland.', '2024-07-04'),
+-- (88, 8, 24, 1, 'Terrible taste, not worth the price.', '2024-07-04'),
+-- (89, 9, 25, 1, 'Apple pie crust was too hard and filling was bland.', '2024-07-04'),
+-- (90, 10, 25, 1, 'Worst dessert I have ever tasted.', '2024-07-04');
+
+
+CREATE EVENT delete_old_notifications
+ON SCHEDULE EVERY 1 DAY
+STARTS CURRENT_TIMESTAMP
+DO
+  DELETE FROM Notification
+  WHERE date < CURDATE();

@@ -16,7 +16,6 @@ bool FeedbackDAO::addFeedback(const Feedback& feedback) {
         pstmt->setInt(2, feedback.menuItemId);
         pstmt->setInt(3, feedback.rating);
         pstmt->setString(4, feedback.comment);
-        pstmt->setString(5, feedback.date);
         pstmt->executeUpdate();
         return true;
     } catch (sql::SQLException &e) {

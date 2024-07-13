@@ -13,7 +13,7 @@ void clientHandlerWrapper(int signal) {
 }
 
 int main() {
-    int server_port = 8081;
+    int server_port = 8082;
 
     try {
         Client client(server_port);

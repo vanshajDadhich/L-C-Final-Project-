@@ -1,55 +1,42 @@
 #include "../../inc/recommendationEngine/recommendationEngine.h"
-#include <queue>
 
+#include <algorithm>
 
-RecommendationEngine::RecommendationEngine()
-    // : positiveWords_(utility_.readWordsFromCSV("positiveSentiments.csv")),
-    //   negativeWords_(utility_.readWordsFromCSV("negativeSentiments.csv")),
-    //   negationWords_(utility_.readWordsFromCSV("negationSentiments.csv")) 
-{
-    negationWords_ = {
-    "not", "never", "no", "none", "nothing", "nowhere", "neither", "hardly", "scarcely",
-    "barely", "without", "seldom", "rarely", "cannot", "can't", "doesn't", "don't", "isn't",
-    "wasn't", "weren't", "won't", "wouldn't", "shouldn't", "mustn't", "mightn't", "didn't",
-    "hasn't", "hadn't", "haven't", "ain't", "non", "nobody", "nor", "zero", "absolutely",
-    "neglect", "omit", "absent", "disallow", "forbid", "prevent", "prohibit", "refuse",
-    "decline", "ban", "exclude", "block", "disagree", "reject", "void", "cancel", "nullify",
-    "abandon", "ignore", "expected", "but","too", "under", "over", "lacked"
-    };
+RecommendationEngine::RecommendationEngine() 
+    : feedbackAnalyzer_(std::make_unique<FeedbackAnalyzer>()) {}
 
-    negativeWords_ = {
-    "bad", "terrible", "horrible", "awful", "hate", "disgusting", "poor", "negative",
-    "sad", "unhappy", "miserable", "displeased", "dissatisfied", "horrendous", "dreadful",
-    "atrocious", "lousy", "pathetic", "abysmal", "disappointing", "wretched", "unpleasant",
-    "horrific", "lamentable", "subpar", "inferior", "unacceptable", "criticize", "condemn",
-    "regretful", "terrifying", "depressing", "disturbing", "frustrating", "annoying", 
-    "offensive", "nasty", "vulgar", "appalling", "sickening", "dreaded", "ghastly",
-    "detestable", "despicable", "loathsome", "grim", "unfortunate", "distasteful", 
-    "dismal", "gloomy", "grief", "cold", "bland", "too", "oily", "dry", "tasteless", 
-    "nothing", "overcooked", "undercooked", "tough", "under", "over", "lacked", "expected", 
-    "nothing", "mediocre", "needed", "more", "okay", "bland", "nothing special", 
-    "too spicy", "more seasoning", "too tough", "not very fresh", "too oily", "too salty",
-    "average", "underwhelming", "too sweet"
-    };
+std::vector<MenuItem> RecommendationEngine::filterAvailableMenuItems(MenuItemType menuType, const std::vector<MenuItem>& menuItems) {
+    std::vector<MenuItem> availableMenuItems;
+    for (const auto& item : menuItems) {
+        if (item.menuItemType == menuType && item.availability) {
+            availableMenuItems.push_back(item);
+        }
+    }
+    return availableMenuItems;
+}
 
-    positiveWords_ = {
-    "good", "great", "excellent", "amazing", "fantastic", "love", "nice", "wonderful",
-    "brilliant", "superb", "fabulous", "positive", "happy", "joyful", "delightful",
-    "pleased", "satisfied", "awesome", "terrific", "splendid", "magnificent",
-    "outstanding", "impressive", "charming", "graceful", "admire", "commendable",
-    "remarkable", "pleasing", "incredible", "beautiful", "marvelous", "delicious",
-    "refreshing", "perfect", "elegant", "thrilling", "enthusiastic", "radiant",
-    "vibrant", "spectacular", "prosperous", "generous", "supportive", "favorable",
-    "delight", "glorious", "blissful", "enchanting", "admirable", "exciting",
-    "enjoyable", "uplifting", "cheerful", "fantastic", "flavorful", "loved", "amazing", 
-    "delicious", "tender", "recommend", "well-cooked", "rich", "juicy", "soft", "heavenly", 
-    "fresh", "outstanding", "superb", "moist", "highly", "divine", "perfectly", "crispy", 
-    "very", "excellent", "best", "pretty", "fluffy", "very tasty", "perfectly cooked", 
-    "highly recommend", "well cooked", "just right", "well-cooked", "fresh and tasty",
-    "great maple syrup", "right amount of spice", "loved it", "superb", "well-cooked", 
-    "amazing", "refreshing", "perfectly sweet", "delightful", "delicious", "fantastic",
-    "fresh and delicious", "absolutely loved", "fluffy", "fresh and refreshing"
-    };
+std::vector<std::pair<double, NextDayMenuVoting>> RecommendationEngine::scoreMenuItems(
+    const std::unordered_map<int, std::vector<Feedback>>& feedbackMap,
+    const std::vector<MenuItem>& availableMenuItems) {
+
+    std::vector<std::pair<double, NextDayMenuVoting>> foodItemScores;
+
+    for (const auto& pair : feedbackMap) {
+        int menuItemId = pair.first;
+
+        auto it = std::find_if(availableMenuItems.begin(), availableMenuItems.end(),
+                               [&](const MenuItem& item) { return item.menuItemId == menuItemId; });
+
+        if (it != availableMenuItems.end()) {
+            double rating; 
+            std::string sentiments;
+            double score = feedbackAnalyzer_->evaluateFoodItem(pair.second, rating, sentiments);
+            NextDayMenuVoting nextDayMenuVoting(menuItemId, 0, rating, sentiments);
+            foodItemScores.push_back({score, nextDayMenuVoting});
+        }
+    }
+
+    return foodItemScores;
 }
 
 std::vector<NextDayMenuVoting> RecommendationEngine::recommendTopFoodItems(
@@ -57,160 +44,48 @@ std::vector<NextDayMenuVoting> RecommendationEngine::recommendTopFoodItems(
     const std::unordered_map<int, std::vector<Feedback>>& feedbackMap,
     const std::vector<MenuItem>& menuItems) {
 
+    auto availableMenuItems = filterAvailableMenuItems(menuType, menuItems);
+    auto foodItemScores = scoreMenuItems(feedbackMap, availableMenuItems);
+
     auto comp = [](const std::pair<double, NextDayMenuVoting>& a, const std::pair<double, NextDayMenuVoting>& b) {
         return a.first < b.first;
     };
-    
-    std::priority_queue<std::pair<double, NextDayMenuVoting>, std::vector<std::pair<double, NextDayMenuVoting>>, decltype(comp)> foodItemScores(comp);
 
-    for (const auto& pair : feedbackMap) {
-        int menuItemId = pair.first;
+    std::priority_queue<std::pair<double, NextDayMenuVoting>, std::vector<std::pair<double, NextDayMenuVoting>>, decltype(comp)> sortedfoodItemScores(comp);
 
-        // Find the MenuItem object corresponding to menuItemId
-        auto it = std::find_if(menuItems.begin(), menuItems.end(),
-                               [&](const MenuItem& item) { return item.menuItemId == menuItemId; });
-
-
-        //recommend only available food Items : assumption that avaiablity of items for tomorrow will be updated today only by admin.
-
-        if (it != menuItems.end() && it->menuItemType == menuType && it->availability) {
-            double rating; 
-            std::string sentiments;
-            double score = evaluateFoodItem(pair.second, rating, sentiments);
-            NextDayMenuVoting nextDayMenuVoting(menuItemId, 0, rating, sentiments);
-            foodItemScores.push({score, nextDayMenuVoting});
-        }
+    for(auto foodItemScore : foodItemScores){
+        sortedfoodItemScores.push(foodItemScore);
     }
 
     std::vector<NextDayMenuVoting> topFoodItems;
-    while (topFoodItems.size() < 4 && !foodItemScores.empty()) {
-        NextDayMenuVoting nextDayMenuVoting = foodItemScores.top().second;
+    while (topFoodItems.size() < 4 && !sortedfoodItemScores.empty()) {
+        NextDayMenuVoting nextDayMenuVoting = sortedfoodItemScores.top().second;
         topFoodItems.push_back(nextDayMenuVoting);
-        foodItemScores.pop();
+        sortedfoodItemScores.pop();
     }
 
     return topFoodItems;
 }
 
-std::string RecommendationEngine::getMostRepetativeSentiments(const std::vector<std::string>& words) {
-    std::unordered_map<std::string, int> wordCount;
-
-    // Count occurrences of each word
-    for (const std::string& word : words) {
-        wordCount[word]++;
-    }
-
-    // Create a vector of pairs (word, count) from the map
-    std::vector<std::pair<std::string, int>> wordFreq(wordCount.begin(), wordCount.end());
-
-    // Sort the vector based on count (in descending order)
-    std::sort(wordFreq.begin(), wordFreq.end(), [](const auto& a, const auto& b) {
-        return a.second > b.second;
-    });
-
-    // Extract top 4 words
-    std::vector<std::string> topWords;
-    int count = 0;
-    for (const auto& pair : wordFreq) {
-        topWords.push_back(pair.first);
-        count++;
-        if (count >= 4) break;
-    }
-
-    // Join top 4 words into a comma-separated string
-    std::string result;
-    for (size_t i = 0; i < topWords.size(); ++i) {
-        result += topWords[i];
-        if (i < topWords.size() - 1) {
-            result += ", ";
-        }
-    }
-
-    return result;
-}
-
-double RecommendationEngine::evaluateFoodItem(const std::vector<Feedback>& feedbacks, double &rating, std::string &sentimentsString) {
-    double totalScore = 0.0;
-    double averageSentimentScore = 0.0;
-    std::vector<std::string> sentiments;
-
-    for (const auto& feedback : feedbacks) {
-        averageSentimentScore += analyzeSentiment(feedback.comment, sentiments);
-    }
-
-    averageSentimentScore /= feedbacks.size();
-
-    double averageRating = 0.0;
-    for (const auto& feedback : feedbacks) {
-        averageRating += feedback.rating;
-    }
-    
-    averageRating /= feedbacks.size();
-    rating = averageRating;
-    totalScore = (averageSentimentScore + averageRating) / 2.0;
-    for(auto i : sentiments){
-        std::cout<<"sentiments Vanshaj : "<<i<<std::endl;
-    }
-    sentimentsString = getMostRepetativeSentiments(sentiments);
-    std::cout<<"sentimentsString : "<<sentimentsString<<std::endl;
-    return totalScore;
-}
-
-double RecommendationEngine::analyzeSentiment(const std::string& comment, std::vector<std::string>& foundSentiments) {
-    std::string lowerComment = utility_.toLower(comment);
-    std::vector<std::string> words = utility_.splitWords(lowerComment);
-
-    int sentimentScore = 0; 
-    for (size_t i = 0; i < words.size(); ++i) {
-        std::string word = words[i];
-        bool isNegated = (i > 0 && negationWords_.find(words[i - 1]) != negationWords_.end());
-
-        if (isNegated && i > 1 && negationWords_.find(words[i - 2]) != negationWords_.end()) {
-            isNegated = false;
-        }
-
-        if (positiveWords_.find(word) != positiveWords_.end()) {
-            sentimentScore += isNegated ? -1 : 1;
-            foundSentiments.push_back(isNegated ? words[i - 1] + " " + word : word);
-        } else if (negativeWords_.find(word) != negativeWords_.end()) {
-            sentimentScore += isNegated ? 1 : -1;
-            foundSentiments.push_back(isNegated ? words[i - 1] + " " + word : word);
-        }
-    }
-
-    if (sentimentScore > 1) {
-        sentimentScore = 1;
-    } else if (sentimentScore < -1) {
-        sentimentScore = -1;
-    }
-    for(auto i : foundSentiments){
-        std::cout<<"foundSentiments : "<<i<<std::endl;
-    }
-
-    return ((sentimentScore + 1) / 2) * 5;
-}
-
 std::vector<NextDayMenuVoting> RecommendationEngine::generateDiscardMenuList(
     const std::unordered_map<int, std::vector<Feedback>>& feedbackMap,
     const std::vector<MenuItem>& menuItems) {
+
     std::vector<NextDayMenuVoting> discardList;
 
     for (const auto& pair : feedbackMap) {
         int menuItemId = pair.first;
 
-        // Find the MenuItem object corresponding to menuItemId
         auto it = std::find_if(menuItems.begin(), menuItems.end(),
                                [&](const MenuItem& item) { return item.menuItemId == menuItemId; });
 
         if (it != menuItems.end()) {
             double rating;
             std::string sentiments;
-            double score = evaluateFoodItem(pair.second, rating, sentiments);
-            std::cout<<"menuItemId : "<<menuItemId<<" score : "<<score<<" rating : "<<rating<<" sentiments : "<<sentiments<<std::endl;
+            double score = feedbackAnalyzer_->evaluateFoodItem(pair.second, rating, sentiments);
             if (score < 3 && rating < 2) {
                 NextDayMenuVoting nextDayMenuVoting(menuItemId, 0, rating, sentiments);
                 discardList.push_back(nextDayMenuVoting);
-                std::cout<<"pushing list in it discard Menu list"<<std::endl;
             }
         }
     }
@@ -218,51 +93,44 @@ std::vector<NextDayMenuVoting> RecommendationEngine::generateDiscardMenuList(
     return discardList;
 }
 
+int RecommendationEngine::calculateMatchPreferenceScore(const UserProfile& userProfile, const MenuItem& menuItem) {
+    int score = 0;
+    if (userProfile.vegetarianPreference == menuItem.vegetarianPreference) score++;
+    if (userProfile.spiceLevelOption == menuItem.spiceLevelOption) score++;
+    if (userProfile.foodPreference == menuItem.foodPreference) score++;
+    if (userProfile.sweetToothPreference == menuItem.sweetToothPreference) score++;
+    return score;
+}
+
 std::vector<NextDayMenuRollOut> RecommendationEngine::sortRecommendedMenuItemsBasedOnProfile(
     const UserProfile& userProfile, 
     const std::vector<NextDayMenuRollOut>& chefRolloutMenuForNextDay, 
     const std::vector<MenuItem>& menuItems) {
-    
-    if(userProfile.userId == 0){
+
+    if (userProfile.userId == 0) {
         return chefRolloutMenuForNextDay;
     }
+
     std::vector<NextDayMenuRollOut> sortedMenuItems = chefRolloutMenuForNextDay;
 
     std::sort(sortedMenuItems.begin(), sortedMenuItems.end(), [&](const NextDayMenuRollOut& a, const NextDayMenuRollOut& b) {
-        int scoreA = 0, scoreB = 0;
+        int matchPreferenceScoreA = 0, matchPreferenceScoreB = 0;
 
-        // Get the MenuItem for each NextDayMenuRollOut item
         auto itA = std::find_if(menuItems.begin(), menuItems.end(),
                                 [&](const MenuItem& item) { return item.menuItemId == a.menuItemId; });
         auto itB = std::find_if(menuItems.begin(), menuItems.end(),
                                 [&](const MenuItem& item) { return item.menuItemId == b.menuItemId; });
 
         if (itA != menuItems.end()) {
-            // Evaluate vegetarian preference
-            if (userProfile.vegetarianPreference == itA->vegetarianPreference) scoreA++;
-            // Evaluate spice level
-            if (userProfile.spiceLevelOption == itA->spiceLevelOption) scoreA++;
-            // Evaluate food preference
-            if (userProfile.foodPreference == itA->foodPreference) scoreA++;
-            // Evaluate sweet tooth preference
-            if (userProfile.sweetToothPreference == itA->sweetToothPreference) scoreA++;
+            matchPreferenceScoreA = calculateMatchPreferenceScore(userProfile, *itA);
         }
 
         if (itB != menuItems.end()) {
-            // Evaluate vegetarian preference
-            if (userProfile.vegetarianPreference == itB->vegetarianPreference) scoreB++;
-            // Evaluate spice level
-            if (userProfile.spiceLevelOption == itB->spiceLevelOption) scoreB++;
-            // Evaluate food preference
-            if (userProfile.foodPreference == itB->foodPreference) scoreB++;
-            // Evaluate sweet tooth preference
-            if (userProfile.sweetToothPreference == itB->sweetToothPreference) scoreB++;
+            matchPreferenceScoreB = calculateMatchPreferenceScore(userProfile, *itB);
         }
 
-        // Higher score items should come first
-        return scoreA > scoreB;
+        return matchPreferenceScoreA > matchPreferenceScoreB;
     });
 
     return sortedMenuItems;
 }
-

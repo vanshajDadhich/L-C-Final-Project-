@@ -34,7 +34,6 @@ std::vector<std::string> Utility::splitWords(const std::string &str) {
 std::unordered_set<std::string> Utility::readWordsFromCSV(const std::string &filename) {
     std::unordered_set<std::string> words;
     std::ifstream file(filename);
-    std::cout << "Reading file: " << filename << std::endl;
     if (!file) {
         std::cerr << "Error opening file: " << filename << std::endl;
         return words;
@@ -46,7 +45,6 @@ std::unordered_set<std::string> Utility::readWordsFromCSV(const std::string &fil
         std::string word;
         while (std::getline(ss, word, ',')) {
             word = toLower(word);
-            std::cout << "Word read: " << word << std::endl;
             words.insert(word);
         }
     }

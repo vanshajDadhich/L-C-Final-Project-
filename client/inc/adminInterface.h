@@ -11,6 +11,9 @@ private:
     void showDeleteItemPrompt();
     void showMenuItemList();
     void addUserPrompt();
+    std::string getMenuType(MenuItemType menuItemType);
+    std::string getVegetarianPreference(VegetarianPreference vegetarianPreference);
+    // std::string getSpicelevelOption
 
 public:
     AdminInterface(RequestHandler* requestHandler);

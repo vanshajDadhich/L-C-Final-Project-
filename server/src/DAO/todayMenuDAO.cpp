@@ -24,7 +24,7 @@ bool TodayMenuDAO::addTodayMenu(const std::vector<int>& todayDayMenuItemId) {
 }
 
 std::vector<MenuItem> TodayMenuDAO::getAllTodayMenuItem() {
-    std::vector<MenuItem> todayMenuItems;
+    std::vector<MenuItem> todayMenuItems = {};
 
     try {
         std::unique_ptr<sql::Statement> stmt(databaseConnection->getConnection()->createStatement());
