@@ -2,7 +2,6 @@
 #define RECOMMENDATION_SELECTION_SERVICE_H
 
 #include"../DAO/INextDayMenuVotingDAO.h"
-#include"../DTO/menuItem.h"
 #include <vector>
 #include<memory>
 

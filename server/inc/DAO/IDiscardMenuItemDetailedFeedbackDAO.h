@@ -1,7 +1,7 @@
 #ifndef IDISCARDMENUITEMDETAILEDFEEDBACKDAO_H
 #define IDISCARDMENUITEMDETAILEDFEEDBACKDAO_H
 
-#include "../DTO/discardMenuItemDetailedFeedback.h"
+#include "../../../common/DTO/discardMenuItemDetailedFeedback.h"
 #include <vector>
 
 class IDiscardMenuItemDetailedFeedbackDAO {

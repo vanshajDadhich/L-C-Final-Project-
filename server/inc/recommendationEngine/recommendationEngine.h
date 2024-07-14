@@ -8,21 +8,13 @@
 #include <memory>
 
 #include "feedbackAnalyzer.h"
-#include "../DTO/nextDayMenuVoting.h"
-#include "../DTO/nextDayMenuRollout.h"
+#include "../../../common/DTO/nextDayMenuVoting.h"
+#include "../../../common/DTO/nextDayMenuRollout.h"
 
 class RecommendationEngine {
-private:
-    std::unique_ptr<FeedbackAnalyzer> feedbackAnalyzer_;
-
-    std::vector<MenuItem> filterAvailableMenuItems(MenuItemType menuType, const std::vector<MenuItem>& menuItems);
-    std::vector<std::pair<double, NextDayMenuVoting>> scoreMenuItems(
-        const std::unordered_map<int, std::vector<Feedback>>& feedbackMap,
-        const std::vector<MenuItem>& availableMenuItems);
-    int calculateMatchPreferenceScore(const UserProfile& userProfile, const MenuItem& menuItem);
-
 public:
     RecommendationEngine();
+    
     std::vector<NextDayMenuVoting> recommendTopFoodItems(
         MenuItemType menuType,
         const std::unordered_map<int, std::vector<Feedback>>& feedbackMap,
@@ -34,6 +26,15 @@ public:
         const UserProfile& userProfile, 
         const std::vector<NextDayMenuRollOut>& chefRolloutMenuForNextDay, 
         const std::vector<MenuItem>& menuItems);
+
+private:
+    std::unique_ptr<FeedbackAnalyzer> feedbackAnalyzer_;
+
+    std::vector<MenuItem> filterAvailableMenuItems(MenuItemType menuType, const std::vector<MenuItem>& menuItems);
+    std::vector<std::pair<double, NextDayMenuVoting>> scoreMenuItems(
+        const std::unordered_map<int, std::vector<Feedback>>& feedbackMap,
+        const std::vector<MenuItem>& availableMenuItems);
+    int calculateMatchPreferenceScore(const UserProfile& userProfile, const MenuItem& menuItem);
 };
 
 #endif

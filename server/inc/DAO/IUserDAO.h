@@ -1,7 +1,7 @@
 #ifndef IUSERDAO_H
 #define IUSERDAO_H
 
-#include "../DTO/user.h"
+#include "../../../common/DTO/user.h"
 #include <vector>
 
 class IUserDAO {

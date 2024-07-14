@@ -3,6 +3,7 @@
 
 #include <cppconn/connection.h>
 #include <memory>
+#include "../../../common/exception/inc/databaseException.h"
 
 class DatabaseConnection {
   static std::shared_ptr<sql::Connection> connection;

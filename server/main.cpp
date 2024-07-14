@@ -1,7 +1,7 @@
 #include <iostream>
 #include <csignal>
 #include <thread>
-#include "./inc/serverProcess/server.h"
+#include "./inc/communication/server.h"
 
 Server* serverInstance = nullptr;
 

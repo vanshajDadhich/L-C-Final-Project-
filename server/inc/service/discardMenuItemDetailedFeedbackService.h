@@ -1,7 +1,6 @@
 #ifndef DISCARD_MENU_ITEM_DETAILED_FEEDBACK_SERVICE_H
 #define DISCARD_MENU_ITEM_DETAILED_FEEDBACK_SERVICE_H
 
-#include "../DTO/discardMenuItemDetailedFeedback.h"
 #include "../DAO/IDiscardMenuItemDetailedFeedbackDAO.h"
 #include <memory>
 #include <vector>

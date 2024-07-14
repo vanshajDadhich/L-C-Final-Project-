@@ -107,8 +107,8 @@ std::string FeedbackAnalyzer::getMostRepetitiveSentiments(const std::vector<std:
 }
 
 double FeedbackAnalyzer::analyzeSentiment(const std::string& comment, std::vector<std::string>& foundSentiments) {
-    std::string lowerComment = utility_.toLower(comment);
-    std::vector<std::string> words = utility_.splitWords(lowerComment);
+    std::string lowerComment = Utility::toLower(comment);
+    std::vector<std::string> words = Utility::splitWords(lowerComment);
 
     int sentimentScore = 0; 
     for (size_t i = 0; i < words.size(); ++i) {

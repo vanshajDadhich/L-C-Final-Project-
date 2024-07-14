@@ -1,8 +1,8 @@
 #ifndef IFEEDBACKDAO_H
 #define IFEEDBACKDAO_H
 
-#include "../DTO/feedback.h"
-#include "../DTO/menuItem.h"
+#include "../../../common/DTO/feedback.h"
+#include "../../../common/DTO/menuItem.h"
 #include <vector>
 
 class IFeedbackDAO {

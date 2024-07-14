@@ -97,7 +97,7 @@ int RecommendationEngine::calculateMatchPreferenceScore(const UserProfile& userP
     int score = 0;
     if (userProfile.vegetarianPreference == menuItem.vegetarianPreference) score++;
     if (userProfile.spiceLevelOption == menuItem.spiceLevelOption) score++;
-    if (userProfile.foodPreference == menuItem.foodPreference) score++;
+    if (userProfile.cuisinePreference == menuItem.cuisinePreference) score++;
     if (userProfile.sweetToothPreference == menuItem.sweetToothPreference) score++;
     return score;
 }
@@ -106,10 +106,6 @@ std::vector<NextDayMenuRollOut> RecommendationEngine::sortRecommendedMenuItemsBa
     const UserProfile& userProfile, 
     const std::vector<NextDayMenuRollOut>& chefRolloutMenuForNextDay, 
     const std::vector<MenuItem>& menuItems) {
-
-    if (userProfile.userId == 0) {
-        return chefRolloutMenuForNextDay;
-    }
 
     std::vector<NextDayMenuRollOut> sortedMenuItems = chefRolloutMenuForNextDay;
 

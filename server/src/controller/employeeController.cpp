@@ -19,23 +19,26 @@ EmployeeController::EmployeeController(std::unique_ptr<MenuItemService> menuItem
 
 std::string EmployeeController::handleRequest(Operation operation, const std::string& requestData) {
     std::cout << "[EmployeeController] Handling request: " << static_cast<int>(operation) << "\n";
-    switch (operation) {
-        case Operation::ViewNotification:
-            return handleViewNotifications();
-        case Operation::ProvideFeedback:
-            return handleProvideFeedback(requestData);
-        case Operation::GetTodaysMenu:
-            return handleGetTodaysMenu();
-        case Operation::VoteItemFromTomorrowMenu:
-            return handleVoteItemFromTomorrowMenu(requestData);
-        case Operation::GetChefRollOutMenuForTomorrow:
-            return handleGetChefRollOutMenuForTomorrow(requestData);
-        case Operation::ProvideDiscardMenuItemDetailedFeedback:
-            return handleProvideDiscardMenuItemDetailedFeedback(requestData);
-        default:
-            std::cerr << "[EmployeeController] Invalid operation: " << static_cast<int>(operation) << "\n";
-            return "Invalid operation";
+    std::string response;
+    if (operation == Operation::ViewNotification) {
+        response = handleViewNotifications();
+    } else if (operation == Operation::ProvideFeedback) {
+        response = handleProvideFeedback(requestData);
+    } else if (operation == Operation::GetTodaysMenu) {
+        response = handleGetTodaysMenu();
+    } else if (operation == Operation::VoteItemFromTomorrowMenu) {
+        response = handleVoteItemFromTomorrowMenu(requestData);
+    } else if (operation == Operation::GetChefRollOutMenuForTomorrow) {
+        response = handleGetChefRollOutMenuForTomorrow(requestData);
+    } else if (operation == Operation::ProvideDiscardMenuItemDetailedFeedback) {
+        response = handleProvideDiscardMenuItemDetailedFeedback(requestData);
+    }else if(operation == Operation::UpdateProfile){
+        response = handleUpdateProfile(requestData);
+    } else {
+        std::cerr << "[EmployeeController] Invalid operation: " << static_cast<int>(operation) << "\n";
+        response = "Invalid operation";
     }
+    return response;
 }
 
 std::string EmployeeController::handleViewNotifications() {
@@ -67,7 +70,7 @@ std::string EmployeeController::handleGetTodaysMenu() {
     std::vector<MenuItem> todaysMenu = todayMenuService->getAllTodayMenuItem();
     if(todaysMenu.empty()) {
         std::cerr << "[EmployeeController] No menu items for today\n";
-        return "Menu is Not yet Published By Chef for today";
+        return "0";
     }
     std::vector<std::string> serializedMenuItems;
     for (const auto& menuItem : todaysMenu) {
@@ -109,14 +112,18 @@ std::string EmployeeController::handleGetChefRollOutMenuForTomorrow(const std::s
     }
     std::vector<NextDayMenuRollOut> preferenceBasedNextDayMenuRollOut;
     std::vector<NextDayMenuRollOut> chefRolloutMenuForNextDay = getNextDayMenuItemsToRollOut();
+    UserProfile userProfile = userProfileService->getUserProfileByID(userId);
+    if(userProfile.userId == 0) {
+    std::cerr << "[EmployeeController] User profile not found\n";
+        return "0";
+    }
     if(chefRolloutMenuForNextDay.empty()) {
         std::cerr << "[EmployeeController] No menu items rolled out for the next day\n";
-        response = "Menu is not yet rolled out by chef for the next day";
-        return response;
+        return "0";
     }
     for (int i = 0; i < 3; ++i) {
         auto chefRollOutMenuForMealType = filterMenuItemsByType(static_cast<MenuItemType>(i + 1), chefRolloutMenuForNextDay);
-        chefRollOutMenuForMealType = recommendationEngine->sortRecommendedMenuItemsBasedOnProfile(userProfileService->getUserProfileByID(userId), chefRollOutMenuForMealType, menuItemService->getAllMenuItems());
+        chefRollOutMenuForMealType = recommendationEngine->sortRecommendedMenuItemsBasedOnProfile(userProfile, chefRollOutMenuForMealType, menuItemService->getAllMenuItems());
         preferenceBasedNextDayMenuRollOut.insert(preferenceBasedNextDayMenuRollOut.end(), chefRollOutMenuForMealType.begin(), chefRollOutMenuForMealType.end());
     }
     std::vector<std::string> recommendedMenuItemSerializedData;
@@ -176,27 +183,17 @@ std::vector<NextDayMenuRollOut> EmployeeController::filterMenuItemsByType(MenuIt
     return filteredMenuItems;
 }
 
-bool EmployeeController::pushNotification(Operation operation, const std::string& message) {
-    Notification notification;
-    switch (operation) {
-        case Operation::PublishMenuForToday:
-            notification.notificationTitle = "Today's Menu Published";
-            notification.message = "Today's menu has been published.";
-            break;
-        case Operation::RollOutMenuForNextDay:
-            notification.notificationTitle = "Menu Rollout For Next Day";
-            notification.message = "Chef has rolled out the menu items for the next day. Check it out in the User Menu.";
-            break;
-        case Operation::DeleteMenuItem:
-            notification.notificationTitle = "Menu Item Deleted";
-            notification.message = message + " has been deleted from the menu.";
-            break;
-        case Operation::GetMenuItemIdForDetailFeedbackFromChef:
-            notification.notificationTitle = "Feedback for Discarded Menu Item";
-            notification.message = "Menu Item ID: " + message + " has low ratings and bad comments. Please share detailed feedback on this menu item.";
-            break;
-        default:
-            return false;
+std::string EmployeeController::handleUpdateProfile(const std::string& requestData) {
+    std::string response;
+    UserProfile userProfile = SerializationUtility::deserialize<UserProfile>(requestData);
+    bool operationDone = userProfileService->updateUserProfile(userProfile);
+    if (operationDone) {
+        std::cout << "[EmployeeController] Profile Updated Successfully\n";
+        response = "Profile Updated Successfully";
+    } else {
+        std::cerr << "[EmployeeController] Failed to Update Profile\n";
+        response = "Failed to Update Profile";
     }
-    return notificationService->addNotification(notification);
+
+    return response;
 }

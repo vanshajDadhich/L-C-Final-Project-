@@ -3,7 +3,15 @@
 
 #include <vector>
 #include <string>
-#include "../DTO/serializationUtility.h"
+#include "../../../common/DTO/serializationUtility.h"
+#include "../service/menuItemService.h"
+#include "../service/nextDayMenuVotingService.h"
+#include "../service/feedbackService.h"
+#include "../service/todayMenuService.h"
+#include "../service/notificationService.h"
+#include "../service/userService.h"
+#include "../service/userProfileService.h"
+#include "../service/discardMenuItemDetailedFeedbackService.h"
 
 class IUserController
 {

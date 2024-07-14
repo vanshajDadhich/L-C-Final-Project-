@@ -6,19 +6,60 @@ AdminController::AdminController(std::unique_ptr<MenuItemService> menuItemServic
 
 std::string AdminController::handleRequest(Operation operation, const std::string& requestData) {
     std::cout << "[AdminController] Handling request: " << static_cast<int>(operation) << "\n";
-    switch (operation) {
-        case Operation::AddUser:
-            return handleAddUser(requestData);
-        case Operation::AddMenuItem:
-            return handleAddMenuItem(requestData);
-        case Operation::DeleteMenuItem:
-            return handleDeleteMenuItem(requestData);
-        case Operation::ViewMenu:
-            return handleViewMenu(requestData);
-        default:
-            std::cerr << "[AdminController] Invalid operation: " << static_cast<int>(operation) << "\n";
-            return "Invalid operation";
+    std::string response;
+
+    if (operation == Operation::AddUser) {
+        response = handleAddUser(requestData);
+    } else if (operation == Operation::AddMenuItem) {
+        response = handleAddMenuItem(requestData);
+    } else if (operation == Operation::DeleteMenuItem) {
+        response = handleDeleteMenuItem(requestData);
+    } else if (operation == Operation::ViewMenu) {
+        response = handleViewMenu(requestData);
+    } else if (operation == Operation::UpdateMenuItem) {
+        response = handleUpdateMenuItem(requestData);
+    } else if (operation == Operation::GetMenuItemById) {
+        response = handleGetMenuItemById(requestData);
+    } else {
+        std::cerr << "[AdminController] Invalid operation: " << static_cast<int>(operation) << "\n";
+        response = "Invalid operation";
     }
+    return response;
+}
+
+std::string AdminController::handleGetMenuItemById(const std::string& requestData) {
+    std::string response;
+    int menuItemId;
+    try {
+        menuItemId = std::stoi(requestData);
+    } catch (const std::invalid_argument&) {
+        std::cerr << "[AdminController] Invalid menu item ID\n";
+        response = "Invalid menu item ID";
+    }
+    std::cout << "[AdminController] Get Menu Item By ID called\n";
+    MenuItem menuItem = menuItemService->getMenuItemById(menuItemId);
+    std::cout << "[AdminController] Get Menu Item By ID operation completed\n";
+    if (menuItem.menuItemId != 0) {
+        response = SerializationUtility::serialize(menuItem);
+    } else {
+        response = "Menu Item Not Found";
+    }
+    return response;
+}
+
+std::string AdminController::handleUpdateMenuItem(const std::string& requestData) {
+    std::string response;
+    std::cout << "[AdminController] Update Menu Item called\n";
+    MenuItem menuItem = SerializationUtility::deserialize<MenuItem>(requestData);
+    bool operationDone = menuItemService->updateMenuItem(menuItem);
+    std::cout << "[AdminController] Update Menu Item operation completed with result: " << operationDone << "\n";
+    if (operationDone) {
+        pushNotification(menuItem, Operation::UpdateMenuItem);
+        response = "Menu Item Updated Successfully";
+    } else {
+        response = "Menu Item Not Updated";
+    }
+    return response;
 }
 
 std::string AdminController::handleAddUser(const std::string& requestData) {

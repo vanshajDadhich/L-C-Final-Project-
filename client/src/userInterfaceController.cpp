@@ -21,24 +21,21 @@ void UserInterfaceController::loginPrompt() {
     std::cin >> login.userId;
     std::cout << "Password: ";
     std::cin >> login.password;
-    Operation operation = Operation::LoginUser;
     auto loginData = SerializationUtility::serialize(login);
     this->userIdLoggedIn = login.userId;
-    auto loginSerializedRequest = SerializationUtility::serializeOperation(operation, loginData);
+    auto loginSerializedRequest = SerializationUtility::serializeOperation(Operation::LoginUser, loginData);
 
     requestHandler->sendRequest(loginSerializedRequest);
 }
 
 void UserInterfaceController::handleUserInput() {
-    int retryCount = 0;
     const int maxRetries = 3;
     std::string response;
     Role userRole;
 
-    while (retryCount < maxRetries) {
+    for (int retryCount = 0; retryCount < maxRetries; retryCount++) {
         loginPrompt();
         response = requestHandler->receiveResponse();
-        std::cout << "User Role response: " << response << "\n";
 
         try {
             userRole = static_cast<Role>(std::stoi(response));
@@ -54,29 +51,18 @@ void UserInterfaceController::handleUserInput() {
             std::cerr << "Error: " << e.what() << ". Please try again.\n";
         }
 
-        retryCount++;
-        if (retryCount < maxRetries) {
-            std::cout << "Attempt " << retryCount + 1 << " of " << maxRetries << "\n";
-        }
+        std::cout << "Attempt " << retryCount + 1 << " of " << maxRetries << "\n";
     }
 
     std::cerr << "Maximum login attempts exceeded. Exiting.\n";
-    return;
 }
 
-void UserInterfaceController::initializeUserInterface(Role userRole)
-{
-    std::cout<<"User Role : "<<userRole<<"\n";
-    if (userRole == Role::Admin)
-    {
+void UserInterfaceController::initializeUserInterface(Role userRole) {
+    if (userRole == Role::Admin) {
         this->userInterface = new AdminInterface(requestHandler);
-    }
-    else if(userRole == Role::Employee)
-    {
+    } else if (userRole == Role::Employee) {
         this->userInterface = new EmployeeInterface(requestHandler, this->userIdLoggedIn);
-    }
-    else
-    {
+    } else {
         this->userInterface = new ChefInterface(requestHandler);
     }
 }

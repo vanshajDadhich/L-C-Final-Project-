@@ -3,7 +3,7 @@
 
 #include "INextDayMenuVotingDAO.h"
 #include "databaseConnection.h"
-#include"../DTO/menuItem.h"
+#include"../../../common/DTO/menuItem.h"
 #include<vector>
 
 class NextDayMenuVotingDAO : public INextDayMenuVotingDAO {

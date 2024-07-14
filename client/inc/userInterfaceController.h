@@ -1,11 +1,10 @@
 #ifndef USERINTERFACECONTROLLER_H
 #define USERINTERFACECONTROLLER_H
 
-#include "client.h"
-#include "IUserInterface.h"
-#include "adminInterface.h"
-#include "chefInterface.h"
-#include "employeeInterface.h"
+#include "communication/client.h"
+#include "interface/adminInterface.h"
+#include "interface/chefInterface.h"
+#include "interface/employeeInterface.h"
 
 class UserInterfaceController {
 public:
@@ -19,9 +18,8 @@ private:
     IUserInterface* userInterface;
 
     void handleUserInput();
-    void showMenuPrompt(std::string userRole);
     void initializeUserInterface(Role userRole);
     void loginPrompt();
 };
 
-#endif 
+#endif

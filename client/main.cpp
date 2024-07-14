@@ -1,6 +1,5 @@
 #include <iostream>
 #include <csignal>
-#include "./inc/client.h"
 #include "./inc/userInterfaceController.h"
 
 Client * clientInstance = nullptr;

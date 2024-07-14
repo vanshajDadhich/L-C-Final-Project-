@@ -2,7 +2,6 @@
 #define TODAYMENUSERVICE_H
 
 #include "../DAO/ITodayMenuDAO.h"
-#include "../DTO/menuItem.h"
 #include <vector>
 #include <memory>
 

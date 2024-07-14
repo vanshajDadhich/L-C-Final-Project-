@@ -59,7 +59,7 @@ std::vector<MenuItem> MenuItemDAO::getMenuItemByType(MenuItemType type) {
 bool MenuItemDAO::addMenuItem(const MenuItem& menuItem) {
     try {
         std::unique_ptr<sql::PreparedStatement> pstmt(
-            databaseConnection->getConnection()->prepareStatement("INSERT INTO MenuItem (menuItemName, menuItemType, availability, price, vegetarianPreference, spiceLevelOption, foodPreference, sweetToothPreference) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"));
+            databaseConnection->getConnection()->prepareStatement("INSERT INTO MenuItem (menuItemName, menuItemType, availability, price, vegetarianPreference, spiceLevelOption, cuisinePreference, sweetToothPreference) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"));
         bindMenuItemToStatement(pstmt, menuItem);
         pstmt->executeUpdate();
         return true;
@@ -72,7 +72,7 @@ bool MenuItemDAO::addMenuItem(const MenuItem& menuItem) {
 bool MenuItemDAO::updateMenuItem(const MenuItem& menuItem) {
     try {
         std::unique_ptr<sql::PreparedStatement> pstmt(
-            databaseConnection->getConnection()->prepareStatement("UPDATE MenuItem SET menuItemName = ?, menuItemType = ?, availability = ?, price = ?, vegetarianPreference = ?, spiceLevelOption = ?, foodPreference = ?, sweetToothPreference = ? WHERE menuItemId = ?"));
+            databaseConnection->getConnection()->prepareStatement("UPDATE MenuItem SET menuItemName = ?, menuItemType = ?, availability = ?, price = ?, vegetarianPreference = ?, spiceLevelOption = ?, cuisinePreference = ?, sweetToothPreference = ? WHERE menuItemId = ?"));
         bindMenuItemToStatement(pstmt, menuItem);
         pstmt->setInt(9, menuItem.menuItemId);
         pstmt->executeUpdate();
@@ -113,7 +113,7 @@ MenuItem MenuItemDAO::createMenuItemFromResultSet(std::unique_ptr<sql::ResultSet
         res->getInt("price"),
         static_cast<VegetarianPreference>(res->getInt("vegetarianPreference")),
         static_cast<SpiceLevelOption>(res->getInt("spiceLevelOption")),
-        static_cast<FoodPreference>(res->getInt("foodPreference")),
+        static_cast<CuisinePreference>(res->getInt("cuisinePreference")),
         static_cast<SweetToothPreference>(res->getInt("sweetToothPreference"))
     );
 }
@@ -125,6 +125,6 @@ void MenuItemDAO::bindMenuItemToStatement(std::unique_ptr<sql::PreparedStatement
     pstmt->setInt(4, menuItem.price);
     pstmt->setInt(5, static_cast<int>(menuItem.vegetarianPreference));
     pstmt->setInt(6, static_cast<int>(menuItem.spiceLevelOption));
-    pstmt->setInt(7, static_cast<int>(menuItem.foodPreference));
+    pstmt->setInt(7, static_cast<int>(menuItem.cuisinePreference));
     pstmt->setInt(8, static_cast<int>(menuItem.sweetToothPreference));
 }

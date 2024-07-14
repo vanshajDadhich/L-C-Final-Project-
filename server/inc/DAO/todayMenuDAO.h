@@ -4,7 +4,7 @@
 #include "ITodayMenuDAO.h"
 #include "databaseConnection.h"
 #include <vector>
-#include "../DTO/menuItem.h"
+#include "../../../common/DTO/menuItem.h"
 
 class TodayMenuDAO : public ITodayMenuDAO {
 public:

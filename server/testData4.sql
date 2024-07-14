@@ -59,7 +59,7 @@ USE databaseRecommendationEngine;
 --     userId BIGINT UNSIGNED PRIMARY KEY,
 --     vegetarianPreference INT,
 --     spiceLevelOption INT,
---     foodPreference INT,
+--     cuisinePreference INT,
 --     sweetToothPreference INT,
 --     FOREIGN KEY (userId) REFERENCES User(userId) ON DELETE CASCADE
 -- );
@@ -71,11 +71,11 @@ USE databaseRecommendationEngine;
 -- ALTER TABLE MenuItem
 -- ADD COLUMN vegetarianPreference INT,
 -- ADD COLUMN spiceLevelOption INT,
--- ADD COLUMN foodPreference INT,
+-- ADD COLUMN cuisinePreference INT,
 -- ADD COLUMN sweetToothPreference INT;
 
 -- -- Inserting new menu items with updated columns
--- INSERT INTO MenuItem (menuItemId, menuItemName, menuItemType, Availability, Price, vegetarianPreference, spiceLevelOption, foodPreference, sweetToothPreference) VALUES
+-- INSERT INTO MenuItem (menuItemId, menuItemName, menuItemType, Availability, Price, vegetarianPreference, spiceLevelOption, cuisinePreference, sweetToothPreference) VALUES
 -- (1, 'Masala Dosa', 1, true, 6.99, 1, 3, 2, 0),          -- Breakfast, Vegetarian, High Spice, South Indian, No Sweet
 -- (2, 'Aloo Paratha', 1, true, 5.49, 1, 2, 1, 0),         -- Breakfast, Vegetarian, Medium Spice, North Indian, No Sweet
 -- (3, 'Paneer Butter Masala', 2, true, 8.99, 1, 2, 1, 0), -- Lunch, Vegetarian, Medium Spice, North Indian, No Sweet
@@ -98,7 +98,7 @@ USE databaseRecommendationEngine;
 -- (20, 'Fruit Salad', 1, true, 4.99, 1, 1, 3, 1);         -- Breakfast, Vegetarian, Low Spice, Other, Sweet
 
 
--- INSERT INTO UserProfile (userId, vegetarianPreference, spiceLevelOption, foodPreference, sweetToothPreference) VALUES
+-- INSERT INTO UserProfile (userId, vegetarianPreference, spiceLevelOption, cuisinePreference, sweetToothPreference) VALUES
 -- (1, 1, 1, 1, 1), -- john_doe
 -- (2, 2, 2, 2, 0), -- jane_smith
 -- (3, 3, 3, 3, 1), -- chef_ravi
@@ -115,7 +115,7 @@ USE databaseRecommendationEngine;
 
 
 -- -- Insert new items into MenuItem table
--- INSERT INTO MenuItem (menuItemId, menuItemName, menuItemType, availability, price, vegetarianPreference, spiceLevelOption, foodPreference, sweetToothPreference) VALUES
+-- INSERT INTO MenuItem (menuItemId, menuItemName, menuItemType, availability, price, vegetarianPreference, spiceLevelOption, cuisinePreference, sweetToothPreference) VALUES
 -- (21, 'Mixed Vegetable Curry', 2, true, 130, 1, 2, 1, 0),
 -- (22, 'Fish Fry', 2, true, 180, 2, 1, 2, 0),
 -- (23, 'Mushroom Soup', 3, true, 100, 1, 3, 3, 0),
@@ -136,9 +136,13 @@ USE databaseRecommendationEngine;
 -- (90, 10, 25, 1, 'Worst dessert I have ever tasted.', '2024-07-04');
 
 
-CREATE EVENT delete_old_notifications
-ON SCHEDULE EVERY 1 DAY
-STARTS CURRENT_TIMESTAMP
-DO
-  DELETE FROM Notification
-  WHERE date < CURDATE();
+-- CREATE EVENT delete_old_notifications
+-- ON SCHEDULE EVERY 1 DAY
+-- STARTS CURRENT_TIMESTAMP
+-- DO
+--   DELETE FROM Notification
+--   WHERE date < CURDATE();
+
+
+ALTER TABLE UserProfile
+CHANGE COLUMN foodPreference cuisinePreference INT;

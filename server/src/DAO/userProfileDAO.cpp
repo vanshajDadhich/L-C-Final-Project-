@@ -6,28 +6,27 @@
 
 UserProfileDAO::UserProfileDAO() : databaseConnection{DatabaseConnection::getInstance()} {}
 
-int UserProfileDAO::addUserProfile(const UserProfile& userProfile) {
+bool UserProfileDAO::addUserProfile(const UserProfile& userProfile) {
     try {
         std::unique_ptr<sql::PreparedStatement> pstmt(
             databaseConnection->getConnection()->prepareStatement(
-                "INSERT INTO UserProfile (userId, vegetarianPreference, spiceLevelOption, foodPreference, sweetToothPreference) VALUES (?, ?, ?, ?, ?)"));
+                "INSERT INTO UserProfile (userId, vegetarianPreference, spiceLevelOption, cuisinePreference, sweetToothPreference) VALUES (?, ?, ?, ?, ?)"));
         pstmt->setInt(1, userProfile.userId);
         pstmt->setInt(2, static_cast<int>(userProfile.vegetarianPreference));
         pstmt->setInt(3, static_cast<int>(userProfile.spiceLevelOption));
-        pstmt->setInt(4, static_cast<int>(userProfile.foodPreference));
+        pstmt->setInt(4, static_cast<int>(userProfile.cuisinePreference));
         pstmt->setInt(5, static_cast<int>(userProfile.sweetToothPreference));
         int updateCount = pstmt->executeUpdate();
 
-        // Check if the update was successful
         if (updateCount == 0) {
             std::cerr << "Failed to add user profile." << std::endl;
-            return -1; // Return -1 on failure
+            return false;
         }
 
-        return userProfile.userId;
+        return true;
     } catch (sql::SQLException &e) {
         std::cerr << "SQL error: " << e.what() << std::endl;
-        return -1;
+        return false;
     }
 }
 
@@ -43,7 +42,7 @@ UserProfile UserProfileDAO::getUserProfileByID(const int& userId) {
                 res->getInt("userId"),
                 static_cast<VegetarianPreference>(res->getInt("vegetarianPreference")),
                 static_cast<SpiceLevelOption>(res->getInt("spiceLevelOption")),
-                static_cast<FoodPreference>(res->getInt("foodPreference")),
+                static_cast<CuisinePreference>(res->getInt("cuisinePreference")),
                 static_cast<SweetToothPreference>(res->getInt("sweetToothPreference"))
             );
         }
@@ -66,7 +65,7 @@ std::vector<UserProfile> UserProfileDAO::getAllUserProfiles() {
                 res->getInt("userId"),
                 static_cast<VegetarianPreference>(res->getInt("vegetarianPreference")),
                 static_cast<SpiceLevelOption>(res->getInt("spiceLevelOption")),
-                static_cast<FoodPreference>(res->getInt("foodPreference")),
+                static_cast<CuisinePreference>(res->getInt("cuisinePreference")),
                 static_cast<SweetToothPreference>(res->getInt("sweetToothPreference"))
             ));
         }
@@ -75,4 +74,28 @@ std::vector<UserProfile> UserProfileDAO::getAllUserProfiles() {
     }
 
     return userProfiles;
+}
+
+bool UserProfileDAO::updateUserProfile(const UserProfile& userProfile) {
+    try {
+        std::unique_ptr<sql::PreparedStatement> pstmt(
+            databaseConnection->getConnection()->prepareStatement(
+                "UPDATE UserProfile SET vegetarianPreference = ?, spiceLevelOption = ?, cuisinePreference = ?, sweetToothPreference = ? WHERE userId = ?"));
+        pstmt->setInt(1, static_cast<int>(userProfile.vegetarianPreference));
+        pstmt->setInt(2, static_cast<int>(userProfile.spiceLevelOption));
+        pstmt->setInt(3, static_cast<int>(userProfile.cuisinePreference));
+        pstmt->setInt(4, static_cast<int>(userProfile.sweetToothPreference));
+        pstmt->setInt(5, userProfile.userId);
+        int updateCount = pstmt->executeUpdate();
+
+        if (updateCount == 0) {
+            // User profile not found, add new profile
+            return addUserProfile(userProfile);
+        }
+
+        return true;
+    } catch (sql::SQLException &e) {
+        std::cerr << "SQL error: " << e.what() << std::endl;
+        return false;
+    }
 }

@@ -12,25 +12,58 @@ ChefController::ChefController(std::unique_ptr<MenuItemService> menuItemService,
 
 std::string ChefController::handleRequest(Operation operation, const std::string& requestData) {
     std::cout << "[ChefController] Handling request: " << static_cast<int>(operation) << "\n";
-    switch (operation) {
-        case Operation::ViewMenu:
-            return handleViewMenu();
-        case Operation::RollOutMenuForNextDay:
-            return handleRollOutMenuForNextDay(requestData);
-        case Operation::GetRecommandationFromEngine:
-            return handleGetRecommendationFromEngine(requestData);
-        case Operation::PublishMenuForToday:
-            return handlePublishMenuForToday();
-        case Operation::GetDiscardMenuList:
-            return handleGetDiscardMenuList();
-        case Operation::RemoveMenuItemFromList:
-            return handleRemoveMenuItemFromList(requestData);
-        case Operation::GetMenuItemIdForDetailFeedbackFromChef:
-            return handleGetMenuItemIdForDetailFeedbackFromChef(requestData);
-        default:
-            std::cerr << "[ChefController] Invalid operation: " << static_cast<int>(operation) << "\n";
-            return "Invalid operation";
+    std::string response;
+
+    if (operation == Operation::ViewMenu) {
+        response = handleViewMenu();
+    } else if (operation == Operation::RollOutMenuForNextDay) {
+        response = handleRollOutMenuForNextDay(requestData);
+    } else if (operation == Operation::GetRecommandationFromEngine) {
+        response = handleGetRecommendationFromEngine(requestData);
+    } else if (operation == Operation::PublishMenuForToday) {
+        response = handlePublishMenuForToday();
+    } else if (operation == Operation::GetDiscardMenuList) {
+        response = handleGetDiscardMenuList();
+    } else if (operation == Operation::RemoveMenuItemFromList) {
+        response = handleRemoveMenuItemFromList(requestData);
+    } else if (operation == Operation::GetMenuItemIdForDetailFeedbackFromChef) {
+        response = handleGetMenuItemIdForDetailFeedbackFromChef(requestData);
+    } else if (operation == Operation::GetNextDayMenuVoting) {
+        response = handleGetNextDayMenuVoting();
+    } else {
+        std::cerr << "[ChefController] Invalid operation: " << static_cast<int>(operation) << "\n";
+        response = "Invalid operation";
     }
+
+    return response;
+}
+
+std::string ChefController::handleGetNextDayMenuVoting() {
+    std::vector<NextDayMenuVoting> nextDayMenuVotingList = nextDayMenuVotingService->getAllNextDayMenuRollOutItem();
+    std::vector<NextDayMenuRollOut> nextDayMenuRollOutItems = {};
+
+    for (const auto& nextDayMenuItemId : nextDayMenuVotingList) {
+        MenuItem menuItem = menuItemService->getMenuItemById(nextDayMenuItemId.menuItemId);
+
+        NextDayMenuRollOut rollOutItem(
+            menuItem.menuItemId,
+            menuItem.menuItemName,
+            menuItem.menuItemType,
+            menuItem.price,
+            nextDayMenuItemId.voteCount,
+            nextDayMenuItemId.rating,
+            nextDayMenuItemId.sentiments
+        );
+
+        nextDayMenuRollOutItems.push_back(rollOutItem);
+    }
+
+    std::vector<std::string> nextDayMenuVotingSerializedData;
+    for (const auto& menu : nextDayMenuRollOutItems) {
+        nextDayMenuVotingSerializedData.push_back(SerializationUtility::serialize(menu));
+    }
+    std::cout << "[ChefController] Next Day Menu Voting operation completed\n";
+    return SerializationUtility::serializeStringVector(nextDayMenuVotingSerializedData);
 }
 
 std::string ChefController::handleViewMenu() {
@@ -46,7 +79,7 @@ std::string ChefController::handleViewMenu() {
 std::string ChefController::handleRollOutMenuForNextDay(const std::string& requestData) {
     std::string response;
     std::cout << "[ChefController] RollOutMenuForNextDay called\n";
-    std::vector<std::string> menuItemIdToRollOutMenu = SerializationUtility::deserializeStringToVector(requestData, '$');
+    std::vector<std::string> menuItemIdToRollOutMenu = SerializationUtility::deserializeStringToVector(requestData);
     std::vector<int> menuItemIdsForNextDayMenu;
     for (const auto& menuItemForMenuType : menuItemIdToRollOutMenu) {
         std::vector<std::string> menuItemIds = SerializationUtility::deserializeStringToVector(menuItemForMenuType, ',');
@@ -77,10 +110,22 @@ std::string ChefController::handleGetRecommendationFromEngine(const std::string&
 
 std::string ChefController::handlePublishMenuForToday() {
     std::string response;
-    bool operationDone = publishMostVotedMenuItems();
-    if (operationDone) {
+    std::vector<int> publishedMenuItemIds = publishMostVotedMenuItems();
+    if (publishedMenuItemIds.size() > 0){
+        std::vector<MenuItem> todaysMenuPublished = {};
+        for(const auto& menuItemId : publishedMenuItemIds) {
+            todaysMenuPublished.push_back(menuItemService->getMenuItemById(menuItemId));
+        }
+
+        std::vector<std::string> todaysMenuSerializedData;
+        for (const auto& menu : todaysMenuPublished) {
+            todaysMenuSerializedData.push_back(SerializationUtility::serialize(menu));
+        }
+
+        std::string serializedTodaysMenu = SerializationUtility::serializeStringVector(todaysMenuSerializedData);
+        
         pushNotification(Operation::PublishMenuForToday, "Today's menu has been published");
-        response = "Today's menu has been published successfully";
+        response = serializedTodaysMenu;
     } else {
         response = "Failed to publish today's menu";
     }
@@ -175,33 +220,33 @@ bool ChefController::rollOutFinalMenuByChefForNextDay(const std::vector<int>& me
     return operationDone;
 }
 
-bool ChefController::publishMostVotedMenuItems() {
+std::vector<int> ChefController::publishMostVotedMenuItems() {
     std::vector<int> mostVotedMenuItemIds = nextDayMenuVotingService->getMostVotedMenuItemIds();
     todayMenuService->deleteTodayMenu();
-    return todayMenuService->addTodayMenu(mostVotedMenuItemIds);
+    bool publishedTodaysMenu =  todayMenuService->addTodayMenu(mostVotedMenuItemIds);
+    if(publishedTodaysMenu) {
+        nextDayMenuVotingService->deleteMenuRolledOut();
+        return mostVotedMenuItemIds;
+    }
+    return {};
 }
 
 bool ChefController::pushNotification(Operation operation, const std::string& message) {
     Notification notification;
-    switch (operation) {
-        case Operation::PublishMenuForToday:
-            notification.notificationTitle = "Today's Menu Published";
-            notification.message = "Today's menu has been published.";
-            break;
-        case Operation::RollOutMenuForNextDay:
-            notification.notificationTitle = "Menu Rollout For Next Day";
-            notification.message = "Chef has rolled out the menu items for the next day. Check it out in the User Menu.";
-            break;
-        case Operation::DeleteMenuItem:
-            notification.notificationTitle = "Menu Item Deleted";
-            notification.message = message + " has been deleted from the menu.";
-            break;
-        case Operation::GetMenuItemIdForDetailFeedbackFromChef:
-            notification.notificationTitle = "Feedback for Discarded Menu Item";
-            notification.message = "Menu Item ID: " + message + " has low ratings and bad comments. Please share detailed feedback on this menu item.";
-            break;
-        default:
-            return false;
+    if (operation == Operation::PublishMenuForToday) {
+        notification.notificationTitle = "Today's Menu Published";
+        notification.message = "Today's menu has been published.";
+    } else if (operation == Operation::RollOutMenuForNextDay) {
+        notification.notificationTitle = "Menu Rollout For Next Day";
+        notification.message = "Chef has rolled out the menu items for the next day. Check it out in the User Menu.";
+    } else if (operation == Operation::DeleteMenuItem) {
+        notification.notificationTitle = "Menu Item Deleted";
+        notification.message = message + " has been deleted from the menu.";
+    } else if (operation == Operation::GetMenuItemIdForDetailFeedbackFromChef) {
+        notification.notificationTitle = "Feedback for Discarded Menu Item";
+        notification.message = "Menu Item ID: " + message + " has low ratings and bad comments. Please share detailed feedback on this menu item.";
+    } else {
+        return false;
     }
     return notificationService->addNotification(notification);
 }

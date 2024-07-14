@@ -1,7 +1,7 @@
 #ifndef INOTIFICATION_DAO_H
 #define INOTIFICATION_DAO_H
 
-#include "../DTO/notification.h"
+#include "../../../common/DTO/notification.h"
 #include <vector>
 
 class INotificationDAO {

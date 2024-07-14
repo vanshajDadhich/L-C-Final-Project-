@@ -2,7 +2,7 @@
 #define ITodayMenuDAO_H
 
 #include <vector>
-#include"../DTO/menuItem.h"
+#include"../../../common/DTO/menuItem.h"
 
 class ITodayMenuDAO {
 public:

@@ -2,8 +2,8 @@
 #define AUTHENTICATION_CONTROLLER_H
 
 #include "../service/userService.h"
-#include "../DTO/serializationUtility.h"
-#include "../DTO/login.h"
+#include "../../../common/DTO/serializationUtility.h"
+#include "../../../common/DTO/login.h"
 #include <memory>
 
 class AuthenticationController {

@@ -1,7 +1,7 @@
 #ifndef IMENUITEMDAO_H
 #define IMENUITEMDAO_H
 
-#include "../DTO/menuItem.h"
+#include "../../../common/DTO/menuItem.h"
 #include <vector>
 
 class IMenuItemDAO {

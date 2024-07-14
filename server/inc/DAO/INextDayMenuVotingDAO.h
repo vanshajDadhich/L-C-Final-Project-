@@ -1,8 +1,8 @@
 #ifndef INextDayMenuVotingDAO_H
 #define INextDayMenuVotingDAO_H
 
-#include "../DTO/nextDayMenuVoting.h"
-#include "../DTO/menuItem.h"
+#include "../../../common/DTO/nextDayMenuVoting.h"
+#include "../../../common/DTO/menuItem.h"
 #include <vector>
 
 class INextDayMenuVotingDAO {

@@ -1,6 +1,5 @@
 #include "../../inc/DAO/databaseConnection.h"
 #include <cppconn/connection.h>
-#include <memory>
 #include <mysql_driver.h>
 #include <stdexcept>
 
@@ -11,16 +10,20 @@ std::shared_ptr<sql::Connection> DatabaseConnection::getConnection() {
   if (connection != nullptr) {
     return connection;
   }
-  throw std::runtime_error("Connection is not initialized. Need to call InitDbConnection first");
+  throw InitializationException("Connection is not initialized. Need to call InitDbConnection first");
 }
 
 void DatabaseConnection::initDbConnection(const std::string& hostName,
                                           const std::string& userName,
                                           const std::string& password,
                                           const std::string& schemaName) {
-  sql::mysql::MySQL_Driver* driver = sql::mysql::get_mysql_driver_instance();
-  connection = std::shared_ptr<sql::Connection>(driver->connect(hostName, userName, password));
-  connection->setSchema(schemaName);
+    sql::mysql::MySQL_Driver* driver = sql::mysql::get_mysql_driver_instance();
+    connection = std::shared_ptr<sql::Connection>(driver->connect(hostName, userName, password));
+    if (connection != nullptr) {
+      connection->setSchema(schemaName);
+    } else {
+      throw ConnectException("Failed to establish connection.");
+    }
 }
 
 DatabaseConnection::DatabaseConnection() {}

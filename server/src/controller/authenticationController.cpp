@@ -14,7 +14,7 @@ int AuthenticationController::authenticateUser(const std::string& requestData) {
         userRole =  user.role;
     }
 
-    std::cout << "[AuthenticationController] Authentication failed for UserID: " << loginCredentials.userId << "\n";
+    // std::cout << "[AuthenticationController] Authentication failed for UserID: " << loginCredentials.userId << "\n";
     return userRole;
 }
 
