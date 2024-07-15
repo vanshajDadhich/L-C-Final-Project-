@@ -35,8 +35,10 @@ int DiscardMenuItemDetailedFeedbackDAO::addFeedback(const DiscardMenuItemDetaile
         return newFeedbackId;
     } catch (const sql::SQLException &e) {
         std::cerr << "SQL error: " << e.what() << std::endl;
-        return -1;
+
+       
     }
+    return -1;
 }
 
 DiscardMenuItemDetailedFeedback DiscardMenuItemDetailedFeedbackDAO::getFeedbackById(const int& id) {

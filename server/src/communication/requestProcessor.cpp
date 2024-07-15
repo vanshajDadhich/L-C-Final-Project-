@@ -63,13 +63,32 @@ std::unique_ptr<IUserController> RequestProcessor::initializeChefController() {
 }
 
 std::string RequestProcessor::processRequest(const std::string& request) {
-    std::pair<Operation, std::string> requestData = SerializationUtility::deserializeOperation(request);
+    std::pair<Operation, std::string> requestData;
     std::string response;
 
-    if (requestData.first == Operation::LoginUser) {
-        response = handleLoginRequest(requestData.second);
-    } else {
-        response = handleUserRequest(requestData.first, requestData.second);
+    try {
+        requestData = SerializationUtility::deserializeOperation(request);
+
+        if (requestData.first == Operation::LoginUser) {
+            response = handleLoginRequest(requestData.second);
+        } else {
+            response = handleUserRequest(requestData.first, requestData.second);
+        }
+    } catch (const QueryException& e) {
+        std::cerr << "QueryException: " << e.what() << std::endl;
+        response = "Error: Query failed.";
+    } catch (const ConnectException& e) {
+        std::cerr << "ConnectException: " << e.what() << std::endl;
+        response = "Error: Connection to database failed.";
+    } catch (const InitializationException& e) {
+        std::cerr << "InitializationException: " << e.what() << std::endl;
+        response = "Error: Initialization failed.";
+    } catch (const DatabaseException& e) {
+        std::cerr << "DatabaseException: " << e.what() << std::endl;
+        response = "Error: Database operation failed.";
+    } catch (const std::exception& e) {
+        std::cerr << "Exception: " << e.what() << std::endl;
+        response = "Error: An unexpected error occurred.";
     }
 
     return response;

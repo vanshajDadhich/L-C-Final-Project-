@@ -19,7 +19,7 @@ void EmployeeInterface::showMenu() {
                      "5. Update Profile\n"
                      "6. Exit\n"<< std::endl;
 
-        int employeeChoice = Utility::getValidatedChoice(1, 5);
+        int employeeChoice = Utility::getValidatedChoice(1, 6);
 
         if (employeeChoice == 1) {
             viewNotification();
@@ -50,7 +50,6 @@ void EmployeeInterface::viewNotification() {
     for (const auto& item : notificationList) {
         auto notification = SerializationUtility::deserialize<Notification>(item);
         std::cout << "Notification Details:" << std::endl
-                  << "ID: " << notification.notificationId << std::endl
                   << "Title: " << notification.notificationTitle << std::endl
                   << "Message: " << notification.message << std::endl
                   << "Date: " << notification.date << std::endl;
@@ -187,12 +186,10 @@ void EmployeeInterface::getDetailedFeedbackForDiscardedMenuItem() {
     std::cin.ignore();
     std::getline(std::cin, discardMenuItemDetailedFeedback.whatYouLiked);
     std::cout << "How Would you like this food Item to taste? \n";
-    std::cin.ignore();
     std::getline(std::cin, discardMenuItemDetailedFeedback.howWouldItTaste);
     std::cout << "Share your mom's recipe. \n";
-    std::cin.ignore();
     std::getline(std::cin, discardMenuItemDetailedFeedback.shareRecipe);
-
+    std::cout<<"[EmployeeController] Discard Menu Item Detailed Feedback Received\n"<<discardMenuItemDetailedFeedback.whatYouLiked<<"\n"<<discardMenuItemDetailedFeedback.howWouldItTaste<<"\n"<<discardMenuItemDetailedFeedback.shareRecipe<<"\n";
     std::string serializedData = SerializationUtility::serialize(discardMenuItemDetailedFeedback);
     std::string serializedDataForRequest = SerializationUtility::serializeOperation(Operation::ProvideDiscardMenuItemDetailedFeedback, serializedData);
     requestHandler->sendRequest(serializedDataForRequest);

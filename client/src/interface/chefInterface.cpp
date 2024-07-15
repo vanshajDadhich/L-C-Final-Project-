@@ -98,6 +98,7 @@ void ChefInterface::showRecommendedMenuAndRolloutForTomorrow(){
                     continue;
                 }
                 rollOutMenuForTomorrow(recommendedMenuItem);
+                flag = false;
             } else if(userChoice == 5){
                 flag = false;
             } else {
@@ -119,7 +120,7 @@ std::vector<std::pair<MenuItemType, int>> ChefInterface::showRecommendedMenu(Men
         std::string serializedMenuList = requestHandler->receiveResponse();
 
         std::vector<std::string>MenuList = SerializationUtility::deserializeStringToVector(serializedMenuList);
-        std::cout<< "********************Recommend Menu Items For "<<Utility::getMenuItemType(menuItemType)<<" ********************" << std::endl;
+        std::cout<< "********************Recommend Menu Items For "<<Utility::getMenuItemType(menuItemType)<<" ********************" << std::endl<<std::endl;
         
         for (const auto& item : MenuList) {
             auto menuItem = SerializationUtility::deserialize<NextDayMenuRollOut>(item);
@@ -173,7 +174,7 @@ std::string ChefInterface::getValidMenuItemIdsForMealType(const std::vector<std:
                 return menuItemIdsForMealType;
             } else {
                 std::cout << "Invalid Menu Item IDs: " << notRecommendedMenuItemIds << std::endl;
-                std::cout<<"Please Enter Valid Menu Item Ids, again\n";
+                std::cout<<"Please Enter Valid Menu Item Ids\n";
             }
         }
     } catch (const std::exception& e) {
@@ -226,6 +227,10 @@ void ChefInterface::showNextDayMenuVoting(){
         requestHandler->sendRequest(viewNextDayMenuVotingSerializedRequest);
 
         std::string serializedMenuList = requestHandler->receiveResponse();
+        if(serializedMenuList == "0"){
+            std::cout<<"No Voting as Menu is not yet rolled out\n";
+            return;
+        }
 
         std::vector<std::string>MenuList = SerializationUtility::deserializeStringToVector(serializedMenuList);
         std::cout<< "********************Next Day Menu Voting********************" << std::endl;

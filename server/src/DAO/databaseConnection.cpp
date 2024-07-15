@@ -22,7 +22,7 @@ void DatabaseConnection::initDbConnection(const std::string& hostName,
     if (connection != nullptr) {
       connection->setSchema(schemaName);
     } else {
-      throw ConnectException("Failed to establish connection.");
+      throw ConnectException("Failed to establish connection");
     }
 }
 

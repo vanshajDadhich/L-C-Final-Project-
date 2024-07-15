@@ -18,7 +18,6 @@ namespace Utility {
     int getValidatedChoice(int min, int max);
     std::string toLower(const std::string &str);
     std::vector<std::string> splitWords(const std::string &str);
-    std::unordered_set<std::string> readWordsFromCSV(const std::string &filename);
 }
 
 #endif // UTILITY_H

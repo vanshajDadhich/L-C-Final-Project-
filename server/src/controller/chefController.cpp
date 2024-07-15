@@ -41,7 +41,10 @@ std::string ChefController::handleRequest(Operation operation, const std::string
 std::string ChefController::handleGetNextDayMenuVoting() {
     std::vector<NextDayMenuVoting> nextDayMenuVotingList = nextDayMenuVotingService->getAllNextDayMenuRollOutItem();
     std::vector<NextDayMenuRollOut> nextDayMenuRollOutItems = {};
-
+    if(nextDayMenuVotingList.empty()) {
+        std::cout << "[ChefController] Menu is not yet rolled out\n";
+        return "0";
+    }
     for (const auto& nextDayMenuItemId : nextDayMenuVotingList) {
         MenuItem menuItem = menuItemService->getMenuItemById(nextDayMenuItemId.menuItemId);
 

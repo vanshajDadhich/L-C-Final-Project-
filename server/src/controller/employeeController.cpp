@@ -68,12 +68,18 @@ std::string EmployeeController::handleProvideFeedback(const std::string& request
 
 std::string EmployeeController::handleGetTodaysMenu() {
     std::vector<MenuItem> todaysMenu = todayMenuService->getAllTodayMenuItem();
+    std::vector<MenuItem> sortedTodayMenu;
+
+    for(int index = 1; index < 4; index++){
+        std::vector<MenuItem> mealTypeMenuItems = filterMenuItemsByType(static_cast<MenuItemType>(index), todaysMenu);
+        sortedTodayMenu.insert(sortedTodayMenu.end(), mealTypeMenuItems.begin(), mealTypeMenuItems.end());
+    }
     if(todaysMenu.empty()) {
         std::cerr << "[EmployeeController] No menu items for today\n";
         return "0";
     }
     std::vector<std::string> serializedMenuItems;
-    for (const auto& menuItem : todaysMenu) {
+    for (const auto& menuItem : sortedTodayMenu) {
         serializedMenuItems.push_back(SerializationUtility::serialize(menuItem));
     }
     std::cout << "[EmployeeController] Get Today's Menu operation completed\n";
@@ -114,7 +120,7 @@ std::string EmployeeController::handleGetChefRollOutMenuForTomorrow(const std::s
     std::vector<NextDayMenuRollOut> chefRolloutMenuForNextDay = getNextDayMenuItemsToRollOut();
     UserProfile userProfile = userProfileService->getUserProfileByID(userId);
     if(userProfile.userId == 0) {
-    std::cerr << "[EmployeeController] User profile not found\n";
+        std::cerr << "[EmployeeController] User profile not found\n";
         return "0";
     }
     if(chefRolloutMenuForNextDay.empty()) {
@@ -122,7 +128,7 @@ std::string EmployeeController::handleGetChefRollOutMenuForTomorrow(const std::s
         return "0";
     }
     for (int i = 0; i < 3; ++i) {
-        auto chefRollOutMenuForMealType = filterMenuItemsByType(static_cast<MenuItemType>(i + 1), chefRolloutMenuForNextDay);
+        std::vector<NextDayMenuRollOut> chefRollOutMenuForMealType = filterMenuItemsByType(static_cast<MenuItemType>(i + 1), chefRolloutMenuForNextDay);
         chefRollOutMenuForMealType = recommendationEngine->sortRecommendedMenuItemsBasedOnProfile(userProfile, chefRollOutMenuForMealType, menuItemService->getAllMenuItems());
         preferenceBasedNextDayMenuRollOut.insert(preferenceBasedNextDayMenuRollOut.end(), chefRollOutMenuForMealType.begin(), chefRollOutMenuForMealType.end());
     }
@@ -137,7 +143,7 @@ std::string EmployeeController::handleGetChefRollOutMenuForTomorrow(const std::s
 }
 
 std::string EmployeeController::handleProvideDiscardMenuItemDetailedFeedback(const std::string& requestData) {
-    std::string response;
+    std::string response = "";
     DiscardMenuItemDetailedFeedback feedback = SerializationUtility::deserialize<DiscardMenuItemDetailedFeedback>(requestData);
     bool operationDone = discardMenuItemDetailedFeedbackService->addFeedback(feedback);
     if (operationDone) {
@@ -173,9 +179,10 @@ std::vector<NextDayMenuRollOut> EmployeeController::getNextDayMenuItemsToRollOut
     return nextDayMenuRollOutItems;
 }
 
-std::vector<NextDayMenuRollOut> EmployeeController::filterMenuItemsByType(MenuItemType menuItemType, const std::vector<NextDayMenuRollOut>& chefRolloutMenuForNextDay) {
-    std::vector<NextDayMenuRollOut> filteredMenuItems;
-    for (const auto& menuItem : chefRolloutMenuForNextDay) {
+template <typename T>
+std::vector<T> EmployeeController::filterMenuItemsByType(MenuItemType menuItemType, const std::vector<T>& menuItems) {
+    std::vector<T> filteredMenuItems;
+    for (const auto& menuItem : menuItems) {
         if (menuItem.menuItemType == menuItemType) {
             filteredMenuItems.push_back(menuItem);
         }

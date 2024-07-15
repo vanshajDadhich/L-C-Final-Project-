@@ -36,7 +36,6 @@ std::string AdminController::handleGetMenuItemById(const std::string& requestDat
         std::cerr << "[AdminController] Invalid menu item ID\n";
         response = "Invalid menu item ID";
     }
-    std::cout << "[AdminController] Get Menu Item By ID called\n";
     MenuItem menuItem = menuItemService->getMenuItemById(menuItemId);
     std::cout << "[AdminController] Get Menu Item By ID operation completed\n";
     if (menuItem.menuItemId != 0) {
@@ -109,7 +108,6 @@ std::string AdminController::handleDeleteMenuItem(const std::string& requestData
     } else {
         response = "Menu Item Not Deleted";
     }
-
     return response;
 }
 

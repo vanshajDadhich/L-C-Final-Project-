@@ -69,26 +69,4 @@ std::vector<std::string> splitWords(const std::string &str) {
     return words;
 }
 
-std::unordered_set<std::string> readWordsFromCSV(const std::string &filename) {
-    std::unordered_set<std::string> words;
-    std::ifstream file(filename);
-    if (!file) {
-        std::cerr << "Error opening file: " << filename << std::endl;
-        return words;
-    }
-
-    std::string line;
-    while (std::getline(file, line)) {
-        std::istringstream ss(line);
-        std::string word;
-        while (std::getline(ss, word, ',')) {
-            word = toLower(word);
-            words.insert(word);
-        }
-    }
-
-    std::cout << "Total words loaded from " << filename << ": " << words.size() << std::endl;
-    return words;
-}
-
 }

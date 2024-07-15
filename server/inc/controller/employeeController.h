@@ -36,7 +36,8 @@ private:
     std::string handleProvideDiscardMenuItemDetailedFeedback(const std::string& requestData);
     std::string handleUpdateProfile(const std::string& requestData);
     std::vector<NextDayMenuRollOut> getNextDayMenuItemsToRollOut();
-    std::vector<NextDayMenuRollOut> filterMenuItemsByType(MenuItemType menuItemType, const std::vector<NextDayMenuRollOut>& chefRolloutMenuForNextDay);
+    template <typename T>
+    std::vector<T> filterMenuItemsByType(MenuItemType menuItemType, const std::vector<T>& menuItems);
 };
 
 #endif

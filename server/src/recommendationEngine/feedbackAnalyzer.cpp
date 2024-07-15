@@ -2,9 +2,6 @@
 #include <algorithm>
 
 FeedbackAnalyzer::FeedbackAnalyzer()
-    // : positiveWords_(utility_.readWordsFromCSV("sentiment/positiveSentiments.csv")), 
-    //   negativeWords_(utility_.readWordsFromCSV("sentiment/negativeSentiments.csv")), 
-    //   negationWords_(utility_.readWordsFromCSV("sentiment/negationSentiments.csv")) 
 {
     negationWords_ = {
     "not", "never", "no", "none", "nothing", "nowhere", "neither", "hardly", "scarcely",

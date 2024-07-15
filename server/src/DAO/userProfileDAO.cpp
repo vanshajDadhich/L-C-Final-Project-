@@ -89,7 +89,6 @@ bool UserProfileDAO::updateUserProfile(const UserProfile& userProfile) {
         int updateCount = pstmt->executeUpdate();
 
         if (updateCount == 0) {
-            // User profile not found, add new profile
             return addUserProfile(userProfile);
         }
 
